@@ -6,112 +6,142 @@ use App\Http\Controllers\Controller;
 use App\Models\SensorLog;
 use App\Models\DeviceControl;
 use Illuminate\Http\Request;
+use App\Models\DeviceStatus;
 
 class IotController extends Controller
 {
-    // 1. Endpoint untuk menerima data dari ESP32 Master (POST)
+    /** Accept actual DHT22 readings now; optional calibrated soils later. */
     public function storeData(Request $request)
     {
-        // Hitung rata-rata kelembapan tiap block
-        $avg_a = ($request->input('soil_a1', 0) + $request->input('soil_a2', 0)) / 2;
-        $avg_b = ($request->input('soil_b1', 0) + $request->input('soil_b2', 0)) / 2;
-        $avg_c = ($request->input('soil_c1', 0) + $request->input('soil_c2', 0)) / 2;
-        $avg_d = ($request->input('soil_d1', 0) + $request->input('soil_d2', 0)) / 2;
-        $avg_e = ($request->input('soil_e1', 0) + $request->input('soil_e2', 0)) / 2;
-        $avg_f = ($request->input('soil_f1', 0) + $request->input('soil_f2', 0)) / 2;
-        $avg_g = ($request->input('soil_g1', 0) + $request->input('soil_g2', 0)) / 2;
-
-        // Simpan log ke database
-        $log = SensorLog::create([
-            'soil_a1' => $request->input('soil_a1', 0),
-            'soil_a2' => $request->input('soil_a2', 0),
-            'soil_b1' => $request->input('soil_b1', 0),
-            'soil_b2' => $request->input('soil_b2', 0),
-            'soil_c1' => $request->input('soil_c1', 0),
-            'soil_c2' => $request->input('soil_c2', 0),
-            'soil_d1' => $request->input('soil_d1', 0),
-            'soil_d2' => $request->input('soil_d2', 0),
-            'soil_e1' => $request->input('soil_e1', 0),
-            'soil_e2' => $request->input('soil_e2', 0),
-            'soil_f1' => $request->input('soil_f1', 0),
-            'soil_f2' => $request->input('soil_f2', 0),
-            'soil_g1' => $request->input('soil_g1', 0),
-            'soil_g2' => $request->input('soil_g2', 0),
-            'avg_a'   => $avg_a,
-            'avg_b'   => $avg_b,
-            'avg_c'   => $avg_c,
-            'avg_d'   => $avg_d,
-            'avg_e'   => $avg_e,
-            'avg_f'   => $avg_f,
-            'avg_g'   => $avg_g,
-            'water_temp'    => $request->input('water_temp', 0),
-            'air_temp'      => $request->input('air_temp', 0),
-            'air_humidity'  => $request->input('air_humidity', 0),
+        $v = $request->validate([
+            'air_temp' => 'required|numeric|between:-40,80',
+            'air_humidity' => 'required|numeric|between:0,100',
+            'soil_a' => 'nullable|numeric|between:0,100',
+            'soil_b' => 'nullable|numeric|between:0,100',
+            'soil_c' => 'nullable|numeric|between:0,100',
+            'soil_d' => 'nullable|numeric|between:0,100',
+            'soil_e' => 'nullable|numeric|between:0,100',
+            'soil_f' => 'nullable|numeric|between:0,100',
+            'soil_g' => 'nullable|numeric|between:0,100',
+            'water_temp' => 'nullable|numeric|between:-10,100',
+            'ph' => 'nullable|numeric|between:0,14',
+            'ec' => 'nullable|numeric|min:0',
+            'tds' => 'nullable|numeric|min:0',
         ]);
 
-        // Cek mode operasional
-        $control = DeviceControl::firstOrCreate(['id' => 1]);
-
-        // Jika Mode Auto, update status valve dan pompa berdasarkan threshold kelembapan
-        if ($control->mode === 'auto') {
-            $valves = ['a' => $avg_a, 'b' => $avg_b, 'c' => $avg_c, 'd' => $avg_d, 'e' => $avg_e, 'f' => $avg_f, 'g' => $avg_g];
-            $anyValveOn = false;
-
-            foreach ($valves as $block => $avg) {
-                $field = "valve_" . $block;
-                // Logika: <= 35% ON (Buka), >= 50% OFF (Tutup)
-                if ($avg <= 35) {
-                    $control->$field = true;
-                } elseif ($avg >= 50) {
-                    $control->$field = false;
-                }
-                if ($control->$field) {
-                    $anyValveOn = true;
-                }
-            }
-
-            // Pompa air otomatis ON jika minimal ada 1 valve terbuka
-            $control->pump_water = $anyValveOn;
-            $control->save();
+        // Current migration has NOT NULL soil and environment fields.
+        // Zero here is strictly storage fallback and must not be displayed as measurements.
+        $row = [
+            'air_temp' => $v['air_temp'],
+            'air_humidity' => $v['air_humidity'],
+            'water_temp' => $v['water_temp'] ?? 0,
+            'ph' => $v['ph'] ?? null,
+            'ec' => $v['ec'] ?? null,
+            'tds' => $v['tds'] ?? null,
+        ];
+        foreach (range('a', 'g') as $z) {
+            $row['soil_' . $z] = $v['soil_' . $z] ?? 0;
         }
-
+        $log = SensorLog::create($row);
+        // Important: telemetry never changes pump/valve commands.
         return response()->json([
-            'status'  => 'success',
-            'message' => 'Data telemetry berhasil disimpan',
-            'control' => $control
+            'status' => 'success',
+            'message' => 'Data DHT22 diterima.',
+            'id' => $log->id,
+            'timestamp' => $log->created_at,
         ], 201);
     }
 
-    // 2. Endpoint untuk ESP32 membaca status kontrol (GET)
-    public function getControlStatus()
+    /** Dashboard: stale readings and uninstalled sensors must not look live. */
+    public function getLatestTelemetry()
     {
-        $control = DeviceControl::firstOrCreate(['id' => 1]);
-        return response()->json($control, 200);
-    }
-
-    // 3. Endpoint untuk update kontrol manual dari Web Dashboard (POST)
-    public function updateControl(Request $request)
-    {
-        $control = DeviceControl::firstOrCreate(['id' => 1]);
-
-        if ($request->has('mode')) {
-            $control->mode = $request->mode;
+        $sensor = SensorLog::latest('id')->first();
+        if (!$sensor) {
+            return response()->json(['status' => 'waiting', 'fresh' => false,
+                'temp' => null, 'humidity' => null, 'waterTemp' => null,
+                'ph' => null, 'ec' => null, 'tds' => null, 'zones' => [],
+                'timestamp' => null]);
         }
-
-        // Field valve dan pump
-        $fields = ['valve_a', 'valve_b', 'valve_c', 'valve_d', 'valve_e', 'valve_f', 'valve_g', 'pump_water', 'pump_fertilizer'];
-        foreach ($fields as $field) {
-            if ($request->has($field)) {
-                $control->$field = filter_var($request->$field, FILTER_VALIDATE_BOOLEAN);
-            }
+        $fresh = $sensor->created_at && $sensor->created_at->gte(now()->subSeconds(20));
+        $control = DeviceControl::first();
+        $zones = [];
+        foreach (range('a', 'g') as $z) {
+            $zones[] = [
+                'code' => strtoupper($z), 'soil' => null, 'flow' => null,
+                'n' => null, 'p' => null, 'k' => null,
+                'valve' => (bool) ($control?->{'valve_' . $z} ?? false),
+                'pump' => (bool) ($control?->pump_water ?? false),
+                'mixer' => null,
+            ];
         }
-
-        $control->save();
-
         return response()->json([
-            'status'  => 'success',
-            'message' => 'Status kontrol diperbarui',
-            'data'    => $control
+            'status' => $fresh ? 'success' : 'waiting',
+            'fresh' => (bool) $fresh,
+            'temp' => $fresh ? $sensor->air_temp : null,
+            'humidity' => $fresh ? $sensor->air_humidity : null,
+            'waterTemp' => null, 'ph' => null, 'ec' => null, 'tds' => null,
+            'zones' => $zones,
+            'timestamp' => $sensor->created_at,
         ]);
     }
+
+    public function getControlStatus()
+    {
+        return response()->json(DeviceControl::firstOrCreate(['id' => 1]));
+    }
+
+    public function updateControl(Request $request)
+    {
+        $validated = $request->validate([
+            'mode' => 'sometimes|required|in:auto,manual',
+            'valve_a' => 'sometimes|boolean', 'valve_b' => 'sometimes|boolean',
+            'valve_c' => 'sometimes|boolean', 'valve_d' => 'sometimes|boolean',
+            'valve_e' => 'sometimes|boolean', 'valve_f' => 'sometimes|boolean',
+            'valve_g' => 'sometimes|boolean', 'pump_water' => 'sometimes|boolean',
+            'pump_fertilizer' => 'sometimes|boolean',
+        ]);
+        $control = DeviceControl::firstOrCreate(['id' => 1]);
+        $control->fill($validated)->save();
+        return response()->json(['status'=>'success', 'data'=>$control]);
+    }
+
+    public function heartbeat(Request $request)
+{
+    $validated = $request->validate([
+        'device_id' => 'required|string|max:100',
+    ]);
+
+    $device = DeviceStatus::updateOrCreate(
+        ['device_id' => $validated['device_id']],
+        ['last_seen_at' => now()]
+    );
+
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Heartbeat diterima',
+        'device_id' => $device->device_id,
+        'last_seen_at' => $device->last_seen_at,
+    ]);
+}
+
+public function deviceStatus()
+{
+    $device = DeviceStatus::where(
+        'device_id',
+        'ESP32-S3-ATAN'
+    )->first();
+
+    $online = $device
+        && $device->last_seen_at
+        && $device->last_seen_at->greaterThan(
+            now()->subSeconds(30)
+        );
+
+    return response()->json([
+        'device_id' => 'ESP32-S3-ATAN',
+        'online' => (bool) $online,
+        'status' => $online ? 'connected' : 'disconnected',
+        'last_seen_at' => $device?->last_seen_at,
+    ]);
+}
 }

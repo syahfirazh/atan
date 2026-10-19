@@ -1,1362 +1,51 @@
 <!DOCTYPE html>
 <html lang="id">
  <head>
-  <!--ATAN SI TATANEN — 1 FILE HTML | Semua HTML, CSS, dan JS ada di sini. Grafik Chart.js dan font diakses dari CDN saat internet tersedia.-->
+  <!--ATAN SI TATANEN — CABAI / ESP32-S3 | Satu HTML dengan Tailwind utilities, CSS khusus animasi, dan JS terstruktur. Grafik Chart.js dan font diakses dari CDN saat internet tersedia.-->
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1" name="viewport"/>
   <meta content="#132d26" name="theme-color"/>
   <title>
-   ATAN si TATANEN &middot; Grow With Intelligence
+   ATAN si TATANEN &middot; Smart Greenhouse Cabai
   </title>
   <link href="https://fonts.googleapis.com" rel="preconnect"/>
   <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Outfit:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
   <!-- Tailwind CSS utilities; CSS asli tetap menjaga identitas Living Greenhouse. -->
    <script src="https://cdn.tailwindcss.com"></script>
+<script>
+ tailwind.config = { corePlugins: { preflight: false }, theme: { extend: {
+  colors: { forest:'#123D34', sage:'#819D87', ivory:'#F8F7F0', lime:'#D5EBAB', clay:'#D89977' },
+  fontFamily: { sans:['DM Sans','sans-serif'], display:['Outfit','sans-serif'] }
+ }}};
+</script>
+<style>
+:root{--ink:#163d34;--muted:#73877c;--line:#e3eae0;--paper:#fffefa;--mist:#f0f6eb}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#f8f7f0;color:var(--ink);font-family:'DM Sans',sans-serif;overflow-x:hidden}
+h1,h2,h3,h4{font-family:Outfit,sans-serif}button,input{font:inherit}button{cursor:pointer}a{text-decoration:none;color:inherit}.wrap{max-width:1440px;padding:0 clamp(16px,4vw,70px);margin:auto}.screen{display:none}.screen.active{display:block}
+.eyebrow{font:800 10px 'DM Sans';letter-spacing:2.6px;text-transform:uppercase;color:#699878}.dashboard-top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:34px 0 20px}.dashboard-top h1{font-size:clamp(36px,4.8vw,65px);line-height:1.05;letter-spacing:-2px;margin:10px 0}.dashboard-top p{font-size:13px;color:#708578}.dashboard-top>div:last-child{display:flex;gap:10px;flex-wrap:wrap}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:25px;padding:clamp(18px,2.2vw,28px);box-shadow:0 14px 45px #244d3210;min-width:0;transition:box-shadow .3s,transform .3s}.panel:hover{box-shadow:0 18px 48px #244d3219}.panel h3{font-family:Outfit;font-size:22px;letter-spacing:-.6px;margin:5px 0}.sub{font-size:12px;color:#7b8c80;line-height:1.8;margin:8px 0 16px}.sectionhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:14px 0}.sectionhead h3{margin:0}
+.metrics{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:13px;margin:10px 0 20px}.metric{min-width:0;background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:19px 16px;box-shadow:0 8px 30px #244d320a;transition:transform .25s,border-color .25s}.metric:hover{transform:translateY(-5px);border-color:#9ebca4}.metric .symbol{height:36px;display:flex;align-items:center;font-size:22px}.metric label{display:block;font-size:11px;color:#738878;margin:13px 0 7px}.metric strong{font:800 clamp(17px,2vw,26px) Outfit;word-break:break-word}.metric small{font-size:10px;color:#719681;display:block;margin-top:9px;font-weight:700}
+.sensor-status-panel{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 18px;background:linear-gradient(115deg,#edf4e7,#fffdf7)}.sensor-status-panel strong{display:block;margin:9px 0;font:700 18px Outfit}.sensor-status-panel .sub{margin:0}.pill{display:inline-flex;align-items:center;border-radius:50px;background:#e9f2e6;color:#416e52;padding:7px 13px;font-size:10px;font-weight:800}.tag{border-radius:50px;background:#fff1e7;color:#9e705a;padding:10px 14px;font-size:11px;font-weight:800}
+.two-col{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,.86fr);gap:18px;margin:18px 0}.reading{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 0;border-bottom:1px solid #ebf0e8;font-size:12px}.reading strong{font-weight:800;color:#244e39;text-align:right}.forecast{background:linear-gradient(130deg,#183f35,#315c43);padding:24px;border-radius:20px;color:white;margin-top:16px}.forecast h3{color:#fff}.forecast p{color:#d4e5d6;line-height:1.8;font-size:12px}
+.diagram{position:relative;isolation:isolate;background:radial-gradient(ellipse at 50% 0%,#fcfff7,#eaf3e5 85%);border:1px solid #dae7d6;border-radius:22px;min-height:315px;padding:27px 20px;overflow:hidden}.diagram:before{content:'';position:absolute;inset:0;z-index:-1;background-image:linear-gradient(#aac9a31e 1px,transparent 1px),linear-gradient(90deg,#aac9a31e 1px,transparent 1px);background-size:29px 29px}.diagram-row{display:flex;justify-content:center;align-items:center;gap:7px;flex-wrap:wrap}.tank{width:95px;height:122px;border:3px solid #6199a0;border-top-width:8px;border-radius:16px 16px 25px 25px;background:linear-gradient(to top,#90d4e0 60%,#edf8f6 60%);display:grid;place-items:center;text-align:center;font-size:11px;font-weight:800;color:#396a75;box-shadow:0 12px 20px #34718b14;transition:transform .4s}.tank:hover{transform:translateY(-5px)}.tank.orange{border-color:#c5a46f;background:linear-gradient(to top,#f0d39f 50%,#fffaf0 50%);color:#856127}.tank.green{border-color:#8aa574;background:linear-gradient(to top,#aed49e 61%,#f3f9ed 61%);color:#466a38}.pipe{height:7px;min-width:15px;max-width:65px;flex:1;border-radius:30px;background:repeating-linear-gradient(90deg,#2699b4 0 14px,#a0dcf0 14px 27px);background-size:54px 100%;animation:waterflow 1.1s linear infinite}.pipe.off{background:#c7d7d1;animation:none}.mixer{width:106px;height:105px;border:3px solid #8db2a5;border-radius:22px;background:linear-gradient(to top,#b5e4d7 60%,#fafffc 60%);display:grid;place-items:center;position:relative;font-size:11px;font-weight:800}.mixer:after{content:'↻';font-size:36px;position:absolute;bottom:14px;color:#468d7e;animation:rotate 5s linear infinite}.water{text-align:center;margin:18px 0;color:#5797ae;font-size:11px;font-weight:700}.diagram-bottom,.zones{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.plant-node,.zone{border:1px solid #d2e4cd;background:#fffefaeb;border-radius:17px;padding:14px 7px;text-align:center;min-width:0;color:#2a533c;font-weight:800;transition:transform .3s,border-color .3s,box-shadow .3s}.plant-node:hover,.plant-node.chosen,.zone:hover,.zone.active{transform:translateY(-3px);border-color:#74a784;box-shadow:0 10px 25px #3e7c3d1c}.zone.active{background:#1c5140;color:white}.plant-node .sprout{display:block;min-height:45px;animation:sway 4s ease-in-out infinite}.plant-node b,.plant-node small{display:block;font-size:11px}.plant-node small{color:#829688;font-size:10px;margin-top:5px}.zone span{display:block;margin:7px 0}.zone small{font-weight:700}
+.btn{border:0;display:inline-flex;align-items:center;gap:9px;border-radius:13px;padding:13px 18px;font-weight:800;font-size:12px;transition:transform .22s,box-shadow .22s}.btn:hover{transform:translateY(-3px)}.btn.dark{background:#174b3b;color:white}.btn.light{background:#e8f2e7;color:#28543b}.reset-btn{border:1px solid #f0d7c9;background:#fff0e7;color:#a06c58}.graphbox{height:230px;position:relative}.grid3,.calc,.cost-breakdown{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.mini{padding:17px;background:#f1f6ed;border-radius:16px}.mini span,.calc span{display:block;color:#789080;font-size:11px}.mini strong,.calc strong{display:block;font:800 23px Outfit;margin:9px 0}.calc{margin:20px 0}.calc .panel{padding:16px}.estimate,.auto-age-banner,.cost-summary-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border-radius:16px;padding:20px;background:#eaf2e4;margin:16px 0}.estimate strong{font:800 25px Outfit}.footnote{font-size:11px;line-height:1.7;color:#8a978c;margin:12px 0 20px}.cost-breakdown{margin:15px 0}.cost-breakdown article{border-radius:17px;padding:17px;background:#f6f9f2;border:1px solid #e3ebdf}.cost-breakdown article h4{margin:0 0 10px;font-size:13px}.cost-breakdown article strong{display:block;font:800 22px Outfit}.cost-breakdown article small{display:block;font-size:11px;color:#799184;line-height:1.65;margin-top:8px}.at-v5-cost{margin:20px 0}
+.sensor-log-section{margin:23px 0}.sensor-table-wrap{overflow-x:auto;width:100%}.sensor-table{width:100%;min-width:1640px;border-collapse:collapse;font-size:11px}.sensor-table th,.sensor-table td{padding:13px 11px;text-align:left;border-bottom:1px solid #e9eee5;white-space:nowrap}.sensor-table th{background:#eef5ea;color:#28553e}.decision-card{display:flex;gap:18px;align-items:flex-start;border-radius:20px;background:linear-gradient(120deg,#183f35,#295e46);padding:24px;color:white}.decision-orb{background:#d5ebab;color:#214936;border-radius:14px;width:50px;height:50px;display:grid;place-items:center;flex-shrink:0}.decision-card b{font:800 18px Outfit}.decision-card p{color:#dbeadc;font-size:13px;line-height:1.8}.decision-card small{color:#c0d3c6;font-size:11px}
+.history-section{margin:25px 0}.history-header,.history-controls,.history-entry-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}.history-header h3{font-size:26px}.history-tools,.history-filters{display:flex;flex-wrap:wrap;gap:8px}.history-overview,.history-data{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:15px 0}.history-stat,.history-data div{background:#f2f7ef;padding:14px;border-radius:14px}.history-stat span,.history-data small{font-size:11px;color:#7a8b7e;display:block}.history-stat strong{font:800 23px Outfit;display:block;margin-top:6px}.history-filter{background:#edf4e9;color:#42694d;padding:9px 13px;border:1px solid #d8e7d6;border-radius:10px;font-weight:800;font-size:11px}.history-filter.active{background:#245743;color:white}.history-timeline{padding-left:24px;position:relative}.history-timeline:before{content:'';background:#d7e6d1;width:2px;position:absolute;left:8px;top:5px;bottom:4px}.history-entry{border:1px solid #dbe8d8;background:#fffefa;border-radius:16px;padding:17px;margin:12px 0;position:relative}.history-entry:before{content:'';background:#7ba985;border:3px solid #edf6e8;border-radius:50%;width:14px;height:14px;position:absolute;left:-23px;top:20px}.history-entry h4{font:800 16px Outfit;margin:6px 0}.history-entry p,.history-note,.history-count{font-size:12px;color:#798b7d;line-height:1.8}.history-data b{font-size:12px}.footer{margin-top:45px;padding:38px 20px;background:#143f34;color:#d0dfd2;text-align:center;font-size:12px}
+.at-v5-modal{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:#09261caa;backdrop-filter:blur(12px);padding:20px}.at-v5-modal[hidden]{display:none}.atan-modal{max-height:90vh;overflow:auto;width:min(510px,100%);border-radius:28px;background:#fffefa;padding:32px;box-shadow:0 40px 100px #0004}.atan-modal h2{font:800 32px Outfit;letter-spacing:-1px}.atan-modal p{font-size:13px;color:#71877b;line-height:1.8}.at-v5-input{width:100%;padding:13px;border:1px solid #c6dcca;background:white;border-radius:13px;margin-top:10px}.hidden{display:none!important}
+/* Artistic motion – ornamental only; pipe movement always follows device state */
+.dashboard-banner{position:relative;overflow:hidden;background:linear-gradient(110deg,#113b30,#275e47 65%,#426e4f);border-radius:29px;color:white;padding:35px 40px;margin:22px 0 20px;min-height:180px;display:flex;align-items:center;justify-content:space-between;gap:25px}.dashboard-banner:before{content:'';position:absolute;width:340px;height:340px;right:0;top:-150px;border:1px solid #d5edac45;border-radius:50%;box-shadow:0 0 0 45px #ffffff08,0 0 0 95px #ffffff06;animation:halo 8s ease-in-out infinite}.banner-art{font-size:74px;position:relative;animation:levitate 5s ease-in-out infinite;filter:drop-shadow(0 15px 15px #071d1977)}.dashboard-banner h2{position:relative;font-size:clamp(27px,3vw,43px);line-height:1.09;letter-spacing:-1.3px;margin:9px 0}.dashboard-banner p{position:relative;font-size:12px;color:#d5e4d8;max-width:580px;line-height:1.75}.dashboard-banner .eyebrow{color:#d4e6af}.reveal{animation:rise .8s cubic-bezier(.2,.7,.2,1) both}.metrics .metric:nth-child(2){animation-delay:.07s}.metrics .metric:nth-child(3){animation-delay:.14s}.metrics .metric:nth-child(4){animation-delay:.21s}.metrics .metric:nth-child(5){animation-delay:.28s}.metrics .metric:nth-child(6){animation-delay:.35s}
+@keyframes waterflow{to{background-position:54px 0}}@keyframes rotate{to{transform:rotate(360deg)}}@keyframes sway{50%{transform:rotate(3deg)}}@keyframes levitate{50%{transform:translateY(-13px) rotate(-3deg)}}@keyframes halo{50%{transform:scale(1.1);opacity:.6}}@keyframes rise{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:1120px){.metrics{grid-template-columns:repeat(3,1fr)}.two-col{grid-template-columns:1fr}}@media(max-width:700px){.metrics{grid-template-columns:repeat(2,1fr)}.dashboard-top{flex-direction:column;align-items:flex-start}.dashboard-banner{padding:25px;min-height:150px}.banner-art{font-size:48px}.diagram-row{gap:3px}.tank{width:68px;height:95px}.mixer{width:77px;height:87px}.pipe{min-width:7px}.diagram-bottom,.zones{grid-template-columns:repeat(2,minmax(0,1fr))}.grid3,.calc,.cost-breakdown{grid-template-columns:1fr}.history-overview,.history-data{grid-template-columns:repeat(2,1fr)}.sensor-status-panel{flex-direction:column;align-items:flex-start}}@media(max-width:410px){.banner-art{display:none}.diagram{padding:15px 9px}.tank{width:59px;font-size:9px}.mixer{width:68px}.plant-node{padding:12px 4px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+</style>
+
    <script src="https://cdn.jsdelivr.net/npm/chart.js">
   </script>
-  <style>
-   /* =======================================================
-   ATAN SI TATANEN - SELURUH STYLE / CSS
-   Ubah tema, warna, animasi dan responsif di bagian ini.
-   ======================================================= */
-
-:root {
-  --dark:#122d25;
-  --forest:#1c4b37;
-  --green:#387f55;
-  --mint:#cfe7cb;
-  --cream:#f8f7ef;
-  --stroke:#dce6d8;
-  --muted:#718174;
-  --gold:#ddaa58
-}
-* {
-  box-sizing:border-box
-}
-html {
-  scroll-behavior:smooth
-}
-body {
-  margin:0;
-  background:var(--cream);
-  color:var(--dark);
-  font-family:'DM Sans',sans-serif
-}
-h1,h2,h3,h4,.display {
-  font-family:Outfit,sans-serif
-}
-button,input,select {
-  font:inherit
-}
-button {
-  cursor:pointer
-}
-a {
-  color:inherit;
-  text-decoration:none
-}
-header {
-  height:80px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 max(5vw,24px);
-  background:rgba(248,247,239,.92);
-  backdrop-filter:blur(20px);
-  position:sticky;
-  top:0;
-  z-index:50;
-  border-bottom:1px solid #e3e9df
-}
-.brand {
-  font-family:Outfit;
-  font-weight:800;
-  font-size:22px;
-  letter-spacing:-1px;
-  display:flex;
-  align-items:center;
-  gap:10px
-}
-.brandmark {
-  width:37px;
-  height:37px;
-  background:var(--dark);
-  color:#bde0a5;
-  display:grid;
-  place-items:center;
-  border-radius:12px
-}
-.nav {
-  display:flex;
-  gap:25px;
-  align-items:center;
-  color:#5b7062;
-  font-size:13px;
-  font-weight:700
-}
-.tag {
-  display:inline-flex;
-  align-items:center;
-  gap:7px;
-  border:1px solid #c9d9cb;
-  background:#ebf4e8;
-  border-radius:30px;
-  padding:8px 13px;
-  color:#397650;
-  font-size:11px;
-  font-weight:800;
-  letter-spacing:1px;
-  text-transform:uppercase
-}
-.tag .dot {
-  height:7px;
-  width:7px;
-  border-radius:50%;
-  background:#5ea373
-}
-.wrap {
-  max-width:1390px;
-  margin:auto;
-  padding:0 5vw
-}
-.screen {
-  display:none
-}
-.screen.active {
-  display:block
-}
-.hero {
-  padding:74px 0 50px;
-  min-height:485px;
-  display:grid;
-  grid-template-columns:1.05fr .95fr;
-  gap:40px;
-  align-items:center
-}
-.eyebrow {
-  font-weight:800;
-  letter-spacing:3px;
-  font-size:11px;
-  text-transform:uppercase;
-  color:#5c9171
-}
-.hero h1 {
-  font-size:clamp(50px,6vw,91px);
-  line-height:1.01;
-  letter-spacing:-4px;
-  margin:20px 0;
-  color:var(--dark)
-}
-.hero h1 i {
-  color:#77a477;
-  font-style:normal
-}
-.desc {
-  font-size:16px;
-  color:#647a69;
-  line-height:1.85;
-  max-width:590px
-}
-.hero-visual {
-  min-height:380px;
-  position:relative;
-  display:grid;
-  place-items:center
-}
-.orb {
-  position:absolute;
-  width:min(360px,83%);
-  aspect-ratio:1;
-  background:radial-gradient(circle,#e1efcf,#d7e8d1 61%,transparent 72%);
-  border-radius:50%;
-  animation:float 6s ease-in-out infinite
-}
-.huge-crop {
-  position:relative;
-  font-size:clamp(155px,22vw,310px);
-  filter:drop-shadow(12px 25px 15px #547f4a2d);
-  animation:float 5s ease-in-out infinite
-}
-.floating {
-  position:absolute;
-  z-index:2;
-  background:#fffdf5;
-  padding:12px 18px;
-  border:1px solid #e0e8dd;
-  border-radius:15px;
-  box-shadow:0 18px 40px #254d2916;
-  font-size:12px;
-  font-weight:800
-}
-.floating.f1 {
-  top:20%;
-  left:2%
-}
-.floating.f2 {
-  right:0;
-  bottom:18%
-}
-.sectionhead {
-  display:flex;
-  align-items:end;
-  justify-content:space-between;
-  margin:28px 0 23px;
-  gap:15px
-}
-.sectionhead h2 {
-  font-size:clamp(29px,3.2vw,44px);
-  letter-spacing:-1.6px;
-  margin:6px 0 0
-}
-.sectionhead p {
-  font-size:13px;
-  color:var(--muted)
-}
-.crop-grid {
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:20px;
-  margin-bottom:80px
-}
-.crop-card {
-  border:1px solid #dce5d9;
-  border-radius:25px;
-  background:#fffef9;
-  padding:22px;
-  text-align:left;
-  transition:.25s;
-  overflow:hidden;
-  position:relative
-}
-.crop-card:hover,.crop-card.selected {
-  transform:translateY(-6px);
-  border-color:#6caa72;
-  box-shadow:0 18px 45px #1a47321b
-}
-.crop-art {
-  height:185px;
-  border-radius:18px;
-  display:grid;
-  place-items:center;
-  font-size:118px;
-  background:radial-gradient(circle,#ecf3d9,#e3ebdf 63%,#f4f5e9);
-  transition:transform .3s
-}
-.crop-card:hover .crop-art {
-  transform:scale(1.035)
-}
-.crop-card h3 {
-  font-size:25px;
-  margin:20px 0 4px
-}
-.crop-card p {
-  color:#789080;
-  font-size:13px;
-  margin:0 0 18px;
-  line-height:1.6
-}
-.cardbottom {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  border-top:1px solid var(--stroke);
-  padding-top:15px;
-  font-weight:800;
-  font-size:12px
-}
-.arrow {
-  width:34px;
-  height:34px;
-  border-radius:50%;
-  background:#e4f0e1;
-  display:grid;
-  place-items:center
-}
-.page-hero {
-  background:linear-gradient(130deg,#183f30,#0d261e);
-  color:#fff;
-  border-radius:28px;
-  min-height:300px;
-  display:grid;
-  grid-template-columns:1.2fr .8fr;
-  align-items:center;
-  padding:42px 5vw;
-  overflow:hidden;
-  position:relative;
-  margin-top:30px
-}
-.page-hero h1 {
-  font-size:clamp(40px,5vw,65px);
-  letter-spacing:-2px;
-  line-height:1.05;
-  margin:15px 0
-}
-.page-hero p {
-  color:#b6d1c0;
-  line-height:1.8;
-  max-width:640px
-}
-.page-hero .art {
-  font-size:220px;
-  text-align:center;
-  animation:float 5s ease-in-out infinite;
-  filter:drop-shadow(15px 25px 20px #0005)
-}
-.btn {
-  border:0;
-  border-radius:13px;
-  padding:14px 22px;
-  font-weight:800;
-  font-size:13px;
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  transition:.2s
-}
-.btn:hover {
-  transform:translateY(-2px)
-}
-.btn.primary {
-  background:#a9d78d;
-  color:#153325
-}
-.btn.dark {
-  background:#204b37;
-  color:white
-}
-.btn.light {
-  background:#eef3e7;
-  color:#2b5940
-}
-.stage-track {
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:14px;
-  margin:24px 0
-}
-.stage {
-  background:#fffef9;
-  border:1px solid var(--stroke);
-  border-radius:20px;
-  padding:18px;
-  text-align:center;
-  cursor:pointer;
-  transition:.2s
-}
-.stage:hover,.stage.active {
-  border-color:#7cb083;
-  box-shadow:0 10px 28px #234d3017;
-  transform:translateY(-4px)
-}
-.stage .illustration {
-  height:94px;
-  display:grid;
-  place-items:center;
-  font-size:66px
-}
-.stage h4 {
-  margin:8px 0 5px;
-  font-size:16px
-}
-.stage p {
-  font-size:12px;
-  color:var(--muted);
-  margin:0
-}
-.panel {
-  background:#fffefb;
-  border:1px solid var(--stroke);
-  border-radius:23px;
-  padding:25px;
-  box-shadow:0 8px 35px #1d4a2f08
-}
-.stage-info {
-  display:grid;
-  grid-template-columns:1fr auto;
-  align-items:center;
-  gap:20px;
-  background:#eaf2e4;
-  border-radius:21px;
-  padding:25px;
-  margin-bottom:32px
-}
-.stage-info h3 {
-  margin:5px 0 9px
-}
-.stage-info p {
-  margin:0;
-  font-size:13px;
-  line-height:1.8;
-  color:#607566
-}
-.stage-info .illustration {
-  font-size:90px
-}
-.actionbar {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin:30px 0 75px;
-  gap:15px
-}
-.dashboard-top {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:20px;
-  padding:36px 0 20px
-}
-.dashboard-top h1 {
-  font-size:clamp(35px,4vw,53px);
-  margin:8px 0 2px;
-  letter-spacing:-2px
-}
-.dashboard-top p {
-  font-size:13px;
-  color:var(--muted)
-}
-.metrics {
-  display:grid;
-  grid-template-columns:repeat(6,1fr);
-  gap:12px;
-  margin:10px 0 18px
-}
-.metric {
-  padding:19px;
-  border:1px solid var(--stroke);
-  border-radius:18px;
-  background:#fffefa
-}
-.metric .symbol {
-  font-size:22px
-}
-.metric label {
-  display:block;
-  color:#798a7c;
-  font-size:11px;
-  font-weight:700;
-  margin:12px 0 7px
-}
-.metric strong {
-  font:700 25px Outfit;
-  letter-spacing:-1px
-}
-.metric small {
-  display:block;
-  font-size:10px;
-  color:#418259;
-  font-weight:700;
-  margin-top:5px
-}
-.two-col {
-  display:grid;
-  grid-template-columns:1.45fr .85fr;
-  gap:17px;
-  margin:18px 0
-}
-.panel h3 {
-  font-size:23px;
-  letter-spacing:-.7px;
-  margin:0 0 4px
-}
-.sub {
-  font-size:12px;
-  color:#889489;
-  margin:0 0 20px;
-  line-height:1.7
-}
-.diagram {
-  background:radial-gradient(circle at 50% 35%,#f2f7e8,#e9f1e5 80%);
-  border:1px solid #dfeada;
-  border-radius:19px;
-  min-height:300px;
-  position:relative;
-  padding:24px;
-  overflow:hidden
-}
-.diagram::before {
-  content:'';
-  position:absolute;
-  inset:0;
-  background-image:linear-gradient(#acc9a420 1px,transparent 1px),linear-gradient(90deg,#acc9a420 1px,transparent 1px);
-  background-size:32px 32px
-}
-.diagram-row {
-  display:flex;
-  align-items:center;
-  gap:8px;
-  position:relative;
-  z-index:1;
-  justify-content:center;
-  flex-wrap:wrap
-}
-.tank {
-  width:100px;
-  height:130px;
-  border:3px solid #498ba0;
-  border-top:8px solid #498ba0;
-  border-radius:15px 15px 25px 25px;
-  background:linear-gradient(to top,#80cfe3 60%,#eaf8ed 60%);
-  display:grid;
-  place-items:center;
-  position:relative;
-  font-weight:800;
-  font-size:12px;
-  text-align:center;
-  color:#285c73
-}
-.tank.orange {
-  background:linear-gradient(to top,#efd097 52%,#fbf8ed 52%);
-  border-color:#caab70;
-  color:#86662b
-}
-.tank.green {
-  background:linear-gradient(to top,#a8cf92 63%,#eff9ea 63%);
-  border-color:#7a9c61;
-  color:#426638
-}
-.pipe {
-  height:7px;
-  min-width:23px;
-  flex:1;
-  max-width:80px;
-  border-radius:20px;
-  background:repeating-linear-gradient(90deg,#278bc7 0 15px,#80cef1 15px 28px);
-  background-size:56px 100%;
-  animation:flow 1.15s linear infinite
-}
-.pipe.off {
-  background:#becfcb;
-  animation:none
-}
-.mixer {
-  height:107px;
-  width:118px;
-  border:3px solid #7aa2a6;
-  border-radius:23px;
-  background:linear-gradient(to top,#b1e3df 60%,#fafffd 60%);
-  display:grid;
-  place-items:center;
-  text-align:center;
-  font-size:11px;
-  font-weight:800;
-  position:relative
-}
-.mixer:after {
-  content:'↻';
-  font-size:40px;
-  position:absolute;
-  color:#408c85;
-  animation:spin 4s linear infinite;
-  bottom:20px
-}
-.diagram-bottom {
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:12px;
-  margin-top:30px;
-  position:relative;
-  z-index:1
-}
-.plant-node {
-  border:1px solid #c6dec3;
-  border-radius:17px;
-  background:#fffefbdf;
-  text-align:center;
-  padding:12px 6px;
-  cursor:pointer;
-  transition:.2s
-}
-.plant-node:hover,.plant-node.chosen {
-  border-color:#5b9866;
-  transform:translateY(-3px);
-  box-shadow:0 8px 25px #376d3f20
-}
-.plant-node .sprout {
-  font-size:49px;
-  display:block;
-  animation:sway 4s ease-in-out infinite
-}
-.plant-node b {
-  display:block;
-  font-size:11px
-}
-.plant-node small {
-  font-size:10px;
-  color:#819284
-}
-.water {
-  color:#3d93ba;
-  font-size:11px;
-  font-weight:700;
-  margin:12px 0;
-  text-align:center
-}
-.zones {
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:7px
-}
-.zone {
-  padding:12px 4px;
-  border:1px solid #dce9da;
-  border-radius:13px;
-  background:#f4f8ef;
-  text-align:center;
-  cursor:pointer;
-  font-size:10px;
-  font-weight:800
-}
-.zone.active {
-  background:#2e6648;
-  color:white
-}
-.zone span {
-  display:block;
-  font-size:19px;
-  margin:5px 0
-}
-.reading {
-  display:flex;
-  justify-content:space-between;
-  padding:13px 0;
-  border-bottom:1px solid #edf1e9;
-  font-size:13px
-}
-.reading strong {
-  font-weight:800
-}
-.graphbox {
-  height:230px;
-  position:relative
-}
-.grid3 {
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:14px
-}
-.mini {
-  background:#f1f6ed;
-  border-radius:16px;
-  padding:17px
-}
-.mini span {
-  display:block;
-  font-size:12px;
-  color:#72907a
-}
-.mini strong {
-  display:block;
-  margin-top:7px;
-  font-size:24px;
-  font-family:Outfit
-}
-.forecast {
-  background:linear-gradient(135deg,#163d2d,#254f3a);
-  color:white;
-  border-radius:22px;
-  padding:25px
-}
-.forecast p {
-  color:#b8d5c3;
-  line-height:1.7;
-  font-size:13px
-}
-.forecast h3 {
-  margin:8px 0
-}
-.control {
-  display:flex;
-  gap:12px;
-  align-items:center;
-  flex-wrap:wrap;
-  margin:15px 0 22px
-}
-.control label {
-  font-size:12px;
-  font-weight:800;
-  color:#6b7e70
-}
-.control input,.control select {
-  border:1px solid #d4e1d1;
-  border-radius:11px;
-  padding:11px;
-  background:white;
-  color:#233f2e;
-  max-width:135px
-}
-.calc {
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:12px;
-  margin:10px 0 18px
-}
-.calc .panel {
-  padding:19px
-}
-.calc span {
-  font-size:12px;
-  color:#7b8c80
-}
-.calc strong {
-  display:block;
-  margin:10px 0;
-  font:800 29px Outfit
-}
-.estimate {
-  display:flex;
-  gap:14px;
-  align-items:center;
-  justify-content:space-between;
-  flex-wrap:wrap;
-  padding:22px;
-  border-radius:17px;
-  background:#e9f1e3
-}
-.estimate h3 {
-  margin:0;
-  font-size:15px
-}
-.estimate strong {
-  font:800 30px Outfit
-}
-.footnote {
-  font-size:11px;
-  color:#859184;
-  line-height:1.7;
-  margin:14px 0 35px
-}
-.pill {
-  border-radius:20px;
-  padding:6px 10px;
-  font-size:10px;
-  background:#eff4e9;
-  color:#42835c;
-  font-weight:800
-}
-.help {
-  position:relative;
-  border-bottom:1px dotted #999;
-  cursor:help
-}
-.footer {
-  padding:35px 5vw;
-  background:#142e24;
-  color:#aec9b6;
-  font-size:12px;
-  text-align:center;
-  margin-top:65px
-}
-.hidden {
-  display:none!important
-}
-@keyframes float {
-  50% {
-    transform:translateY(-13px)
-  }
-}
-@keyframes flow {
-  to {
-    background-position:56px 0
-  }
-}
-@keyframes spin {
-  to {
-    transform:rotate(360deg)
-  }
-}
-@keyframes sway {
-  50% {
-    transform:rotate(4deg)
-  }
-}
-@media(max-width:1050px) {
-  .metrics {
-    grid-template-columns:repeat(3,1fr)
-  }
-  .two-col {
-    grid-template-columns:1fr
-  }
-  .hero {
-    grid-template-columns:1fr 1fr
-  }
-  .zones {
-    grid-template-columns:repeat(4,1fr)
-  }
-}
-@media(max-width:700px) {
-  header {
-    height:68px
-  }
-  .nav a {
-    display:none
-  }
-  .wrap {
-    padding:0 20px
-  }
-  .hero {
-    grid-template-columns:1fr;
-    padding-top:42px
-  }
-  .hero-visual {
-    min-height:250px
-  }
-  .hero h1 {
-    letter-spacing:-2px
-  }
-  .huge-crop {
-    font-size:160px
-  }
-  .crop-grid,.grid3,.calc {
-    grid-template-columns:1fr
-  }
-  .crop-art {
-    height:150px
-  }
-  .page-hero {
-    grid-template-columns:1fr;
-    padding:28px
-  }
-  .page-hero .art {
-    font-size:115px
-  }
-  .stage-track {
-    grid-template-columns:repeat(2,1fr)
-  }
-  .stage-info {
-    grid-template-columns:1fr
-  }
-  .metrics {
-    grid-template-columns:repeat(2,1fr)
-  }
-  .diagram {
-    padding:10px
-  }
-  .tank {
-    width:72px;
-    height:96px
-  }
-  .mixer {
-    height:85px;
-    width:80px
-  }
-  .diagram-row {
-    gap:3px
-  }
-  .pipe {
-    min-width:10px
-  }
-  .dashboard-top {
-    align-items:start;
-    flex-direction:column
-  }
-  .zones {
-    grid-template-columns:repeat(4,1fr)
-  }
-  .actionbar {
-    flex-direction:column;
-    align-items:stretch
-  }
-}
-
-
-/* Daily history & simulation controls */
-.reset-btn {
-  background: #fff3ea;
-  color: #a45136;
-  border: 1px solid #e8beac;
-}
-.day-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin: 15px 0 20px;
-}
-.history-section {
-  margin: 22px 0 76px;
-}
-.history-header {
-  display: flex;
-  align-items: start;
-  justify-content: space-between;
-  gap: 18px;
-  flex-wrap: wrap;
-}
-.history-header h3 {
-  font-size: clamp(24px, 3vw, 34px);
-  margin: 8px 0 10px;
-}
-.history-header .sub {
-  max-width: 740px;
-}
-.history-tools, .history-filters {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.history-overview {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
-  margin: 18px 0 26px;
-}
-.history-stat {
-  background: #f1f6ed;
-  border: 1px solid #e0ebda;
-  border-radius: 17px;
-  padding: 16px;
-}
-.history-stat span {
-  display: block;
-  color: #66806d;
-  font-size: 12px;
-}
-.history-stat strong {
-  display: block;
-  font: 700 25px Outfit, sans-serif;
-  margin-top: 7px;
-}
-.history-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 14px;
-  margin-bottom: 16px;
-}
-.history-filter {
-  border: 1px solid #d7e3d3;
-  padding: 9px 16px;
-  border-radius: 10px;
-  background: #f6f8f2;
-  font-weight: 700;
-  font-size: 12px;
-  color: #4c6954;
-}
-.history-filter.active {
-  background: #255c40;
-  color: white;
-  border-color: #255c40;
-}
-.history-count, .history-note {
-  color: #718174;
-  font-size: 12px;
-}
-.history-timeline {
-  position: relative;
-  padding-left: 26px;
-}
-.history-timeline::before {
-  content: '';
-  position: absolute;
-  left: 9px;
-  top: 10px;
-  bottom: 16px;
-  width: 2px;
-  background: #d8e6d3;
-}
-.history-entry {
-  position: relative;
-  background: #fffefb;
-  border: 1px solid #dbe8d8;
-  border-radius: 18px;
-  padding: 18px;
-  margin-bottom: 12px;
-}
-.history-entry::before {
-  content: '';
-  position: absolute;
-  left: -24px;
-  top: 24px;
-  background: #5e9e69;
-  border: 3px solid #e7f1e3;
-  border-radius: 50%;
-  width: 13px;
-  height: 13px;
-}
-.history-entry-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-.history-entry h4 {
-  margin: 4px 0;
-  font-size: 19px;
-}
-.history-entry p {
-  color: #698071;
-  font-size: 12px;
-  line-height: 1.6;
-}
-.history-data {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
-  margin-top: 14px;
-}
-.history-data div {
-  background: #f3f7ef;
-  border-radius: 10px;
-  padding: 10px;
-}
-.history-data small, .history-data b {
-  display: block;
-}
-.history-data small {
-  color: #718174;
-  font-size: 10px;
-  margin-bottom: 6px;
-}
-.history-data b {
-  font-size: 13px;
-}
-.history-note {
-  line-height: 1.7;
-  margin-top: 18px;
-}
-@media (max-width: 850px) {
-  .history-overview, .history-data {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@media (max-width: 480px) {
-  .history-overview { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .history-data { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .history-entry { padding: 13px; }
-}
-
-/* =======================================================
-   STREAM SENSOR & TABEL TIMESERIES
-   CSS tambahan, tidak mengganti desain Living Greenhouse.
-   ======================================================= */
-.sensor-status-panel {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-.sensor-status-panel strong {
-  display: block;
-  margin: 8px 0;
-}
-.sensor-status-panel .sub {
-  margin: 0;
-}
-.sensor-log-section {
-  margin: 26px 0;
-}
-.sensor-table-wrap {
-  width: 100%;
-  overflow-x: auto;
-}
-.sensor-table {
-  width: 100%;
-  min-width: 900px;
-  border-collapse: collapse;
-  font-size: 12px;
-}
-.sensor-table th,
-.sensor-table td {
-  padding: 12px 10px;
-  border-bottom: 1px solid var(--stroke);
-  text-align: left;
-  white-space: nowrap;
-}
-.sensor-table th {
-  color: var(--forest);
-  background: #f1f6ed;
-}
-@media (max-width: 700px) {
-  .sensor-status-panel {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-}
-
-  
-/* ============================================================
-   PENAMBAHAN V4: Popup dan panel analitik
-   Seluruh CSS Living Greenhouse lama tetap dipertahankan.
-   ============================================================ */
-.atan-modal-layer {
-  position: fixed;
-  inset: 0;
-  z-index: 200;
-  display: grid;
-  place-items: center;
-  padding: 20px;
-  overflow-y: auto;
-  background: rgba(9, 31, 22, .64);
-  backdrop-filter: blur(13px);
-}
-.atan-modal {
-  width: min(760px, 100%);
-  max-height: min(92vh, 860px);
-  overflow-y: auto;
-  border-radius: 32px;
-  padding: clamp(25px, 5vw, 53px);
-  background: #fffef9;
-  box-shadow: 0 35px 100px #071d1690;
-  animation: modalEnter .5s ease both;
-}
-@keyframes modalEnter {
-  from { opacity: 0; transform: translateY(22px) scale(.97); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-.modal-headline {
-  font: 800 17px Outfit, sans-serif;
-  margin-bottom: 36px;
-  color: #204b37;
-}
-.atan-modal h2 {
-  font: 800 clamp(32px, 5vw, 54px)/1.08 Outfit, sans-serif;
-  letter-spacing: -2px;
-  margin: 12px 0;
-}
-.atan-modal h2 em { color: #6ca47a; font-style: normal; }
-.atan-modal p { color: #6b8072; line-height: 1.7; font-size: 14px; }
-.modal-crops { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; margin-top: 28px; }
-.modal-crop {
-  padding: 21px 10px;
-  border: 1px solid #dbe8d8;
-  background: #f2f7eb;
-  border-radius: 20px;
-  text-align: center;
-  transition: .2s;
-}
-.modal-crop:hover { transform: translateY(-4px); border-color: #75ad7c; background: #e9f4e2; }
-.modal-crop span { display: block; font-size: 65px; margin-bottom: 12px; }
-.modal-crop b { font-family: Outfit, sans-serif; }
-.modal-crop small { display: block; margin-top: 5px; color: #789081; }
-.modal-back { border: 0; background: transparent; color: #397650; font-weight: 700; padding: 0 0 23px; }
-#fert-form { display: grid; gap: 17px; margin-top: 25px; }
-#fert-form label { display: grid; gap: 8px; font-size: 12px; font-weight: 800; color: #355943; }
-#fert-form input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #cadaCA; background: white; }
-#fert-form small { line-height: 1.7; color: #788d7f; }
-.modal-fields { display: grid; grid-template-columns: repeat(2, 1fr); gap: 13px; }
-.modal-submit { justify-content: center; }
-.auto-age-banner, .cost-summary-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-  padding: 16px 20px;
-  background: #eaf2e4;
-  border-radius: 15px;
-  margin: 14px 0 18px;
-  color: #385b44;
-  font-size: 13px;
-}
-.cost-breakdown { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 18px 0; }
-.cost-breakdown article { padding: 19px; border: 1px solid #e0eadb; border-radius: 18px; background: #f8faf3; }
-.cost-breakdown article h4 { margin: 0 0 12px; }
-.cost-breakdown article strong { display: block; font: 800 23px Outfit, sans-serif; }
-.cost-breakdown article small { display: block; color: #789081; margin-top: 9px; line-height: 1.6; }
-.decision-card { display: flex; gap: 22px; padding: 24px; border-radius: 19px; background: linear-gradient(125deg,#173e2e,#285a40); color: white; }
-.decision-orb { flex-shrink: 0; display: grid; place-items: center; width: 50px; height: 50px; border-radius: 15px; background: #b9e29e; color: #1a412c; font-size: 25px; }
-.decision-card b { font: 700 20px Outfit,sans-serif; }
-.decision-card p { color: #d1e9d8; line-height: 1.8; }
-.decision-card small { color: #aacbb8; }
-#current-art, #stage-art { transition: transform .4s, opacity .4s; }
-.stage-animate { animation: phasePop .5s ease; }
-@keyframes phasePop { from { opacity: .35; transform: translateY(12px) scale(.75); } to { opacity: 1; transform: translateY(0) scale(1); } }
-@media(max-width:700px) {
-  .modal-crops, .cost-breakdown { grid-template-columns: 1fr; }
-  .modal-crop { display: flex; align-items: center; gap: 15px; text-align: left; padding: 12px; }
-  .modal-crop span { margin: 0; font-size: 38px; }
-  .modal-fields { grid-template-columns: 1fr; }
-}
-
-/* Kartu materi pertumbuhan yang dipicu oleh fase terpilih */
-.plant-learning { margin-bottom: 24px; }
-.learning-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
-  margin-top: 18px;
-}
-.learning-grid article {
-  background: #f1f6ed;
-  border: 1px solid #dce9d8;
-  border-radius: 15px;
-  padding: 18px;
-  animation: phasePop .5s ease;
-}
-.learning-grid article b { color: #28553b; font: 800 15px Outfit, sans-serif; }
-.learning-grid article p { color: #647d6c; font-size: 12px; line-height: 1.85; }
-@media(max-width:700px) {
-  .learning-grid { grid-template-columns: 1fr; }
-}
-
-/* ========================================================
-   V5 — utilitas tambahan; tidak mengubah komponen asli
-   ======================================================== */
-.zones,
-.diagram-bottom {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-@media (max-width: 700px) {
-    .zones,
-    .diagram-bottom {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-}
-@media (max-width: 420px) {
-    .zones,
-    .diagram-bottom {
-        grid-template-columns: 1fr;
-    }
-}
-.at-v5-cost {
-    margin-top: 20px;
-}
-.at-v5-modal {
-    position: fixed;
-    inset: 0;
-    z-index: 300;
-    display: grid;
-    place-items: center;
-    padding: 20px;
-    background: rgba(9, 31, 22, .66);
-    backdrop-filter: blur(12px);
-}
-.at-v5-modal[hidden] {
-    display: none;
-}
-.at-v5-input {
-    width: 100%;
-    padding: 12px 14px;
-    border: 1px solid #cbdccc;
-    border-radius: 12px;
-    background: #fff;
-    color: #173e2e;
-}
-
-</style>
  </head>
  <body>
-  <!--HALAMAN WEBSITE: PILIH TANAMAN -> PROFIL -> DASHBOARD -> RIWAYAT-->
-  
-  <main>
-   <section class="screen active" id="selection">
-    <div class="wrap">
-     <div class="hero">
-      <div>
-       <span class="eyebrow">
-        ✦ Welcome to smarter farming
-       </span>
-       <h1>
-        Grow better.
-        <br/>
-        <i>
-         Grow smarter.
-        </i>
-       </h1>
-       <p class="desc">
-        Setiap tanaman punya cerita dan kebutuhan berbeda. Pilih tanamanmu, kenali setiap fase pertumbuhannya, lalu jelajahi simulasi greenhouse cerdas yang membantu merencanakan air dan nutrisi.
-       </p>
-       <span class="tag">
-        🌱 Pilih tanaman untuk memulai perjalanan
-       </span>
-      </div>
-      <div class="hero-visual">
-       <div class="orb">
-       </div>
-       <span class="huge-crop">
-        🌿
-       </span>
-       <div class="floating f1">
-        ✺ Smart Growing
-       </div>
-       <div class="floating f2">
-        💧 Precision Irrigation
-       </div>
-      </div>
-     </div>
-     <div class="sectionhead">
-      <div>
-       <span class="eyebrow">
-        01 / Plant library
-       </span>
-       <h2>
-        Apa yang ingin kamu tanam?
-       </h2>
-      </div>
-      <p>
-       3 pilihan tanaman &middot; 
-      </p>
-     </div>
-     <div class="crop-grid" id="crop-cards">
-     </div>
-    </div>
-   </section>
-   <section class="screen" id="profile">
-    <div class="wrap">
-     <div class="page-hero">
-      <div>
-       <span class="eyebrow" style="color:#b1d59c">
-        02 / Know your plant
-       </span>
-       <h1 id="profile-title">
-       </h1>
-       <p id="profile-desc">
-       </p>
-       <span class="pill" id="profile-duration">
-       </span>
-      </div>
-      <div class="art" id="profile-art">
-      </div>
-     </div>
-     <div class="sectionhead">
-      <div>
-       <span class="eyebrow">
-        The growth journey
-       </span>
-       <h2>
-        Perjalanan dari benih hingga panen.
-       </h2>
-      </div>
-      <p>
-       Pilih fase untuk mempelajari pertumbuhan
-      </p>
-     </div>
-     <div class="stage-track" id="stages">
-     </div>
-     <div class="stage-info">
-      <div>
-       <span class="eyebrow" id="stage-period">
-       </span>
-       <h3 id="stage-title">
-       </h3>
-       <p id="stage-desc">
-       </p>
-      </div>
-      <div class="illustration" id="stage-art">
-      </div>
-     </div>
-     <!-- PROFIL AGRONOMI PER FASE: tidak mengubah timeline lama -->
-      <div class="panel plant-learning" id="plant-learning">
-        <span class="eyebrow">Plant Knowledge / Panduan Pertumbuhan</span>
-        <h3 id="learning-title">Memahami kebutuhan tanaman</h3>
-        <p id="learning-intro" class="sub"></p>
-        <div class="learning-grid" id="learning-grid"></div>
-      </div>
-      <div class="actionbar">
-      <button class="btn light" onclick="navigate('selection')">
-       &larr; Pilih Tanaman Lain
-      </button>
-      <button class="btn dark" onclick="navigate('dashboard')">
-       Mulai Analisis &rarr;
-      </button>
-     </div>
-    </div>
-   </section>
-   <section class="screen" id="dashboard">
+<main>
+<section class="screen active" id="dashboard">
     <div class="wrap">
      <div class="dashboard-top">
       <div>
@@ -1373,29 +62,28 @@ header {
        </p>
       </div>
       <div>
-       <button class="btn light" onclick="navigate('selection')">
-        &orarr; Ganti Tanaman
-       </button>
+       
        <button class="btn reset-btn" onclick="resetSimulation()">
         &olarr; Mulai Ulang Siklus
        </button>
-       <span class="tag">
-        ● Simulasi &middot; bukan realtime
-       </span>
+       
       </div>
      </div>
-     <div class="metrics" id="metrics">
+     <div class="dashboard-banner reveal" aria-label="ATAN Smart Greenhouse">
+ <div><span class="eyebrow">✳ ATAN SI TATANEN / SMART GREENHOUSE</span><h2>Every drop matters.<br><span style="color:#d5ebab">Every plant thrives.</span></h2><p>Pantau lingkungan, aliran nutrisi, dan perjalanan tanaman cabai dari satu ruang kendali. Pembacaan tetap menunggu perangkat ESP32-S3 yang benar-benar aktif.</p></div><div class="banner-art" aria-hidden="true">🌿</div>
+</div>
+<div class="metrics" id="metrics">
       </div>
       <!-- STATUS SUMBER DATA: otomatis / ESP32-S3 -->
-      <div class="panel sensor-status-panel">
+      <div class="panel sensor-status-panel reveal">
        <div>
         <span class="eyebrow">SENSOR STREAM</span>
         <strong id="connection-status">ESP32-S3 · Belum terhubung</strong>
         <p class="sub" id="sensor-updated">Menunggu pembacaan berikutnya.</p>
        </div>
-       <span class="pill" id="sensor-source">Data contoh otomatis</span>
+       <span class="pill" id="sensor-source">Menunggu Koneksi</span>
      </div>
-     <div class="two-col">
+     <div class="two-col reveal">
       <div class="panel">
        <div class="sectionhead" style="margin:0 0 15px">
         <div>
@@ -1406,7 +94,7 @@ header {
           Living Greenhouse
          </h3>
          <p class="sub">
-          Klik tanaman untuk melihat pembacaan terbaru. Animasi aliran mengikuti status irigasi.
+          Klik blok untuk melihat pembacaan terbaru. Aliran hanya menyala jika status aktuator dilaporkan perangkat.
          </p>
         </div>
         <span class="pill">
@@ -1420,7 +108,7 @@ header {
           <br/>
           TANGKI AIR
          </div>
-         <div class="pipe" title="Simulasi aliran">
+         <div class="pipe" title="Status aliran">
          </div>
          <div class="tank orange">
           🧪
@@ -1461,9 +149,7 @@ header {
             <button
                 type="button"
                 onclick="openAddBlockModal()"
-                class="rounded-xl bg-emerald-800 px-4 py-2.5
-                       text-sm font-bold text-white shadow-sm
-                       transition hover:bg-emerald-700"
+                class="btn dark"
             >
                 ＋ Tambah Blok
             </button>
@@ -1482,7 +168,7 @@ header {
         </span>
        </h3>
        <p class="sub">
-        Nilai sensor diperbarui otomatis dan mengikuti status koneksi perangkat.
+        Data hanya berasal dari ESP32-S3. Nilai kosong berarti belum ada pembacaan.
        </p>
        <div id="sensor-detail">
        </div>
@@ -1541,7 +227,7 @@ header {
        </div>
       </div>
      </div>
-     <div class="two-col">
+     <div class="two-col reveal">
       <div class="panel">
        <span class="eyebrow">
         04 / Growth intelligence
@@ -1550,7 +236,7 @@ header {
         Prediksi Fase Pertumbuhan
        </h3>
        <p class="sub">
-        Simulasi menggunakan umur tanaman. Model machine learning belum dihubungkan.
+        Umur tanaman dihitung dari tanggal tanam. Prediksi ML belum terhubung.
        </p>
                <div class="auto-age-banner">
           <span>🌱 Umur otomatis berdasarkan tanggal tanam</span>
@@ -1589,7 +275,7 @@ header {
         Kebutuhan per Fase
        </h3>
        <p class="sub">
-        Indeks relatif simulasi, bukan dosis agronomi tervalidasi.
+        Grafik akan terisi setelah hasil kebutuhan tervalidasi tersedia.
        </p>
        <div class="graphbox">
         <canvas id="growthChart">
@@ -1611,7 +297,7 @@ header {
        </div>
       </div>
      </div>
-     <div class="two-col">
+     <div class="two-col reveal">
       <div class="panel">
        <span class="eyebrow">
         05 / Farm economics
@@ -1620,7 +306,7 @@ header {
         Smart Farming Cost Planner
        </h3>
        <p class="sub">
-        Simulasi perkiraan biaya kebutuhan air dan larutan pupuk. Ubah asumsi harga agar sesuai kondisi petani.
+        Proyeksi biaya berdasarkan konfigurasi pupuk dan parameter operasional. Pengeluaran aktual tersedia setelah data perangkat masuk.
        </p>
                <input type="hidden" id="water-price" value="15">
         <input type="hidden" id="fert-price" value="1500">
@@ -1635,7 +321,7 @@ header {
             <h3 class="mt-2 mb-3">Biaya Hari Ini, Bulan Ini &amp; Bulan Depan</h3>
             <p class="sub">
                 Air, pupuk, dan listrik ditampilkan terpisah.
-                Nilai dihitung dari asumsi kebutuhan tiap fase.
+                Nilai tersedia setelah perangkat mengirim pemakaian terukur.
             </p>
             <div
                 id="cost-period-grid"
@@ -1645,24 +331,24 @@ header {
 <div class="calc">
         <div class="panel">
          <span>
-          Air sisa fase aktif
+          Air terukur
          </span>
          <strong id="phase-water">
           &mdash;
          </strong>
          <span>
-          Liter &middot; estimasi simulasi
+          Liter &middot; menunggu flow meter
          </span>
         </div>
         <div class="panel">
          <span>
-          Larutan pupuk sisa fase aktif
+          Pupuk terukur
          </span>
          <strong id="phase-fert">
           &mdash;
          </strong>
          <span>
-          Liter &middot; estimasi simulasi
+          Liter &middot; menunggu flow meter
          </span>
         </div>
         <div class="panel">
@@ -1673,7 +359,7 @@ header {
           &mdash;
          </strong>
          <span>
-          Rp &middot; estimasi simulasi
+          Rp &middot; estimasi proyeksi
          </span>
         </div>
        </div>
@@ -1690,7 +376,7 @@ header {
         </strong>
        </div>
        <p class="footnote">
-        Bukan rekomendasi dosis atau anggaran aktual. Termasuk estimasi listrik; belum termasuk tenaga kerja, media tanam, alat, kehilangan air, pajak, dan perawatan. Angka baseline air/pupuk per tanaman per hari hanyalah contoh untuk demonstrasi UI.
+        Pengeluaran air, pupuk, dan listrik memerlukan data total konsumsi aktual. Proyeksi belum ditampilkan sampai tersedia data yang memadai.
        </p>
       </div>
       <div class="panel">
@@ -1701,7 +387,7 @@ header {
         Komposisi Nutrisi &amp; Biaya
        </h3>
        <p class="sub">
-        Proporsi N/P/K berikut adalah indeks presentasi ilustratif; bukan persentase kandungan AB Mix atau dosis pupuk.
+        Pembacaan N/P/K akan ditampilkan setelah sensor RS485 terhubung.
        </p>
        <div class="graphbox">
         <canvas id="costChart">
@@ -1736,7 +422,7 @@ header {
         <div>
          <span class="eyebrow">TIME SERIES / SENSOR LOG</span>
          <h3>Riwayat Pembacaan Sensor</h3>
-         <p class="sub">Terisi otomatis setiap pembaruan. Pembacaan ke-201 menggantikan data paling lama.</p>
+         <p class="sub">Terisi hanya dari payload ESP32-S3 yang valid. Pembacaan ke-201 menggantikan data paling lama.</p>
         </div>
         <span class="pill" id="sensor-log-count">0 / 200</span>
        </div>
@@ -1745,8 +431,10 @@ header {
          <thead>
           <tr>
            <th>Waktu</th><th>Sumber</th><th>Zona</th>
-           <th>Soil %</th><th>Suhu °C</th><th>RH %</th>
-           <th>pH</th><th>EC</th><th>Flow L/min</th><th>Valve</th>
+           <th>Soil %</th><th>Suhu Udara °C</th><th>RH %</th>
+           <th>Suhu Air °C</th><th>pH</th><th>EC</th><th>TDS ppm</th>
+           <th>N mg/kg</th><th>P mg/kg</th><th>K mg/kg</th>
+           <th>Flow L/min</th><th>Valve</th><th>Pompa</th><th>Mixer</th>
           </tr>
          </thead>
          <tbody id="sensor-log-body"></tbody>
@@ -1777,10 +465,10 @@ header {
          Riwayat Perjalanan Tanaman
         </h3>
         <p class="sub">
-         Perkembangan dari hari penyemaian sampai hari simulasi saat ini. Catatan pertumbuhan dan sensor diperbarui mengikuti sumber data yang tersedia.
+         Perkembangan dari hari penyemaian sampai hari proyeksi saat ini. Catatan pertumbuhan dan sensor diperbarui mengikuti sumber data yang tersedia.
         </p>
        </div>
-       <div class="history-tools">
+       <div class="history-tools flex flex-wrap gap-2">
         <button class="btn light" onclick="exportHistoryCSV()" type="button">
          &darr; Export CSV
         </button>
@@ -1808,242 +496,41 @@ header {
       </div>
       <div aria-live="polite" class="history-timeline" id="history-timeline">
       </div>
-      <p class="history-note">
-       Catatan: nilai sensor harian adalah simulasi deterministik. Dosis pupuk, NPK, dan biaya hanya asumsi UI, tidak boleh digunakan langsung sebagai rekomendasi budidaya.
-      </p>
+      <p class="history-note">Hanya pembacaan ESP32-S3 yang diterima akan dicatat. Riwayat dalam memori halaman maksimal 200 baris; gunakan backend/database untuk arsip permanen.</p>
      </section>
     </div>
    </section>
-  </main>
-  <footer class="footer">
-   ✳ ATAN si TATANEN &mdash; Teknologi Adaptif Nutrisi &middot; Prototype experience /  &middot; IoT &amp; ML integration ready
+  
+</main>
+<footer class="footer">
+   ✳ ATAN si TATANEN &mdash; Teknologi Adaptif Nutrisi &middot; Smart Greenhouse Cabai &middot; ESP32-S3
   </footer>
-    <!-- POPUP PEMILIHAN TANAMAN & KONFIGURASI PUPUK -->
-  <div class="atan-modal-layer" id="atan-start-modal" role="dialog"
-       aria-modal="true" aria-label="Pilih tanaman dan pupuk">
-    <div class="atan-modal">
-      <div class="modal-headline">✳ ATAN si TATANEN</div>
-      <div id="crop-step">
-        <span class="eyebrow">A NEW GROWING JOURNEY</span>
-        <h2>Tanaman apa yang ingin<br><em>kamu kenali?</em></h2>
-        <p>Pilih tanaman untuk menjelajahi profil, pertumbuhan,
-           dan analisis greenhouse.</p>
-        <div class="modal-crops" id="modal-crops"></div>
-      </div>
-      <div id="fert-step" class="hidden">
-        <button class="modal-back" type="button" onclick="showCropStep()">← Ubah pilihan</button>
-        <span class="eyebrow">SETUP NUTRIENT</span>
-        <h2>Persiapkan <em>nutrisinya.</em></h2>
-        <p>Harga pupuk diisi sekali untuk menghitung kebutuhan
-           dan biaya secara otomatis.</p>
-        <form id="fert-form" onsubmit="saveFertilizer(event)">
-          <label>Nama pupuk
-            <input id="fert-name" required maxlength="80" value="AB Mix" placeholder="Contoh: AB Mix">
-          </label>
-          <div class="modal-fields">
-            <label>Harga per kemasan (Rp)
-              <input id="fert-package-price" type="number" min="0" step="1" required value="45000">
-            </label>
-            <label>Isi kemasan (mL konsentrat)
-              <input id="fert-package-volume" type="number" min="1" step="1" required value="1000">
-            </label>
-          </div>
-          <small>Konversi biaya berdasarkan volume konsentrat pupuk,
-                 bukan volume larutan hasil pengenceran.</small>
-          <button class="btn dark modal-submit" type="submit">Lanjut ke Profil Tanaman →</button>
-        </form>
-      </div>
-    </div>
-  </div>
-
 <script>
    // =======================================================
-// DATA TANAMAN DAN FASE PERTUMBUHAN (DUMMY)
+// REFERENSI FASE PERTUMBUHAN CABAI
 // Bagian ini nantinya dapat dihubungkan ke data IoT / ML.
 // =======================================================
 
-// Metadata tanaman dan fase pertumbuhan (contoh simulasi)
+// Referensi fase pertumbuhan agronomi untuk cabai
+// Profil cabai merupakan referensi statis, bukan pembacaan sensor.
 const plants = {
-    "tomat": {
-        "name": "Tomat",
-        "latin": "Solanum lycopersicum",
-        "emoji": "🍅",
-        "description": "Tomat merupakan tanaman hortikultura penghasil buah yang melalui fase vegetatif, pembungaan, pembentukan buah, dan pematangan. Kebutuhan air serta nutrisinya berubah mengikuti perkembangan tanaman.",
-        "duration": 110,
-        "stages": [
-            [
-                "Persemaian",
-                0,
-                14,
-                "🌱",
-                "Benih berkecambah dan membentuk daun pertama. Fokus pada kelembapan media yang cukup, bukan tergenang.",
-                2,
-                1,
-                1
-            ],
-            [
-                "Vegetatif",
-                15,
-                35,
-                "🌿",
-                "Batang, akar, dan daun berkembang pesat. Pantau kelembapan, cahaya, serta pertumbuhan tajuk.",
-                5,
-                3,
-                2
-            ],
-            [
-                "Pembungaan",
-                36,
-                55,
-                "🌼",
-                "Bunga mulai terbentuk. Ketersediaan air dan nutrisi stabil membantu mendukung fase reproduktif.",
-                6,
-                5,
-                5
-            ],
-            [
-                "Pembuahan",
-                56,
-                85,
-                "🍅",
-                "Buah tumbuh dan membesar. Pengairan yang konsisten penting untuk menghindari fluktuasi kondisi tanaman.",
-                8,
-                6,
-                7
-            ],
-            [
-                "Panen",
-                86,
-                110,
-                "🧺",
-                "Buah matang bertahap dan siap dipetik sesuai kualitas yang diinginkan.",
-                6,
-                4,
-                5
-            ]
-        ]
-    },
-    "cabai": {
+    cabai: {
         "name": "Cabai",
         "latin": "Capsicum annuum",
-        "emoji": "🌶️",
-        "description": "Cabai adalah tanaman penghasil buah pedas yang memerlukan pemantauan lingkungan serta nutrisi sejak pembentukan akar hingga masa panen yang dapat berlangsung berulang.",
+        "emoji": "/img/cabai2.png",
+        "description": "Cabai adalah tanaman penghasil buah pedas...",
         "duration": 120,
         "stages": [
-            [
-                "Persemaian",
-                0,
-                18,
-                "🌱",
-                "Benih berkembang menjadi bibit dan daun awal.",
-                2,
-                1,
-                1
-            ],
-            [
-                "Vegetatif",
-                19,
-                45,
-                "🌿",
-                "Tanaman membangun akar, batang, dan percabangan.",
-                5,
-                3,
-                3
-            ],
-            [
-                "Pembungaan",
-                46,
-                65,
-                "🌼",
-                "Muncul bunga sebagai awal perkembangan buah.",
-                6,
-                5,
-                5
-            ],
-            [
-                "Pembuahan",
-                66,
-                95,
-                "🌶️",
-                "Buah mulai terbentuk dan berkembang.",
-                8,
-                6,
-                8
-            ],
-            [
-                "Panen",
-                96,
-                120,
-                "🧺",
-                "Buah mencapai kematangan, panen dapat berlanjut setelah fase awal.",
-                7,
-                5,
-                7
-            ]
-        ]
-    },
-    "melon": {
-        "name": "Melon",
-        "latin": "Cucumis melo",
-        "emoji": "🍈",
-        "description": "Melon adalah tanaman buah merambat yang membutuhkan pengelolaan air dan nutrisi cermat, terutama saat pembungaan, pembesaran buah, dan pematangan.",
-        "duration": 85,
-        "stages": [
-            [
-                "Persemaian",
-                0,
-                10,
-                "🌱",
-                "Benih mulai berkecambah dan bibit dipersiapkan.",
-                2,
-                1,
-                1
-            ],
-            [
-                "Vegetatif",
-                11,
-                28,
-                "🌿",
-                "Batang menjalar serta daun dan akar aktif berkembang.",
-                5,
-                3,
-                3
-            ],
-            [
-                "Pembungaan",
-                29,
-                43,
-                "🌼",
-                "Bunga muncul, selanjutnya berlangsung penyerbukan dan pembentukan bakal buah.",
-                6,
-                5,
-                5
-            ],
-            [
-                "Pembesaran Buah",
-                44,
-                70,
-                "🍈",
-                "Buah mengalami pembesaran. Kondisi air serta larutan nutrisi perlu dijaga stabil.",
-                9,
-                6,
-                9
-            ],
-            [
-                "Panen",
-                71,
-                85,
-                "🧺",
-                "Buah menuju kematangan dan dapat dipanen sesuai indikator varietas.",
-                5,
-                4,
-                6
-            ]
+            ["Persemaian", 0, 18, "/img/persemaian.png", "Benih berkembang menjadi bibit dan daun awal.", 2, 1, 1],
+            ["Vegetatif", 19, 45, "/img/vegetatif.png", "Tanaman membangun akar, batang, dan percabangan.", 5, 3, 3],
+            ["Pembungaan", 46, 65, "/img/pembungaan.png", "Muncul bunga sebagai awal perkembangan buah.", 6, 5, 5],
+            ["Pembuahan", 66, 95, "/img/pembuahan.png", "Buah mulai terbentuk dan berkembang.", 8, 6, 8],
+            ["Panen", 96, 120, "/img/panen.png", "Buah mencapai kematangan, panen dapat berlanjut setelah fase awal.", 7, 5, 7]
         ]
     }
 };
   </script>
-  <script>
+<script>
    // =======================================================
 // LOGIKA INTERAKTIF, SIMULASI, RIWAYAT DAN RESET
 // Bagian ini nantinya dapat dihubungkan ke data IoT / ML.
@@ -2052,7 +539,7 @@ const plants = {
 // =============================================
 // STATE DAN UTILITAS
 // =============================================
-let crop = 'tomat';
+const crop = 'cabai';
 let selectedStage = 0;
 let zone = 'A';
 let growthChart;
@@ -2061,58 +548,21 @@ let costChart;
 const $ = (id) => document.getElementById(id);
 const num = (value) => Math.round(value).toLocaleString('id-ID');
 const rupiah = (value) => `Rp ${num(value)}`;
+const sensorText = (value, unit = '', decimals = null) => {
+    if (typeof value !== 'number' || !Number.isFinite(value)) return '—';
+    const text = decimals === null ? String(value) : value.toFixed(decimals);
+    return text + unit;
+};
 
 // Navigasi antarlayar (pilih tanaman, profil, dashboard).
 function navigate(page) {
-    document.querySelectorAll('.screen').forEach((element) => {
-        element.classList.toggle('active', element.id === page);
-    });
-
-    if (page === 'profile') {
-        renderProfile();
-    }
-
-    if (page === 'dashboard') {
-        renderDashboard();
-    }
-
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Dua dokumen terpisah, gunakan navigasi browser asli.
+    window.location.href = page === 'dashboard'
+        ? '/dashboard'
+        : '/';
 }
 
-function setCrop(id, navigateToProfile = true) {
-    if (!plants[id]) return;
-
-    crop = id;
-    selectedStage = 0;
-    zone = 'A';
-    if ($('age')) $('age').value = 0;
-
-    if (navigateToProfile) {
-        $('atan-start-modal').classList.remove('hidden');
-        openFertStep(id);
-    }
-}
-
-// =============================================
-// HALAMAN PEMILIHAN DAN PROFIL TANAMAN
-// =============================================
-function renderCards() {
-    $('crop-cards').innerHTML = Object.entries(plants).map(([id, plant]) => `
-        <button class="crop-card" onclick="setCrop('${id}')">
-            <div class="crop-art">${plant.emoji}</div>
-            <h3>${plant.name}</h3>
-            <p>
-                <i>${plant.latin}</i><br>
-                Kenali profil dan fase pertumbuhannya.
-            </p>
-            <div class="cardbottom">
-                <span>± ${plant.duration} hari contoh siklus</span>
-                <span class="arrow">↗</span>
-            </div>
-        </button>
-    `).join('');
-}
-
+// Tanaman sudah ditetapkan sebagai cabai; tidak ada pemilihan klasifikasi.
 function renderProfile() {
     const plant = plants[crop];
 
@@ -2151,21 +601,21 @@ function selectStage(index) {
 }
 
 // =============================================
-// SENSOR DUMMY — GANTI KE API IOT NANTI
+// SENSOR ESP32-S3 — TIDAK ADA DATA BUATAN
 // =============================================
 const sensorSeed = {
-    temp: 26.5,
-    humidity: 72,
-    waterTemp: 24.7,
-    ph: 6.1,
-    ec: 1.8,
-    tds: 900
+    temp: null,
+    humidity: null,
+    waterTemp: null,
+    ph: null,
+    ec: null,
+    tds: null
 };
 
 const zoneSensors = [
-    { soil: 68, flow: 1.2, n: 110, p: 44, k: 172 },
-    { soil: 56, flow: 0.9, n: 105, p: 40, k: 164 },
-    { soil: 73, flow: 1.4, n: 120, p: 48, k: 181 }
+    { soil: null, flow: null, n: null, p: null, k: null },
+    { soil: null, flow: null, n: null, p: null, k: null },
+    { soil: null, flow: null, n: null, p: null, k: null }
 ];
 
 // Daftar blok dinamis; A, B, C adalah blok utama prototipe.
@@ -2196,13 +646,8 @@ function getBlocks() {
 }
 function ensureZoneSensors() {
     while (zoneSensors.length < getBlocks().length) {
-        const index = zoneSensors.length;
         zoneSensors.push({
-            soil: 62,
-            flow: 0,
-            n: 108 + index,
-            p: 43,
-            k: 169
+            soil: null, flow: null, n: null, p: null, k: null
         });
     }
 }
@@ -2239,6 +684,7 @@ function addBlock(event) {
     selectZone(code);
 }
 document.addEventListener('DOMContentLoaded', () => {
+    if (!$('add-block-form')) return;
     $('add-block-form').addEventListener('submit', addBlock);
     $('add-block-modal').addEventListener('click', (event) => {
         if (event.target.id === 'add-block-modal') {
@@ -2252,20 +698,22 @@ ensureZoneSensors();
 function renderDashboard() {
     const plant = plants[crop];
     $('age').max = plant.duration;
-    $('dashboard-summary').textContent =
-        `${plant.emoji} ${plant.name} · ${getBlocks().length} blok · IoT & predictive insights`;
+
+    // Perbaikan: gunakan innerHTML agar tag <img> di dashboard-summary dirender
+    $('dashboard-summary').innerHTML =
+    `<img src="${plant.emoji}" alt="${plant.name}" class="w-5 h-5 inline-block align-middle mr-1 object-contain"> ${plant.name} · ${getBlocks().length} blok · IoT & predictive insights`;
 
     const metrics = [
-        ['🌡️', 'Suhu udara', `${sensorSeed.temp.toFixed(1)}°C`],
-        ['💦', 'Kelembapan udara', `${sensorSeed.humidity}%`],
-        ['🌡️', 'Suhu air', `${sensorSeed.waterTemp.toFixed(1)}°C`],
-        ['⚗️', 'pH larutan', sensorSeed.ph],
-        ['⚡', 'EC', `${sensorSeed.ec} mS/cm`],
-        ['🧪', 'TDS', `${sensorSeed.tds} ppm`]
+        [`<img src="/img/suhu_udara.png" alt="Suhu Udara" class="w-6 h-6 object-contain">`, 'Suhu udara', sensorText(sensorSeed.temp, '°C', 1)],
+        ['💦', 'Kelembapan udara', sensorText(sensorSeed.humidity, '%')],
+        [`<img src="/img/suhu_air.png" alt="Suhu Air" class="w-6 h-6 object-contain">`, 'Suhu air', sensorText(sensorSeed.waterTemp, '°C', 1)],
+        [`<img src="/img/sensor_ph.png" alt="pH Larutan" class="w-6 h-6 object-contain">`, 'pH larutan', sensorText(sensorSeed.ph)],
+        ['⚡', 'EC', sensorText(sensorSeed.ec, ' mS/cm')],
+        [`🌱`, 'Soil Moisture (Blok ' + zone + ')', sensorText(zoneSensors[findZoneIndex(zone)]?.soil, ' %', 1)]
     ];
 
     $('metrics').innerHTML = metrics.map(([icon, label, value]) => `
-        <div class="metric">
+        <div class="metric reveal">
             <div class="symbol">${icon}</div>
             <label>${label}</label>
             <strong>${value}</strong>
@@ -2273,15 +721,19 @@ function renderDashboard() {
         </div>
     `).join('');
 
+    // 1. Dihubungkan langsung ke cabai2.png untuk Diagram Blok (Atas)
     $('diagram-plants').innerHTML = getBlocks().map((block, index) => `
         <button class="plant-node ${index === 0 ? 'chosen' : ''}"
                 onclick="selectZone('${block.code}')">
-            <span class="sprout">${plant.emoji}</span>
+            <span class="sprout">
+                <img src="/img/cabai2.png" alt="Cabai" class="w-10 h-10 object-contain mx-auto block">
+            </span>
             <b>${escapeHtml(block.name)}</b>
             <small>Klik untuk sensor</small>
         </button>
     `).join('');
 
+    // 2. Dihubungkan langsung ke cabai2.png untuk Tombol Pilih Zona Tanam (Bawah)
     $('zones').innerHTML = zoneSensors.map((sensor, index) => {
         const block = getBlocks()[index];
         const label = block.code;
@@ -2289,8 +741,10 @@ function renderDashboard() {
             <button class="zone" id="zone-${label}"
                     onclick="selectZone('${label}')">
                 ${escapeHtml(block.name)}
-                <span>${plant.emoji}</span>
-                <small>${sensor.soil}%</small>
+                <span>
+                    <img src="/img/cabai2.png" alt="Cabai" class="w-6 h-6 object-contain mx-auto my-1 block">
+                </span>
+                <small>${sensorText(sensor.soil, "%")}</small>
             </button>
         `;
     }).join('');
@@ -2304,6 +758,13 @@ function selectZone(label) {
     if (index < 0) return;
 
     zone = label;
+    const soilMetric = $('metrics')?.querySelectorAll('.metric')[5];
+    if (soilMetric) {
+        const soilLabel = soilMetric.querySelector('label');
+        const soilValue = soilMetric.querySelector('strong');
+        if (soilLabel) soilLabel.textContent = 'Soil Moisture (Blok ' + zone + ')';
+        if (soilValue) soilValue.textContent = sensorText(zoneSensors[index]?.soil, ' %', 1);
+    }
     const sensor = zoneSensors[index];
     $('zone-label').textContent = zone;
     $('zone-status').textContent = `Zona ${zone} dipilih`;
@@ -2317,13 +778,13 @@ function selectZone(label) {
     });
 
     const readings = [
-        ['Kelembapan media tanam', `${sensor.soil} %`],
-        ['Laju aliran', `${sensor.flow.toFixed(1)} L/menit`],
-        ['Nitrogen (N)', `${sensor.n} mg/kg`],
-        ['Fosfor (P)', `${sensor.p} mg/kg`],
-        ['Kalium (K)', `${sensor.k} mg/kg`],
-        ['pH larutan', sensorSeed.ph],
-        ['EC larutan', `${sensorSeed.ec} mS/cm`]
+        ['Kelembapan media tanam', sensorText(sensor.soil, ' %')],
+        ['Laju aliran', sensorText(sensor.flow, ' L/menit', 1)],
+        ['Nitrogen (N)', sensorText(sensor.n, ' mg/kg')],
+        ['Fosfor (P)', sensorText(sensor.p, ' mg/kg')],
+        ['Kalium (K)', sensorText(sensor.k, ' mg/kg')],
+        ['pH larutan', sensorText(sensorSeed.ph)],
+        ['EC larutan', sensorText(sensorSeed.ec, ' mS/cm')]
     ];
 
     $('sensor-detail').innerHTML = readings.map(([label, value]) => `
@@ -2333,19 +794,23 @@ function selectZone(label) {
         </div>
     `).join('');
 
-    const dry = sensor.soil < 60;
-    $('valve-state').textContent = dry ? 'ON' : 'OFF';
-    if ($('pump-state')) $('pump-state').textContent = dry ? 'ON' : 'OFF';
-    if ($('mixer-state')) $('mixer-state').textContent = 'STANDBY';
+    // Indikator aktual hanya boleh berasal dari status aktuator perangkat.
+    const valve = sensor.valve === true ? 'ON'
+        : sensor.valve === false ? 'OFF' : '—';
+    const pump = sensor.pump === true ? 'ON'
+        : sensor.pump === false ? 'OFF' : '—';
+    $('valve-state').textContent = valve;
+    if ($('pump-state')) $('pump-state').textContent = pump;
+    if ($('mixer-state')) $('mixer-state').textContent =
+        sensor.mixer === true ? 'ON' : sensor.mixer === false ? 'OFF' : '—';
     document.querySelectorAll('.pipe').forEach((pipe) => {
-        pipe.classList.toggle('off', !dry);
+        pipe.classList.toggle('off', !(liveSensorConnected && sensor.pump === true));
     });
-    $('insight-title').textContent = dry
-        ? 'Zona cenderung lebih kering'
-        : 'Kelembapan terpantau';
-    $('insight-text').textContent = dry
-        ? `Zona ${label}: media ${sensor.soil}% berada di bawah ambang 60%. Valve dan pompa air direkomendasikan ON. Data berasal dari ${sensorSourceLabel()}.`
-        : `Zona ${label}: media ${sensor.soil}% tidak melewati ambang kering 60%. Valve OFF. Keputusan ini merupakan aturan sederhana, bukan inferensi model ML.`;
+    $('insight-title').textContent = liveSensorConnected
+        ? 'Analisis pembacaan zona' : 'Menunggu pembacaan perangkat';
+    $('insight-text').textContent = liveSensorConnected
+        ? 'Data aktual Zona ' + zone + ' ditampilkan. Perintah aktuator tidak dikirim melalui halaman ini.'
+        : 'Belum ada pembacaan ESP32-S3 yang valid. Keputusan irigasi tidak dijalankan.';
 }
 
 // =============================================
@@ -2357,146 +822,83 @@ function stageForAge(age) {
     return found === -1 ? stages.length - 1 : found;
 }
 
+// Referensi fase berbasis tanggal tanam, bukan hasil prediksi ML.
 function refreshForecast() {
-    if (!$('age')) return;
-
     const plant = plants[crop];
     const age = getPlantAge();
     $('age').value = age;
-    $('automatic-age-label').textContent = `Hari ke-${age} · ${plant.stages[stageForAge(age)][0]}`;
-    const quantity = Math.max(1, Math.min(100000, Number($('quantity').value) || 1));
-    const waterPrice = Math.max(0, Number($('water-price').value) || 0);
-    const fertilizerPrice = Math.max(0, Number($('fert-price').value) || 0);
-    const index = stageForAge(age);
-    const stage = plant.stages[index];
-
-    const waterPerPlant = [0.11, 0.24, 0.32, 0.43, 0.29];
-    const fertPerPlant = [0.008, 0.016, 0.024, 0.031, 0.017];
-    const daysLeftInStage = Math.max(0, stage[2] - Math.max(age, stage[1]) + 1);
-    const stageWater = quantity * waterPerPlant[index] * daysLeftInStage;
-    const stageFertilizer = quantity * fertPerPlant[index] * daysLeftInStage;
-
-    let remainingWater = 0;
-    let remainingFertilizer = 0;
-
-    plant.stages.forEach((item, phaseIndex) => {
-        const days = Math.max(0, item[2] - Math.max(age, item[1]) + 1);
-        remainingWater += days * quantity * waterPerPlant[phaseIndex];
-        remainingFertilizer += days * quantity * fertPerPlant[phaseIndex];
-    });
-
-    $('current-period').textContent = `Hari ${age} · rentang fase ${stage[1]}–${stage[2]}`;
-    $('current-stage').textContent = stage[0];
-    $('current-explanation').textContent = stage[4];
-    $('current-art').textContent = stage[3];
-    $('days-left').textContent = `${Math.max(0, plant.duration - age)} hari`;
+    const stage = plant.stages[stageForAge(age)];
+    
+    $('automatic-age-label').textContent =
+        `Hari ke-${age} · ${stage[0]}`;
+    $('current-period').textContent =
+        `Hari ${age} · rentang fase ${stage[1]}–${stage[2]}`;
+    $('current-stage').textContent = stage[0];$('current-explanation').textContent = stage[4];
+    
+    // Perbaikan rendering gambar dengan penanganan error gambar
+    const imagePath = stage[3];
+    $('current-art').innerHTML = `
+        <img src="${imagePath}" 
+             alt="${stage[0]}" 
+             class="h-28 w-auto max-w-full object-contain mx-auto block"
+             onerror="this.onerror=null; console.error('Gagal memuat gambar:', '${imagePath}');">
+    `;
+    
+    $('days-left').textContent =
+        `${Math.max(0, plant.duration - age)} hari (estimasi)`;
     $('stage-label').textContent = stage[0];
-    $('phase-water').textContent = `${num(stageWater)} L`;
-    $('phase-fert').textContent = `${stageFertilizer.toFixed(1)} L`;
-    $('phase-cost').textContent = rupiah(
-        stageWater * waterPrice + stageFertilizer * fertilizerPrice
-    );
-    $('total-cost').textContent = rupiah(
-        remainingWater * waterPrice + remainingFertilizer * fertilizerPrice
-    );
 
-    const [n, phosphorus, k] = [stage[5], stage[6], stage[7]];
-    const totalNPK = n + phosphorus + k;
-    const proportion = (value) => (100 * value / totalNPK).toFixed(0);
-
-    $('n-index').textContent = `${proportion(n)}%`;
-    $('p-index').textContent = `${proportion(phosphorus)}%`;
-    $('k-index').textContent = `${proportion(k)}%`;
-
-    const requirements = [
-        ['💧 Air', `${(waterPerPlant[index] * 1000).toFixed(0)} mL`, 'per tanaman / hari'],
-        ['🧪 Larutan pupuk', `${(fertPerPlant[index] * 1000).toFixed(0)} mL`, 'per tanaman / hari'],
-        ['🌱 Distribusi NPK', `${proportion(n)}/${proportion(phosphorus)}/${proportion(k)}`, 'indeks N/P/K relatif']
-    ];
-
-    $('stage-requirement').innerHTML = requirements.map(([label, value, unit]) => `
+    $('phase-water').textContent = '—';$('phase-fert').textContent = '—';
+    $('phase-cost').textContent = '—';$('total-cost').textContent = '—';
+    $('n-index').textContent = '—';$('p-index').textContent = '—';
+    $('k-index').textContent = '—';$('stage-requirement').innerHTML = [
+        ['💧 Air', 'Menunggu', 'Total air dari flow meter'],
+        ['🧪 Larutan pupuk', 'Menunggu', 'Total dosis dari aktuator'],
+        ['🌱 NPK', 'Menunggu', 'Sensor RS485 N/P/K']
+    ].map(([label, value, unit]) => `
         <div class="mini">
             <span>${label}</span>
             <strong>${value}</strong>
-            <span>${unit} · contoh</span>
+            <span>${unit}</span>
         </div>
     `).join('');
-
-    const dailyCosts = calculateDailyCosts(age);
-    renderCharts(
-        plant,
-        dailyCosts.waterCost,
-        dailyCosts.fertilizerCost,
-        dailyCosts.electricityCost
-    );
+    renderCharts(plant, null, null, null);
     renderHistory();
     renderAutomaticCost();
 }
 
-function renderCharts(plant, waterCost, fertilizerCost, electricityCost = 0) {
+// Grafik tetap tampil dengan canvas kosong sampai data valid tersedia.
+function renderCharts(plant) {
     if (typeof Chart === 'undefined') return;
-    const labels = plant.stages.map((stage) => stage[0]);
-
     if (growthChart) growthChart.destroy();
+    if (costChart) costChart.destroy();
+    const labels = plant.stages.map(stage => stage[0]);
     growthChart = new Chart($('growthChart'), {
         type: 'line',
         data: {
             labels,
-            datasets: [
-                {
-                    label: 'Indeks air',
-                    data: [22, 55, 72, 100, 65],
-                    borderColor: '#3f9cba',
-                    backgroundColor: '#3f9cba25',
-                    fill: true,
-                    tension: 0.36
-                },
-                {
-                    label: 'Indeks nutrisi',
-                    data: [20, 51, 77, 100, 62],
-                    borderColor: '#6b9c55',
-                    backgroundColor: '#6b9c5522',
-                    fill: true,
-                    tension: 0.36
-                }
-            ]
+            datasets: [{
+                label: 'Data kebutuhan belum tersedia',
+                data: labels.map(() => null),
+                borderColor: '#3f9cba'
+            }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+    });
+    costChart = new Chart($('costChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Menunggu pemakaian air, pupuk, listrik'],
+            datasets: [{ data: [1], backgroundColor: ['#e5ebe3'] }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { position: 'bottom' } },
-            scales: {
-                y: {
-                    min: 0,
-                    max: 110,
-                    title: { display: true, text: 'Indeks ilustratif' }
-                }
-            }
-        }
-    });
-
-    if (costChart) costChart.destroy();
-    costChart = new Chart($('costChart'), {
-        type: 'doughnut',
-        data: {
-            labels: ['Air', 'Pupuk', 'Listrik'],
-            datasets: [{
-                data: [waterCost, fertilizerCost, electricityCost],
-                backgroundColor: ['#7dc0dc', '#76a86d', '#ddaa58'],
-                borderWidth: 0
-            }]
-        },
-        options: {
-            cutout: '70%',
-            maintainAspectRatio: false,
-            plugins: { legend: { position: 'bottom' } }
+            plugins: { legend: { display: false }, tooltip: { enabled: false } }
         }
     });
 }
 
-// =======================================================
-// OTOMASI SENSOR: TITIK INTEGRASI IoT ESP32-S3
-// =======================================================
 // Untuk data nyata, isi API_SENSOR_URL dengan endpoint HTTP
 // yang mengembalikan JSON seperti:
 // {
@@ -2513,77 +915,154 @@ function renderCharts(plant, waterCost, fertilizerCost, electricityCost = 0) {
 //   ]
 // }
 // API disarankan melalui backend agar CORS dan autentikasi aman.
-const API_SENSOR_URL = '';
+const API_SENSOR_URL = '/api/telemetry/latest';
+const API_DEVICE_STATUS_URL = '/api/device/status';
+const DEVICE_STATUS_INTERVAL_MS = 5000;
+let deviceOnline = false;
+let lastHeartbeatAt = null;
 const SENSOR_INTERVAL_MS = 5000;
 const SENSOR_HISTORY_LIMIT = 200;
 let liveSensorConnected = false;
 let sensorRecords = [];
-let sensorTick = 0;
+let lastSensorTimestamp = null;
+let lastValidTelemetryAt = 0;
+const SENSOR_STALE_AFTER_MS = 15000;
 
-function sensorSourceLabel() {
-    return liveSensorConnected ? 'ESP32-S3' : 'Data contoh otomatis';
+
+// Koneksi ESP32 murni berdasarkan heartbeat, tidak bergantung pada pembacaan sensor.
+function renderDeviceConnection() {
+    const status = $('connection-status');
+    const source = $('sensor-source');
+    const updated = $('sensor-updated');
+    if (!status || !source || !updated) return;
+
+    status.textContent = deviceOnline
+        ? 'ESP32-S3 · Terhubung'
+        : 'ESP32-S3 · Belum terhubung';
+    source.textContent = deviceOnline ? 'Perangkat Online' : 'Perangkat Offline';
+    source.style.background = deviceOnline ? '#e9f2e6' : '#fff1e7';
+    source.style.color = deviceOnline ? '#416e52' : '#9e705a';
+
+    if (deviceOnline && !liveSensorConnected) {
+        updated.textContent = 'ESP32 aktif · sensor belum tersedia / belum ada pembacaan terbaru';
+    } else if (deviceOnline && lastSensorTimestamp) {
+        updated.textContent = 'Sensor diperbarui ' +
+            new Date(lastSensorTimestamp).toLocaleTimeString('id-ID');
+    } else if (!deviceOnline) {
+        updated.textContent = 'Tidak menerima heartbeat ESP32 terbaru';
+    }
 }
 
-function clampSensor(value, low, high) {
-    return Math.min(high, Math.max(low, value));
+async function updateDeviceConnection() {
+    try {
+        const response = await fetch(API_DEVICE_STATUS_URL, {
+            cache: 'no-store',
+            signal: AbortSignal.timeout(4000)
+        });
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const data = await response.json();
+        // Hanya endpoint heartbeat Laravel yang menentukan online/offline.
+        deviceOnline = data.device_id === 'ESP32-S3-ATAN' && data.online === true;
+        lastHeartbeatAt = data.last_seen_at || null;
+    } catch (error) {
+        deviceOnline = false;
+        lastHeartbeatAt = null;
+        console.warn('Gagal membaca heartbeat perangkat:', error.message);
+    }
+    renderDeviceConnection();
+}
+
+function sensorSourceLabel() {
+    return liveSensorConnected ? 'Data Aktual ESP32-S3' : (deviceOnline ? 'Sensor Belum Tersedia' : 'Perangkat Offline');
 }
 
 function isValidNumber(value) {
     return typeof value === 'number' && Number.isFinite(value);
 }
 
-// Data contoh bergerak sendiri hingga endpoint benar-benar tersedia.
-function generateSensorExample() {
-    sensorTick += 1;
-    const t = sensorTick;
-
-    sensorSeed.temp = +(26.3 + 1.7 * Math.sin(t / 7)).toFixed(1);
-    sensorSeed.humidity = Math.round(70 + 6 * Math.cos(t / 8));
-    sensorSeed.waterTemp = +(24.5 + 0.7 * Math.sin(t / 9)).toFixed(1);
-    sensorSeed.ph = +(6.0 + 0.12 * Math.sin(t / 11)).toFixed(2);
-    sensorSeed.ec = +(1.7 + 0.14 * Math.sin(t / 12)).toFixed(2);
-    sensorSeed.tds = Math.round(sensorSeed.ec * 500);
-
-    zoneSensors.forEach((item, i) => {
-        item.soil = Math.round(
-            clampSensor(63 + 15 * Math.sin(t / 6 + i * 1.5), 35, 90)
-        );
-        item.flow = item.soil < 60 ? +(0.7 + i * 0.15).toFixed(2) : 0;
-    });
-}
-
-// Terima angka sensor hanya bila JSON memenuhi struktur dasar.
+// Payload yang diterima wajib berisi pengukuran nyata dari ESP32-S3.
+// Tiap zona dapat memiliki code A/B/C dan status valve/pump/mixer.
 function applyRealSensorData(data) {
-    if (!data || !Array.isArray(data.zones) || data.zones.length < 3) {
-        throw new Error('Format payload sensor tidak sesuai');
+    if (!data || !Array.isArray(data.zones)) {
+        throw new Error('Payload wajib memiliki array zones.');
+    }
+
+    // Endpoint yang tersedia tidak membuktikan ESP32 masih hidup.
+    // Status aktif mensyaratkan timestamp pembacaan baru dari perangkat.
+    const stamp = data.timestamp;
+    const parsedStamp = typeof stamp === 'number'
+        ? (stamp < 1e11 ? stamp * 1000 : stamp)
+        : Date.parse(stamp);
+
+    if (!Number.isFinite(parsedStamp)) {
+        throw new Error('Timestamp ESP32-S3 wajib tersedia dan valid.');
+    }
+
+    const ageMs = Date.now() - parsedStamp;
+    if (ageMs > SENSOR_STALE_AFTER_MS || ageMs < -5000) {
+        throw new Error('Pembacaan sensor sudah kedaluwarsa.');
+    }
+
+    // Jika backend mengulang paket lama, status tidak boleh tetap aktif.
+    if (lastValidTelemetryAt && parsedStamp <= lastValidTelemetryAt) {
+        throw new Error('Tidak ada pembacaan baru dari ESP32-S3.');
     }
 
     const keys = ['temp', 'humidity', 'waterTemp', 'ph', 'ec', 'tds'];
     for (const key of keys) {
-        if (!isValidNumber(data[key])) {
-            throw new Error('Nilai tidak valid: ' + key);
+        if (data[key] !== null && data[key] !== undefined &&
+            !isValidNumber(data[key])) {
+            throw new Error('Parameter tidak valid: ' + key);
         }
     }
 
-    for (const item of data.zones.slice(0, 3)) {
+    const byCode = new Map();
+    data.zones.forEach((item, index) => {
+        const code = item.code || getBlocks()[index]?.code;
+        if (!code) return;
         for (const key of ['soil', 'flow', 'n', 'p', 'k']) {
-            if (!isValidNumber(item[key])) {
-                throw new Error('Nilai zona tidak valid: ' + key);
+            if (item[key] !== null && item[key] !== undefined &&
+                !isValidNumber(item[key])) {
+                throw new Error('Parameter ' + code + '.' + key + ' tidak valid');
             }
         }
+        byCode.set(code, item);
+    });
+    if (byCode.size === 0) {
+        throw new Error('Belum ada zona valid.');
+    }
+
+    const hasMeasurement =
+        keys.some(key => isValidNumber(data[key])) ||
+        [...byCode.values()].some(item =>
+            ['soil', 'flow', 'n', 'p', 'k'].some(key =>
+                isValidNumber(item[key])
+            )
+        );
+
+    if (!hasMeasurement) {
+        throw new Error('Belum ada nilai sensor aktual dalam payload.');
     }
 
     keys.forEach((key) => {
-        sensorSeed[key] = data[key];
+        sensorSeed[key] = isValidNumber(data[key]) ? data[key] : null;
     });
-
-    data.zones.slice(0, getBlocks().length).forEach((item, i) => {
-        Object.assign(zoneSensors[i], item);
+    getBlocks().forEach((block, i) => {
+        const item = byCode.get(block.code);
+        const empty = {
+            soil: null, flow: null, n: null, p: null, k: null,
+            valve: null, pump: null, mixer: null
+        };
+        zoneSensors[i] = { ...empty, ...item };
     });
+    lastSensorTimestamp = parsedStamp;
+    lastValidTelemetryAt = parsedStamp;
+    return [...byCode.keys()];
 }
 
-function addSensorRecords(timestamp) {
+function addSensorRecords(timestamp, receivedCodes) {
     zoneSensors.forEach((item, i) => {
+        if (!receivedCodes.includes(getBlocks()[i].code)) return;
         sensorRecords.push({
             timestamp,
             source: sensorSourceLabel(),
@@ -2591,10 +1070,15 @@ function addSensorRecords(timestamp) {
             soil: item.soil,
             temp: sensorSeed.temp,
             humidity: sensorSeed.humidity,
+            waterTemp: sensorSeed.waterTemp,
             ph: sensorSeed.ph,
             ec: sensorSeed.ec,
+            tds: sensorSeed.tds,
+            n: item.n, p: item.p, k: item.k,
             flow: item.flow,
-            valve: item.soil < 60 ? 'ON' : 'OFF'
+            valve: item.valve === true ? 'ON' : item.valve === false ? 'OFF' : '—',
+            pump: item.pump === true ? 'ON' : item.pump === false ? 'OFF' : '—',
+            mixer: item.mixer === true ? 'ON' : item.mixer === false ? 'OFF' : '—'
         });
     });
 
@@ -2621,14 +1105,17 @@ function renderSensorRecords() {
             record.soil,
             record.temp,
             record.humidity,
+            record.waterTemp,
             record.ph,
             record.ec,
+            record.tds,
+            record.n, record.p, record.k,
             record.flow,
-            record.valve
+            record.valve, record.pump, record.mixer
         ];
         for (const value of values) {
             const td = document.createElement('td');
-            td.textContent = String(value);
+            td.textContent = value === null || value === undefined || Number.isNaN(value) ? '—' : String(value);
             tr.appendChild(td);
         }
         fragment.appendChild(tr);
@@ -2638,18 +1125,22 @@ function renderSensorRecords() {
 
 function refreshLiveSensorDisplay() {
     if (!$('metrics') || !$('dashboard').classList.contains('active')) {
+        renderDeviceConnection();
         return;
     }
 
     // Re-render hanya nilai sensor dan zona, bukan keseluruhan dashboard.
     const metricValues = [
-        sensorSeed.temp.toFixed(1) + '°C',
-        sensorSeed.humidity + '%',
-        sensorSeed.waterTemp.toFixed(1) + '°C',
-        sensorSeed.ph,
-        sensorSeed.ec + ' mS/cm',
-        sensorSeed.tds + ' ppm'
+        sensorText(sensorSeed.temp, '°C', 1),
+        sensorText(sensorSeed.humidity, '%'),
+        sensorText(sensorSeed.waterTemp, '°C', 1),
+        sensorText(sensorSeed.ph),
+        sensorText(sensorSeed.ec, ' mS/cm'),
+        sensorText(zoneSensors[findZoneIndex(zone)]?.soil, ' %', 1)
     ];
+
+    const soilLabel = $('metrics')?.querySelectorAll('.metric')[5]?.querySelector('label');
+    if (soilLabel) soilLabel.textContent = 'Soil Moisture (Blok ' + zone + ')';
 
     $('metrics').querySelectorAll('.metric').forEach((card, index) => {
         const value = card.querySelector('strong');
@@ -2660,42 +1151,45 @@ function refreshLiveSensorDisplay() {
 
     zoneSensors.forEach((item, i) => {
         const small = $('zone-' + getBlocks()[i].code)?.querySelector('small');
-        if (small) small.textContent = item.soil + '%';
+        if (small) small.textContent = sensorText(item.soil, '%');
     });
 
     selectZone(zone);
-    $('connection-status').textContent = liveSensorConnected
-        ? 'ESP32-S3 · Terhubung'
-        : 'ESP32-S3 · Belum terhubung';
-    $('sensor-source').textContent = sensorSourceLabel();
-    $('sensor-updated').textContent =
-        'Pembaruan terakhir ' + new Date().toLocaleTimeString('id-ID');
+    renderDeviceConnection();
     renderSensorRecords();
+    renderHistory();
     updateDecisionExplanation();
 }
 
 // Tidak ada input manual; polling berjalan setiap 5 detik.
+// Polling tidak pernah menghasilkan nilai palsu ketika perangkat offline.
 async function updateSensorsAutomatically() {
-    let connected = false;
-
-    if (API_SENSOR_URL) {
-        try {
-            const response = await fetch(API_SENSOR_URL, {
-                cache: 'no-store',
-                signal: AbortSignal.timeout(3000)
-            });
-            if (!response.ok) throw new Error('HTTP ' + response.status);
-            const data = await response.json();
-            applyRealSensorData(data);
-            connected = true;
-        } catch (error) {
-            console.warn('ESP32 tidak tersedia:', error.message);
-        }
+    liveSensorConnected = false;
+    if (!API_SENSOR_URL) {
+        liveSensorConnected = false;
+        refreshLiveSensorDisplay();
+        return;
     }
 
-    liveSensorConnected = connected;
-    if (!connected) generateSensorExample();
-    addSensorRecords(Date.now());
+    try {
+        const response = await fetch(API_SENSOR_URL, {
+            cache: 'no-store',
+            signal: AbortSignal.timeout(4000)
+        });
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const data = await response.json();
+        const receivedCodes = applyRealSensorData(data);
+        liveSensorConnected = true;
+        addSensorRecords(lastSensorTimestamp, receivedCodes);
+    } catch (error) {
+        console.warn('ESP32-S3 offline / payload tidak valid:', error.message);
+        liveSensorConnected = false;
+        Object.keys(sensorSeed).forEach(key => { sensorSeed[key] = null; });
+        zoneSensors.forEach(item => {
+            ['soil', 'flow', 'n', 'p', 'k', 'valve', 'pump', 'mixer']
+                .forEach(key => { item[key] = null; });
+        });
+    }
     refreshLiveSensorDisplay();
 }
 
@@ -2735,29 +1229,32 @@ function getPlantAge() {
     return Math.min(plants[crop].duration, Math.max(0, elapsed));
 }
 
-function showCropStep() {
-    $('crop-step').classList.remove('hidden');
-    $('fert-step').classList.add('hidden');
-}
-
-function openFertStep(id) {
-    crop = id;
-    $('crop-step').classList.add('hidden');
+function openFertStep() {
+    // Form tersedia langsung pada halaman profil.
     $('fert-step').classList.remove('hidden');
 }
 
 function saveFertilizer(event) {
     event.preventDefault();
+
     fertilizerProfile = {
         name: $('fert-name').value.trim(),
         packagePrice: Math.max(0, Number($('fert-package-price').value)),
         packageVolume: Math.max(1, Number($('fert-package-volume').value))
     };
-    localStorage.setItem('atan_fertilizer', JSON.stringify(fertilizerProfile));
-    plantStartDate = localDateString();
-    localStorage.setItem('atan_start_date', plantStartDate);
-    $('atan-start-modal').classList.add('hidden');
-    navigate('profile');
+
+    localStorage.setItem(
+        'atan_fertilizer',
+        JSON.stringify(fertilizerProfile)
+    );
+
+    $('fert-save-status').textContent =
+        'Pengaturan pupuk berhasil disimpan.';
+
+    // Jangan mereset tanggal tanam sewaktu harga pupuk diedit.
+    if ($('dashboard')) {
+        refreshForecast();
+    }
 }
 
 function animateStageArtwork() {
@@ -2768,20 +1265,12 @@ function animateStageArtwork() {
 }
 
 function initializeWelcome() {
-    $('modal-crops').innerHTML = Object.entries(plants)
-        .map(([id, plant]) => `
-            <button class="modal-crop" type="button"
-                    onclick="openFertStep('${id}')">
-                <span>${plant.emoji}</span>
-                <div><b>${plant.name}</b>
-                <small>${plant.latin}</small></div>
-            </button>
-        `).join('');
-    $('fert-name').value = fertilizerProfile.name;
-    $('fert-package-price').value = fertilizerProfile.packagePrice;
-    $('fert-package-volume').value = fertilizerProfile.packageVolume;
+    // Landing langsung menampilkan profil cabai dan pengaturan pupuk.
+    openFertStep();
+    $('fert-name').value = fertilizerProfile.name || '';
+    $('fert-package-price').value = fertilizerProfile.packagePrice || '';
+    $('fert-package-volume').value = fertilizerProfile.packageVolume || '';
 }
-
 
 // ==========================================================
 // V5 — Biaya kalender: hari ini, bulan ini, bulan depan.
@@ -2801,158 +1290,48 @@ function daysBetweenLocalDates(startDate, endDate) {
     );
     return Math.floor((b - a) / 86400000);
 }
-function costForCalendarPeriod(start, end) {
-    const plantedAt = new Date(plantStartDate + 'T00:00:00');
-    const totals = {
-        waterCost: 0,
-        fertilizerCost: 0,
-        electricityCost: 0
-    };
-    const cursor = new Date(start);
-    while (cursor < end) {
-        const plantAge = daysBetweenLocalDates(plantedAt, cursor);
-        if (plantAge >= 0 && plantAge <= plants[crop].duration) {
-            const result = calculateDailyCosts(plantAge);
-            totals.waterCost += result.waterCost;
-            totals.fertilizerCost += result.fertilizerCost;
-            totals.electricityCost += result.electricityCost;
-        }
-        cursor.setDate(cursor.getDate() + 1);
-    }
-    return totals;
-}
 function renderPeriodCosts() {
     const target = $('cost-period-grid');
     if (!target) return;
-
-    const now = new Date();
-    const startToday = new Date(
-        now.getFullYear(), now.getMonth(), now.getDate()
-    );
-    const firstThisMonth = new Date(
-        now.getFullYear(), now.getMonth(), 1
-    );
-    const firstNextMonth = new Date(
-        now.getFullYear(), now.getMonth() + 1, 1
-    );
-    const firstMonthAfter = new Date(
-        now.getFullYear(), now.getMonth() + 2, 1
-    );
-    const endToday = new Date(startToday);
-    endToday.setDate(endToday.getDate() + 1);
-
-    const periods = [
-        {
-            label: 'Hari Ini',
-            detail: 'Estimasi kebutuhan hari ini',
-            start: startToday,
-            end: endToday
-        },
-        {
-            label: 'Bulan Ini',
-            detail: 'Proyeksi sepanjang bulan berjalan',
-            start: firstThisMonth,
-            end: firstNextMonth
-        },
-        {
-            label: 'Bulan Depan',
-            detail: 'Proyeksi bulan kalender berikutnya',
-            start: firstNextMonth,
-            end: firstMonthAfter
-        }
-    ];
-
-    target.innerHTML = periods.map((period) => {
-        const costs = costForCalendarPeriod(period.start, period.end);
-        const total = costs.waterCost +
-            costs.fertilizerCost + costs.electricityCost;
-        return `
-            <article class="rounded-2xl border border-emerald-100
-                            bg-[#f8faf3] p-5">
-                <p class="text-xs font-bold uppercase tracking-wider
-                          text-emerald-700">
-                    ${period.label}
-                </p>
-                <h4 class="mt-2 text-2xl font-extrabold text-emerald-950">
-                    ${rupiah(total)}
-                </h4>
-                <p class="mt-1 text-xs text-slate-500">
-                    ${period.detail}
-                </p>
-                <div class="mt-4 space-y-3 border-t border-emerald-100 pt-4">
-                    <div class="flex justify-between gap-2 text-sm">
-                        <span>💧 Air</span>
-                        <b>${rupiah(costs.waterCost)}</b>
-                    </div>
-                    <div class="flex justify-between gap-2 text-sm">
-                        <span>🧪 Pupuk</span>
-                        <b>${rupiah(costs.fertilizerCost)}</b>
-                    </div>
-                    <div class="flex justify-between gap-2 text-sm">
-                        <span>⚡ Listrik</span>
-                        <b>${rupiah(costs.electricityCost)}</b>
-                    </div>
-                </div>
-            </article>
-        `;
-    }).join('');
+    target.innerHTML = [
+        'Hari Ini', 'Bulan Ini', 'Bulan Depan'
+    ].map(label => `
+        <article class="rounded-2xl border border-emerald-100 bg-[#f8faf3] p-5">
+            <h4 class="font-bold text-emerald-900">${label}</h4>
+            <p class="mt-2 text-xs text-slate-500">Air · Pupuk · Listrik</p>
+            <strong class="mt-3 block text-xl text-emerald-950">—</strong>
+            <small class="text-slate-500">Menunggu data pemakaian aktual</small>
+        </article>
+    `).join('');
 }
 
-function calculateDailyCosts(day) {
-    const phase = stageForAge(day);
-    const plantCount = 30;
-    const dailyWater = [0.11, 0.24, 0.32, 0.43, 0.29];
-    const liters = day === 0 ? 0 : plantCount * dailyWater[phase];
-    const concentrateMl = day === 0 ? 0 :
-        plantCount * RESOURCE_CONFIG.fertilizerConcentrateMl[phase];
-    const electricityKwh = day === 0 ? 0 :
-        RESOURCE_CONFIG.dailyElectricalWatts / 1000 *
-        RESOURCE_CONFIG.dailyElectricalHours;
+function calculateDailyCosts() {
     return {
-        liters,
-        concentrateMl,
-        electricityKwh,
-        waterCost: liters * RESOURCE_CONFIG.waterPricePerLiter,
-        fertilizerCost: concentrateMl / fertilizerProfile.packageVolume *
-            fertilizerProfile.packagePrice,
-        electricityCost: electricityKwh * RESOURCE_CONFIG.electricityPricePerKwh
+        liters: null,
+        concentrateMl: null,
+        electricityKwh: null,
+        waterCost: null,
+        fertilizerCost: null,
+        electricityCost: null
     };
 }
 
 function renderAutomaticCost() {
-    const age = getPlantAge();
-    const today = calculateDailyCosts(age);
-    let future = {waterCost: 0, fertilizerCost: 0, electricityCost: 0};
-    for (let day = age + 1; day <= Math.min(age + 30, plants[crop].duration); day++) {
-        const cost = calculateDailyCosts(day);
-        future.waterCost += cost.waterCost;
-        future.fertilizerCost += cost.fertilizerCost;
-        future.electricityCost += cost.electricityCost;
-    }
-    const cards = [
-        ['💧 Air', 'waterCost', `${today.liters.toFixed(2)} L hari ini`],
-        ['🧪 Pupuk · ' + fertilizerProfile.name, 'fertilizerCost',
-            `${today.concentrateMl.toFixed(1)} mL konsentrat hari ini`],
-        ['⚡ Listrik', 'electricityCost',
-            `${today.electricityKwh.toFixed(3)} kWh hari ini`]
-    ];
-    $('automatic-cost-breakdown').innerHTML = cards.map(([label, key, detail]) => `
+    $('automatic-cost-breakdown').innerHTML = [
+        '💧 Air', '🧪 Pupuk · ' + fertilizerProfile.name, '⚡ Listrik'
+    ].map(label => `
         <article>
             <h4>${escapeHtml(label)}</h4>
             <span>Biaya hari ini</span>
-            <strong>${rupiah(today[key])}</strong>
-            <small>${detail}</small>
-            <hr style="border:0;border-top:1px solid #dfebda;margin:13px 0">
+            <strong>—</strong>
+            <small>Menunggu pemakaian terukur</small>
+            <hr class="my-3 border-t border-emerald-100">
             <span>Perkiraan 30 hari ke depan</span>
-            <strong>${rupiah(future[key])}</strong>
+            <strong>—</strong>
         </article>
     `).join('');
-    // Sinkronisasi dua kartu lama dengan total tiga komponen
-    const existingToday = today.waterCost + today.fertilizerCost + today.electricityCost;
-    $('phase-cost').textContent = rupiah(existingToday);
-    $('total-cost').textContent = rupiah(
-        future.waterCost + future.fertilizerCost + future.electricityCost
-    );
+    $('phase-cost').textContent = '—';
+    $('total-cost').textContent = '—';
     renderPeriodCosts();
 }
 
@@ -2965,74 +1344,35 @@ function escapeHtml(value) {
 
 function updateDecisionExplanation() {
     const sensor = zoneSensors[findZoneIndex(zone)];
-    const hot = sensorSeed.temp >= 32;
+    if (!sensor || !liveSensorConnected ||
+        !isValidNumber(sensor.soil) || !isValidNumber(sensorSeed.temp)) {
+        $('decision-explanation').textContent =
+            'Menunggu suhu DHT22 dan kelembapan tanah aktual dari ESP32-S3. ' +
+            'Analisis keputusan belum dapat dilakukan.';
+        return;
+    }
     const dry = sensor.soil < 60;
-    const total = sensor.n + sensor.p + sensor.k;
-    const highNutrients = total >= 300;
-    const waterAction = dry ? 'pompa air dan valve perlu ON' :
-        'pompa air dan valve bisa OFF';
-    const nutrientAction = highNutrients ?
-        'penambahan pupuk ditunda karena pembacaan NPK relatif tinggi' :
-        'kadar NPK perlu ditinjau sebelum pemberian pupuk';
-    const climateAction = hot ?
-        'suhu tinggi: evaluasi ventilasi atau blower' :
-        'suhu belum mencapai ambang ventilasi 32°C';
-    $('decision-heading').textContent =
-        `${dry ? 'Prioritas irigasi' : 'Kondisi kelembapan cukup'} · Zona ${zone}`;
-    $('decision-reason').textContent =
-        `Suhu DHT22 ${sensorSeed.temp.toFixed(1)}°C dan kelembapan ` +
-        `media ${sensor.soil}% (${dry ? 'kering' : 'cukup'}). ` +
-        `Indikasi total NPK ${total} mg/kg. Oleh sebab itu ${waterAction}; ` +
-        `${nutrientAction}. Selain itu, ${climateAction}. ` +
-        `Aliran yang terbaca ${sensor.flow.toFixed(2)} L/menit. ` +
-        `Semua keputusan adalah rekomendasi, bukan instruksi ` +
-        `yang otomatis dikirim ke perangkat.`;
-    $('decision-source').textContent =
-        `${sensorSourceLabel()} · aturan keputusan transparan, ` +
-        `bukan hasil pelatihan model Decision Tree`;
+    const hot = sensorSeed.temp >= 32;
+    const nutrientReadings = [sensor.n, sensor.p, sensor.k];
+    const npkAvailable = nutrientReadings.every(isValidNumber);
+    const npkTotal = npkAvailable
+        ? nutrientReadings.reduce((a, b) => a + b, 0) : null;
+    const message = [
+        `Suhu DHT22 ${sensorSeed.temp.toFixed(1)}°C;`,
+        `kelembapan tanah Zona ${zone} ${sensor.soil}%.`,
+        dry ? 'Tanah di bawah ambang pantau 60%.'
+            : 'Tanah tidak di bawah ambang pantau 60%.',
+        hot ? 'Suhu tinggi, periksa ventilasi.'
+            : 'Suhu di bawah ambang pantau 32°C.',
+        npkAvailable ? `Pembacaan N/P/K: ${sensor.n}/${sensor.p}/${sensor.k} mg/kg.`
+            : 'Pembacaan NPK belum tersedia.',
+        'Ini penjelasan aturan pemantauan, bukan hasil Decision Tree terlatih.',
+        'Status relay aktual harus dibaca dari perangkat; tidak ada perintah otomatis.'
+    ];
+    $('decision-explanation').textContent = message.join(' ');
 }
 
-// ===========================================================
-// REFERENSI EDUKASI: penjelasan per fase dan per jenis tanaman
-// ===========================================================
 const botanyKnowledge = {
-    tomat: {
-        intro: 'Tomat (Solanum lycopersicum) merupakan tanaman Solanaceae. ' +
-            'Pertumbuhannya dipengaruhi varietas, cahaya, suhu, aerasi akar, ' +
-            'air, dan komposisi nutrisi. Lama fase di bawah hanya kisaran pembelajaran.',
-        notes: [
-            ['Perkecambahan', 'Benih menyerap air, kulit biji pecah, lalu radikula muncul. ' +
-                'Media harus lembap tetapi memiliki cukup oksigen agar akar muda tidak mudah busuk.',
-             'Lingkungan', 'Pantau kelembapan semai, suhu media, dan sirkulasi. ' +
-                'Bibit yang terlalu basah rentan rebah semai.',
-             'Pengamatan', 'Catat kemunculan kecambah, daun lembaga, dan daun sejati.'],
-            ['Pembentukan tajuk', 'Daun aktif berfotosintesis, batang memanjang, ' +
-                'dan akar berkembang untuk memasok air serta unsur mineral.',
-             'Kebutuhan', 'Nitrogen penting bagi pertumbuhan vegetatif, ' +
-                'namun kelebihan dapat menyebabkan tanaman terlalu rimbun.',
-             'Pengamatan', 'Pantau warna daun, internodus, kesehatan akar, ' +
-                'dan kelembapan tiap blok secara terpisah.'],
-            ['Inisiasi bunga', 'Transisi ke reproduksi dimulai ketika ' +
-                'tandan bunga terbentuk. Stres air dan suhu ekstrem berpotensi ' +
-                'mengganggu pembentukan maupun keberhasilan bunga.',
-             'Kebutuhan', 'Jaga pasokan air stabil serta kecukupan fosfor, ' +
-                'kalium, dan unsur mikro tanpa mengabaikan keseimbangan keseluruhan.',
-             'Pengamatan', 'Catat jumlah tandan bunga, kerontokan, ' +
-                'dan kondisi mikroklimat greenhouse.'],
-            ['Pertumbuhan buah', 'Setelah penyerbukan, buah melakukan pembelahan ' +
-                'dan pembesaran sel. Perubahan pasokan air yang tajam dapat ' +
-                'mengganggu kualitas hasil.',
-             'Kebutuhan', 'Kalium berperan dalam perpindahan hasil fotosintesis. ' +
-                'Kalsium dan kestabilan transpirasi juga penting bagi mutu buah.',
-             'Pengamatan', 'Pantau ukuran buah, keseragaman per blok, ' +
-                'gejala gangguan fisiologis, dan fluktuasi EC.'],
-            ['Kematangan', 'Warna dan tekstur berubah seiring pematangan; ' +
-                'panen dapat dilakukan bertahap bergantung varietas dan tujuan pemasaran.',
-             'Kebutuhan', 'Hindari perubahan pasokan air mendadak. ' +
-                'Sesuaikan pemeliharaan dengan kondisi buah nyata.',
-             'Pengamatan', 'Catat jumlah buah, bobot panen, mutu, dan penggunaan input.']
-        ]
-    },
     cabai: {
         intro: 'Cabai (Capsicum annuum) merupakan anggota Solanaceae ' +
             'dengan pertumbuhan vegetatif, pembungaan, dan panen buah yang bisa berulang.',
@@ -3058,58 +1398,97 @@ const botanyKnowledge = {
              'Kebutuhan', 'Sesuaikan pemeliharaan setelah setiap petik.',
              'Pengamatan', 'Catat bobot dan interval panen per blok.']
         ]
-    },
-    melon: {
-        intro: 'Melon (Cucumis melo) adalah tanaman Cucurbitaceae ' +
-            'yang merambat dan memerlukan pemantauan ketat ketika buah berkembang.',
-        notes: [
-            ['Penyemaian', 'Akar kecambah tumbuh cepat dalam media ' +
-                'yang aerasi dan kelembapannya terjaga.',
-             'Lingkungan', 'Jaga media hangat dan hindari genangan.',
-             'Pengamatan', 'Amati kecambah dan daun awal.'],
-            ['Pertumbuhan sulur', 'Tanaman membentuk ruas, daun, ' +
-                'serta sulur; tajuk menentukan kapasitas fotosintesis.',
-             'Kebutuhan', 'Perhatikan cahaya, ruang, dan nutrisi.',
-             'Pengamatan', 'Catat panjang sulur, daun, dan kondisi akar.'],
-            ['Penyerbukan', 'Bunga jantan dan betina berkembang. ' +
-                'Penyerbukan yang berhasil memulai pembentukan bakal buah.',
-             'Kebutuhan', 'Jaga iklim tidak ekstrem selama pembungaan.',
-             'Pengamatan', 'Amati kemunculan bunga dan keberhasilan buah.'],
-            ['Pengisian buah', 'Buah membesar dan mengakumulasi gula. ' +
-                'Pasokan air perlu seimbang agar kualitas stabil.',
-             'Kebutuhan', 'Kelola EC dan kebutuhan kalium sesuai pengamatan.',
-             'Pengamatan', 'Catat ukuran buah, jaring kulit, dan pertumbuhan.'],
-            ['Pematangan', 'Kematangan dinilai dari karakter varietas ' +
-                'seperti aroma, warna kulit, umur, dan tingkat kemanisan.',
-             'Kebutuhan', 'Jangan menentukan pengairan hanya berdasarkan usia.',
-             'Pengamatan', 'Pantau karakter buah dan hasil panen.']
-        ]
     }
 };
+
+
+// Materi mendalam per fase. Rekomendasi bersifat edukatif;
+// dosis akhir harus divalidasi untuk varietas, media, dan iklim.
+const detailedChiliStages = [
+    {
+        morphology: 'Benih menyerap air (imbibisi), embrio mengaktifkan proses metabolisme, radikula muncul, lalu hipokotil dan kotiledon berkembang. Daun sejati pertama menjadi tanda awal kapasitas fotosintesis yang lebih stabil.',
+        roots: 'Sistem perakaran masih pendek dan rentan terhadap kurang oksigen akibat genangan. Media semai perlu porous, lembap tetapi tidak jenuh air.',
+        nutrients: 'Cadangan makanan benih membantu fase awal. Pemupukan pekat terlalu dini dapat meningkatkan tekanan osmotik dan merusak akar muda. Mulai nutrisi bertahap sesuai kondisi bibit dan formulasi yang teruji.',
+        environment: 'Cahaya cukup, sirkulasi udara baik, suhu tidak ekstrem, dan penyiraman halus membantu bibit tumbuh seragam. pH/EC diperiksa bila memakai fertigasi.',
+        observation: 'Catat tanggal semai, persentase berkecambah, jumlah daun sejati, gejala rebah semai, warna kotiledon, serta pertumbuhan akar.',
+        risks: 'Risiko umum meliputi damping-off, media terlalu basah, bibit etiolasi karena cahaya rendah, dan stres setelah pindah tanam.'
+    },
+    {
+        morphology: 'Tanaman mengembangkan ruas batang, akar lateral, luas daun, dan percabangan. Tajuk yang sehat membentuk kapasitas fotosintesis untuk menopang fase generatif berikutnya.',
+        roots: 'Akar menyebar untuk mengambil air dan hara. Tanaman pada polybag perlu ruang akar, drainase, serta penghindaran genangan berkepanjangan.',
+        nutrients: 'Nitrogen mendukung pembentukan daun dan jaringan vegetatif; fosfor berperan dalam transfer energi dan pembentukan akar; kalium mendukung pengaturan air dan berbagai proses enzimatis. Proporsi harus seimbang.',
+        environment: 'Jaga kelembapan media stabil, cahaya cukup, dan aerasi greenhouse. Kelebihan nitrogen dapat mendorong daun lebat tanpa keseimbangan pertumbuhan generatif.',
+        observation: 'Ukur tinggi tanaman, jumlah daun dan cabang, diameter batang, intensitas hijau daun, serta perkembangan akar dan tanda hama.',
+        risks: 'Waspadai serangan kutu daun, trips, tungau, gejala kekurangan hara, dan pertumbuhan terlalu rimbun akibat pemupukan tidak seimbang.'
+    },
+    {
+        morphology: 'Titik tumbuh mulai membentuk organ reproduksi. Bakal bunga berkembang menjadi bunga; keberhasilan penyerbukan dan pembuahan menentukan jumlah calon buah.',
+        roots: 'Akar harus tetap aktif menyediakan air dan unsur hara. Kekeringan atau perubahan kelembapan mendadak meningkatkan stres dan dapat memicu kerontokan bunga.',
+        nutrients: 'Fosfor terkait metabolisme energi, sedangkan kalium mendukung keseimbangan air dan proses fisiologis. Unsur mikro seperti boron juga penting dalam perkembangan reproduktif, sesuai kebutuhan yang terukur.',
+        environment: 'Suhu terlalu tinggi, kelembapan udara ekstrem dan sirkulasi yang buruk bisa menurunkan keberhasilan pembentukan buah. Ventilasi dan kontinuitas irigasi perlu diperhatikan.',
+        observation: 'Catat tanggal bunga pertama, jumlah tandan bunga, bunga yang gugur, pembentukan bakal buah, serta kondisi mikroklimat ketika bunga muncul.',
+        risks: 'Stres panas, serangan trips, defisit air, dan ketidakseimbangan nutrisi dapat menyebabkan bunga rontok atau pembentukan buah rendah.'
+    },
+    {
+        morphology: 'Setelah pembuahan, sel-sel buah membelah lalu membesar. Buah bertambah panjang dan berat; biji serta jaringan perikarp berkembang hingga mencapai ukuran varietasnya.',
+        roots: 'Kebutuhan suplai air relatif konsisten karena buah yang berkembang memerlukan transportasi hara dan tekanan turgor. Hindari perubahan kadar air terlalu drastis.',
+        nutrients: 'Kalium penting bagi transportasi hasil fotosintesis dan keseimbangan osmotik. Kalsium mendukung integritas jaringan; pengaturan nutrisi harus mempertimbangkan keseluruhan larutan dan hasil pengukuran.',
+        environment: 'Jaga suhu, kelembapan dan pencahayaan yang mendukung pembentukan buah. Irigasi berlebih dapat mengurangi oksigen akar, sedangkan defisit ekstrem membatasi pembesaran.',
+        observation: 'Pantau panjang dan diameter buah, jumlah buah per tanaman, tanda busuk ujung buah, kondisi bunga baru, serta serangan hama pada buah.',
+        risks: 'Masalah yang perlu dipantau antara lain busuk ujung buah, antraknosa, kerusakan serangga, pecah buah, dan stres kelembapan media.'
+    },
+    {
+        morphology: 'Buah mencapai kematangan fisiologis dan warna kulit berubah sesuai varietas. Cabai dapat dipanen beberapa kali karena tanaman masih dapat menghasilkan bunga dan buah baru.',
+        roots: 'Perakaran tetap membutuhkan aerasi dan pasokan air walaupun buah dipetik berulang. Pemeliharaan tidak berhenti setelah panen pertama.',
+        nutrients: 'Kebutuhan unsur hara mengikuti ritme pembungaan, pembentukan buah, dan panen berikutnya. Penyesuaian pupuk dilakukan berdasarkan kondisi tanaman serta pengukuran pH, EC dan media.',
+        environment: 'Pilih waktu panen dengan suhu lapang tidak terlalu tinggi; hindari luka mekanis dan kelembapan berlebih selama penanganan hasil.',
+        observation: 'Catat tanggal petik, bobot panen per blok, jumlah buah layak jual, tingkat kematangan, interval panen, serta kerusakan pascapanen.',
+        risks: 'Waspadai penurunan kesehatan tanaman, pembusukan buah, keterlambatan panen, dan tekanan penyakit selama fase produksi berkepanjangan.'
+    }
+];
 
 function renderStageKnowledge() {
     const knowledge = botanyKnowledge[crop];
     const values = knowledge.notes[selectedStage];
+    const detail = detailedChiliStages[selectedStage];
+
     $('learning-title').textContent =
-        plants[crop].stages[selectedStage][0] + ' · Pengetahuan fase';
-    $('learning-intro').textContent = knowledge.intro;
-    $('learning-grid').innerHTML = [
-        ['🌱 Proses biologis', values[0] + ': ' + values[1]],
-        ['💧 Kebutuhan lingkungan', values[2] + ': ' + values[3]],
-        ['🔬 Hal yang diamati', values[4] + ': ' + values[5]]
-    ].map(([title, description]) => `
-        <article><b>${title}</b><p>${description}</p></article>
+        plants[crop].stages[selectedStage][0] +
+        ' · Panduan lengkap fase cabai';
+
+    $('learning-intro').textContent =
+        knowledge.intro + ' ' +
+        'Durasi tiap fase adalah ilustrasi umum dan dapat berubah ' +
+        'sesuai varietas, suhu, lingkungan, dan manajemen budidaya.';
+
+    const topics = [
+        ['🌱 Proses pertumbuhan', detail.morphology],
+        ['🌿 Perkembangan akar', detail.roots],
+        ['🧪 Nutrisi & unsur hara', detail.nutrients],
+        ['💧 Lingkungan & irigasi', detail.environment],
+        ['🔬 Parameter pengamatan', detail.observation],
+        ['🛡️ Risiko & pencegahan', detail.risks]
+    ];
+
+    const articleClasses = [
+        'rounded-2xl',
+        'border',
+        'border-[#dce9d8]',
+        'bg-[#f1f6ed]',
+        'p-[18px]'
+    ].join(' ');
+
+    $('learning-grid').innerHTML = topics.map(([title, description]) => `
+        <article class="${articleClasses}">
+            <b>${title}</b>
+            <p>${description}</p>
+        </article>
     `).join('');
 }
 
-// Inisialisasi halaman pertama.
-initializeWelcome();
-renderCards();
-updateSensorsAutomatically();
-setInterval(updateSensorsAutomatically, SENSOR_INTERVAL_MS);
 
 // =============================================
-// SIMULATION JOURNAL
+// JURNAL PEMBACAAN SENSOR AKTUAL
 // =============================================
 let historyPeriod = 7;
 function readScenario() {
@@ -3122,89 +1501,63 @@ function readScenario() {
         fertilizerPrice: Math.max(0, Number($('fert-price').value) || 0)
     };
 }
+// Riwayat diambil dari paket sensor yang benar-benar diterima.
+// Tidak membuat catatan masa lalu atau nilai sensor tiruan.
 function getDailyHistory() {
-    const scenario = readScenario();
-    const dailyWater = [0.11, 0.24, 0.32, 0.43, 0.29];
-    const dailyFertilizer = [0.008, 0.016, 0.024, 0.031, 0.017];
-    const result = [];
-    let cumulativeCost = 0;
-    let cumulativeWater = 0;
-    let cumulativeFertilizer = 0;
-    for (let day = 0; day <= scenario.age; day += 1) {
-        const stageIndex = stageForAge(day);
-        const stage = scenario.plant.stages[stageIndex];
-        // Hari 0 = awal penyemaian. Belum ada pemakaian yang dihitung.
-        const water = day === 0 ? 0 : dailyWater[stageIndex] * scenario.quantity;
-        const fertilizer = day === 0 ? 0 : dailyFertilizer[stageIndex] * scenario.quantity;
-        const dailyCost = water * scenario.waterPrice + fertilizer * scenario.fertilizerPrice;
-        cumulativeWater += water;
-        cumulativeFertilizer += fertilizer;
-        cumulativeCost += dailyCost;
-        // Deret deterministik, bukan hasil pembacaan sensor asli.
-        const soil = Math.round(66 + 8 * Math.sin(day * 0.41 + stageIndex));
-        const temperature = 25.5 + 1.5 * Math.sin(day * 0.27);
-        const humidity = Math.round(71 + 5 * Math.cos(day * 0.23));
-        result.push({
-            day,
-            stage: stage[0],
-            icon: stage[3],
-            description: stage[4],
-            soil,
-            temperature: temperature.toFixed(1),
-            humidity,
-            ph: (6.0 + 0.15 * Math.sin(day * 0.21)).toFixed(2),
-            ec: (1.6 + 0.18 * Math.cos(day * 0.19)).toFixed(2),
-            water,
-            fertilizer,
-            dailyCost,
-            cumulativeWater,
-            cumulativeFertilizer,
-            cumulativeCost,
-            npk: [stage[5], stage[6], stage[7]].join(' / ')
-        });
-    }
-    return result;
+    const groups = new Map();
+    sensorRecords.forEach(record => {
+        const date = new Date(record.timestamp).toLocaleDateString('sv-SE');
+        if (!groups.has(date)) groups.set(date, []);
+        groups.get(date).push(record);
+    });
+    return [...groups.entries()].map(([date, rows]) => ({
+        date,
+        rows,
+        latest: rows[rows.length - 1]
+    })).sort((a, b) => a.date.localeCompare(b.date));
 }
+
 function renderHistory() {
     const list = getDailyHistory();
-    const latest = list[list.length - 1];
     const shown = historyPeriod === 'all' ? list : list.slice(-historyPeriod);
     $('history-overview').innerHTML = [
-        ['🌱 Umur tanaman', `Hari ke-${latest.day}`],
-        ['💧 Total air', `${latest.cumulativeWater.toFixed(1)} L`],
-        ['🧪 Total larutan pupuk', `${latest.cumulativeFertilizer.toFixed(2)} L`],
-        ['💰 Estimasi biaya berjalan', rupiah(latest.cumulativeCost)]
+        ['🌱 Umur tanaman', 'Hari ke-' + getPlantAge()],
+        ['📅 Hari tercatat', list.length],
+        ['📡 Pembacaan tersimpan', sensorRecords.length],
+        ['🧪 Sumber', deviceOnline ? 'ESP32-S3 Online' : 'Perangkat Offline']
     ].map(([label, value]) => `
-    <div class="history-stat">
-      <span>${label}</span>
-      <strong>${value}</strong>
-    </div>
-  `).join('');
-    $('history-count').textContent = `Menampilkan ${shown.length} dari ${list.length} hari (terbaru dahulu)`;
-    $('history-timeline').innerHTML = [...shown].reverse().map((item) => `
-    <article class="history-entry">
-      <div class="history-entry-header">
-        <div>
-          <span class="eyebrow">HARI ${item.day} · ${item.stage}</span>
-          <h4>${item.icon} ${item.day === 0 ? 'Awal penyemaian' : 'Perkembangan hari ke-' + item.day}</h4>
+        <div class="history-stat">
+            <span>${label}</span>
+            <strong>${value}</strong>
         </div>
-        <span class="pill">Data dummy</span>
-      </div>
-      <p>${item.description}</p>
-      <div class="history-data">
-        <div><small>Kelembapan media</small><b>${item.soil}%</b></div>
-        <div><small>Suhu udara</small><b>${item.temperature}°C</b></div>
-        <div><small>Kelembapan udara</small><b>${item.humidity}%</b></div>
-        <div><small>pH / EC</small><b>${item.ph} / ${item.ec} mS/cm</b></div>
-        <div><small>Air hari ini</small><b>${item.water.toFixed(2)} L</b></div>
-        <div><small>Larutan pupuk hari ini</small><b>${item.fertilizer.toFixed(3)} L</b></div>
-        <div><small>Indeks N / P / K</small><b>${item.npk}</b></div>
-        <div><small>Biaya hari ini</small><b>${rupiah(item.dailyCost)}</b></div>
-      </div>
-    </article>
-  `).join('');
-    document.querySelectorAll('.history-filter').forEach((button) => {
-        button.classList.toggle('active', String(historyPeriod) === button.dataset.period);
+    `).join('');
+    $('history-count').textContent =
+        `Menampilkan ${shown.length} dari ${list.length} hari yang tercatat`;
+    $('history-timeline').innerHTML = shown.length
+        ? [...shown].reverse().map(item => `
+            <article class="history-entry">
+                <div class="history-entry-header">
+                    <div>
+                        <span class="eyebrow">${item.date}</span>
+                        <h4>🌶️ ${item.rows.length} pembacaan ESP32-S3</h4>
+                    </div>
+                    <span class="pill">Sensor aktual</span>
+                </div>
+                <p>Data terbaru dari blok ${escapeHtml(item.latest.zone)}.</p>
+                <div class="history-data">
+                    <div><small>Soil</small><b>${sensorText(item.latest.soil, '%')}</b></div>
+                    <div><small>Suhu</small><b>${sensorText(item.latest.temp, '°C')}</b></div>
+                    <div><small>RH</small><b>${sensorText(item.latest.humidity, '%')}</b></div>
+                    <div><small>pH / EC</small><b>${sensorText(item.latest.ph)} / ${sensorText(item.latest.ec)}</b></div>
+                    <div><small>Flow</small><b>${sensorText(item.latest.flow, ' L/min')}</b></div>
+                    <div><small>Valve</small><b>${escapeHtml(item.latest.valve)}</b></div>
+                </div>
+            </article>
+        `).join('')
+        : '<p class="sub">Belum ada riwayat sensor dari ESP32-S3.</p>';
+    document.querySelectorAll('.history-filter').forEach(button => {
+        button.classList.toggle('active',
+            String(historyPeriod) === button.dataset.period);
     });
 }
 function filterHistory(period) {
@@ -3219,14 +1572,14 @@ function advanceDay() {
     $('growth-history').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 function resetSimulation() {
-    // Semua state simulasi frontend kembali ke awal.
+    // Semua state proyeksi frontend kembali ke awal.
     plantStartDate = localDateString();
     localStorage.setItem('atan_start_date', plantStartDate);
     $('age').value = 0;
     $('quantity').value = 30;
     $('water-price').value = 15;
     $('fert-price').value = 1500;
-    sensorRecords = [];
+    // Arsip sensor aktual tidak dihapus saat mulai ulang siklus tanam.
     renderSensorRecords();
     zone = 'A';
     selectedStage = 0;
@@ -3237,31 +1590,44 @@ function resetSimulation() {
 }
 function exportHistoryCSV() {
     const headings = [
-        'Hari', 'Fase', 'Kelembapan Media (%)', 'Suhu Udara (C)',
-        'Kelembapan Udara (%)', 'pH', 'EC (mS/cm)', 'Air (L)',
-        'Larutan Pupuk (L)', 'Indeks NPK', 'Biaya Harian (Rp)',
-        'Biaya Kumulatif (Rp)', 'Sumber'
+        'Waktu', 'Sumber', 'Blok', 'Soil (%)', 'Suhu (C)',
+        'RH (%)', 'pH', 'EC (mS/cm)', 'Flow (L/min)', 'Valve'
     ];
-    const rows = getDailyHistory().map((item) => [
-        item.day, item.stage, item.soil, item.temperature, item.humidity,
-        item.ph, item.ec, item.water.toFixed(3), item.fertilizer.toFixed(3),
-        item.npk, item.dailyCost.toFixed(2), item.cumulativeCost.toFixed(2),
-        'DUMMY'
+    const rows = sensorRecords.map(item => [
+        new Date(item.timestamp).toISOString(), item.source, item.zone,
+        item.soil, item.temp, item.humidity, item.ph, item.ec,
+        item.flow, item.valve
     ]);
-    const csv = [headings, ...rows]
-        .map((row) => row.map((value) => `"${String(value).replace(/"/g, '""')}"`).join(','))
-        .join('\r\n');
-    const blob = new Blob(['\uFEFF', csv], { type: 'text/csv;charset=utf-8' });
+    const csv = [headings, ...rows].map(row =>
+        row.map(value => `"${String(value ?? '').replace(/"/g, '""')}"`)
+            .join(',')
+    ).join('\r\n');
+    const blob = new Blob(['\uFEFF', csv], {
+        type: 'text/csv;charset=utf-8'
+    });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `riwayat-${crop}-simulasi.csv`;
+    link.download = 'riwayat-sensor-cabai.csv';
     link.click();
     URL.revokeObjectURL(url);
 }
-  </script>
- 
 
+// Inisialisasi setelah semua state terdefinisi.
+if ($('profile')) {
+    initializeWelcome();
+    renderProfile();
+}
+if ($('dashboard')) {
+    renderDashboard();
+    renderDeviceConnection();
+    updateDeviceConnection();
+    setInterval(updateDeviceConnection, DEVICE_STATUS_INTERVAL_MS);
+    updateSensorsAutomatically();
+    setInterval(updateSensorsAutomatically, SENSOR_INTERVAL_MS);
+}
+
+  </script>
 <!-- =========================================================
      V5 / POPUP TAMBAH BLOK
      Data disimpan sementara di localStorage browser.
@@ -3321,6 +1687,6 @@ function exportHistoryCSV() {
     </div>
 </div>
 
+
 </body>
 </html>
-

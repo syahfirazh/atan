@@ -1,53 +1,105 @@
+
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AuthController;
 
+/*
+|--------------------------------------------------------------------------
+| ATAN si TATANEN - WEB ROUTES
+|--------------------------------------------------------------------------
+| Fokus tanaman : Cabai
+| Mikrokontroler : ESP32-S3
+| Halaman        : Welcome & Dashboard
+|--------------------------------------------------------------------------
+*/
+
+
 // ======================================================
-// DASHBOARD PUBLIK
+// 1. HALAMAN WELCOME
 // ======================================================
-Route::get('/', [DashboardController::class, 'index'])
+
+// Profil tanaman cabai dan konfigurasi pupuk
+Route::get('/', [WelcomeController::class, 'index'])
+    ->name('welcome');
+
+
+// ======================================================
+// 2. DASHBOARD GREENHOUSE
+// ======================================================
+
+// Monitoring Living Greenhouse
+Route::get('/dashboard', [DashboardController::class, 'index'])
     ->name('dashboard');
 
+
+// ======================================================
+// 3. MONITORING SENSOR ESP32-S3
+// ======================================================
+
+// Mengambil pembacaan sensor terbaru
 Route::get('/live-data', [DashboardController::class, 'getLiveData'])
     ->name('live.data');
 
 
 // ======================================================
-// AUTHENTICATION
+// 4. AUTHENTICATION OPERATOR
 // ======================================================
+
 Route::middleware('guest')->group(function () {
 
-    Route::get('/login', [AuthController::class, 'showLoginForm'])
-        ->name('login');
+    Route::get('/login', [
+        AuthController::class,
+        'showLoginForm'
+    ])->name('login');
 
-    Route::post('/login', [AuthController::class, 'login'])
-        ->name('login.post');
+    Route::post('/login', [
+        AuthController::class,
+        'login'
+    ])->name('login.post');
+
 });
 
-Route::post('/logout', [AuthController::class, 'logout'])
-    ->name('logout')
-    ->middleware('auth');
+Route::post('/logout', [
+    AuthController::class,
+    'logout'
+])
+    ->middleware('auth')
+    ->name('logout');
 
 
 // ======================================================
-// CONTROL ENDPOINT
+// 5. CONTROL AKTUATOR
 // ======================================================
-// Sebaiknya hanya operator/login yang dapat mengubah aktuator.
-Route::post('/api/controls/update', [DashboardController::class, 'updateControl'])
+
+// Mengubah status aktuator
+// Hanya pengguna login yang diizinkan
+Route::post('/api/controls/update', [
+    DashboardController::class,
+    'updateControl'
+])
     ->middleware('auth')
     ->name('controls.update');
 
 
 // ======================================================
-// EXPORT DATA
+// 6. EXPORT RIWAYAT DATA
 // ======================================================
+
 Route::middleware('auth')->group(function () {
 
-    Route::get('/export-excel', [DashboardController::class, 'exportExcel'])
-        ->name('export.excel');
+    // Export Excel
+    Route::get('/export-excel', [
+        DashboardController::class,
+        'exportExcel'
+    ])->name('export.excel');
 
-    Route::get('/export-csv', [DashboardController::class, 'exportCSV'])
-        ->name('export.csv');
+    // Export CSV
+    Route::get('/export-csv', [
+        DashboardController::class,
+        'exportCSV'
+    ])->name('export.csv');
+
 });
