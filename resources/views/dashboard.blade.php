@@ -38,6 +38,9 @@ h1,h2,h3,h4{font-family:Outfit,sans-serif}button,input{font:inherit}button{curso
 @keyframes waterflow{to{background-position:54px 0}}@keyframes rotate{to{transform:rotate(360deg)}}@keyframes sway{50%{transform:rotate(3deg)}}@keyframes levitate{50%{transform:translateY(-13px) rotate(-3deg)}}@keyframes halo{50%{transform:scale(1.1);opacity:.6}}@keyframes rise{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:1120px){.metrics{grid-template-columns:repeat(3,1fr)}.two-col{grid-template-columns:1fr}}@media(max-width:700px){.metrics{grid-template-columns:repeat(2,1fr)}.dashboard-top{flex-direction:column;align-items:flex-start}.dashboard-banner{padding:25px;min-height:150px}.banner-art{font-size:48px}.diagram-row{gap:3px}.tank{width:68px;height:95px}.mixer{width:77px;height:87px}.pipe{min-width:7px}.diagram-bottom,.zones{grid-template-columns:repeat(2,minmax(0,1fr))}.grid3,.calc,.cost-breakdown{grid-template-columns:1fr}.history-overview,.history-data{grid-template-columns:repeat(2,1fr)}.sensor-status-panel{flex-direction:column;align-items:flex-start}}@media(max-width:410px){.banner-art{display:none}.diagram{padding:15px 9px}.tank{width:59px;font-size:9px}.mixer{width:68px}.plant-node{padding:12px 4px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+.atan-sensor-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+.atan-sensor-actions .btn{white-space:nowrap;padding:11px 16px}
+@media(max-width:700px){.sensor-log-section .sectionhead{align-items:flex-start;flex-direction:column}.atan-sensor-actions{width:100%;justify-content:space-between}}
 </style>
 
    <script src="https://cdn.jsdelivr.net/npm/chart.js">
@@ -83,7 +86,13 @@ h1,h2,h3,h4{font-family:Outfit,sans-serif}button,input{font:inherit}button{curso
        </div>
        <span class="pill" id="sensor-source">Menunggu Koneksi</span>
      </div>
-     <div class="two-col reveal">
+           <section class="panel" style="margin:12px 0 18px" aria-label="Diagnostik sensor mentah">
+        <span class="eyebrow">DIAGNOSTIK / PEMBACAAN MENTAH</span>
+        <h3>ADC Sensor &amp; NPK Global</h3>
+        <p class="sub">Pembacaan mentah ESP32, bukan persentase Soil atau nilai pH/TDS terkalibrasi. NPK ditampilkan global, bukan diasumsikan per zona.</p>
+        <div class="grid3" id="atan-raw-diagnostic"><div class="mini">Menunggu telemetry diagnostik...</div></div>
+      </section>
+<div class="two-col reveal">
       <div class="panel">
        <div class="sectionhead" style="margin:0 0 15px">
         <div>
@@ -192,7 +201,7 @@ h1,h2,h3,h4{font-family:Outfit,sans-serif}button,input{font:inherit}button{curso
         <span>
          Pompa Air
         </span>
-        <strong>
+        <strong id="pump-state">
          Menunggu
         </strong>
        </div>
@@ -200,7 +209,7 @@ h1,h2,h3,h4{font-family:Outfit,sans-serif}button,input{font:inherit}button{curso
         <span>
          Mixer Nutrisi
         </span>
-        <strong>
+        <strong id="mixer-state">
          Menunggu
         </strong>
        </div>
@@ -208,7 +217,7 @@ h1,h2,h3,h4{font-family:Outfit,sans-serif}button,input{font:inherit}button{curso
         <span>
          Sensor NPK Tanah
         </span>
-        <strong>
+        <strong id="global-npk-state">
          N / P / K
         </strong>
        </div>
@@ -315,6 +324,21 @@ h1,h2,h3,h4{font-family:Outfit,sans-serif}button,input{font:inherit}button{curso
             konsumsi perangkat, dan harga pupuk terdaftar.</span>
         </div>
         <div class="cost-breakdown" id="automatic-cost-breakdown"></div>
+        <div id="atan-nutrient-cost" class="panel" style="margin:16px 0;background:#f4f8ef">
+          <span class="eyebrow">COST / PUPUK A + B + AIR + LISTRIK</span>
+          <h3>Rekap Bahan Nutrisi & Listrik</h3>
+          <p class="sub">Resep adalah perkiraan. Biaya pupuk dan air dicatat saat batch benar-benar dibuat; energi berasal dari aktivitas relay ESP32.</p>
+          <div class="grid3" style="margin:14px 0">
+            <div class="mini"><span>Resep per batch (estimasi)</span><strong id="nc-recipe">—</strong></div>
+            <div class="mini"><span>Batch tercatat hari ini</span><strong id="nc-batches">—</strong></div>
+            <div class="mini"><span>Pupuk hari ini (A+B)</span><strong id="nc-fertilizer">—</strong></div>
+            <div class="mini"><span>Air batch hari ini</span><strong id="nc-water">—</strong></div>
+            <div class="mini"><span>Listrik hari ini</span><strong id="nc-electricity">—</strong></div>
+            <div class="mini"><span>Total biaya tercatat hari ini</span><strong id="nc-total">—</strong></div>
+          </div>
+          <p id="nc-info" class="footnote">Menunggu API biaya Laravel.</p>
+          <a href="/#fertilizer-section" class="btn dark">Atur Pupuk A/B & Air ↗</a>
+        </div>
         <!-- Ringkasan tiga periode memakai konfigurasi biaya yang sama. -->
         <div class="at-v5-cost">
             <span class="eyebrow">Rekap &amp; Proyeksi Periode</span>
@@ -422,18 +446,23 @@ h1,h2,h3,h4{font-family:Outfit,sans-serif}button,input{font:inherit}button{curso
         <div>
          <span class="eyebrow">TIME SERIES / SENSOR LOG</span>
          <h3>Riwayat Pembacaan Sensor</h3>
-         <p class="sub">Terisi hanya dari payload ESP32-S3 yang valid. Pembacaan ke-201 menggantikan data paling lama.</p>
+         <p class="sub">Hasil aktual ESP32-S3; Soil ADC merupakan nilai mentah, sedangkan N/P/K berasal dari satu sensor global dan bukan hasil pengukuran tiap blok. Pembacaan ke-201 menggantikan data paling lama.</p>
         </div>
-        <span class="pill" id="sensor-log-count">0 / 200</span>
+        <div class="atan-sensor-actions">
+          <span class="pill" id="sensor-log-count">0 / 200</span>
+          <button id="download-sensor-csv" type="button" class="btn dark" onclick="downloadSensorCSV()" aria-label="Unduh riwayat pembacaan sensor dalam format CSV">
+            ↓ Download CSV
+          </button>
+        </div>
        </div>
        <div class="sensor-table-wrap">
         <table class="sensor-table">
          <thead>
           <tr>
            <th>Waktu</th><th>Sumber</th><th>Zona</th>
-           <th>Soil %</th><th>Suhu Udara °C</th><th>RH %</th>
+           <th>Soil %</th><th>Soil ADC mentah</th><th>Suhu Udara °C</th><th>RH %</th>
            <th>Suhu Air °C</th><th>pH</th><th>EC</th><th>TDS ppm</th>
-           <th>N mg/kg</th><th>P mg/kg</th><th>K mg/kg</th>
+           <th>N global*</th><th>P global*</th><th>K global*</th>
            <th>Flow L/min</th><th>Valve</th><th>Pompa</th><th>Mixer</th>
           </tr>
          </thead>
@@ -612,6 +641,10 @@ const sensorSeed = {
     tds: null
 };
 
+// Diagnostik global dari endpoint /api/telemetry/latest (bukan persentase).
+let soilAdcByZone = { A: null, B: null, C: null };
+let globalNpk = { n: null, p: null, k: null };
+
 const zoneSensors = [
     { soil: null, flow: null, n: null, p: null, k: null },
     { soil: null, flow: null, n: null, p: null, k: null },
@@ -744,7 +777,7 @@ function renderDashboard() {
                 <span>
                     <img src="/img/cabai2.png" alt="Cabai" class="w-6 h-6 object-contain mx-auto my-1 block">
                 </span>
-                <small>${sensorText(sensor.soil, "%")}</small>
+                <small>${isValidNumber(sensor.soil) ? sensorText(sensor.soil, '%', 1) : (isValidNumber(soilAdcByZone[label]) ? soilAdcByZone[label] + ' ADC (mentah)' : '—')}</small>
             </button>
         `;
     }).join('');
@@ -778,11 +811,15 @@ function selectZone(label) {
     });
 
     const readings = [
-        ['Kelembapan media tanam', sensorText(sensor.soil, ' %')],
+        ['Kelembapan media tanam (terkalibrasi)', sensorText(sensor.soil, ' %')],
+        ['Soil (ADC mentah)', sensorText(soilAdcByZone[label], ' ADC')],
+        ['Suhu udara (global)', sensorText(sensorSeed.temp, ' °C', 1)],
+        ['Kelembapan udara (global)', sensorText(sensorSeed.humidity, ' %', 1)],
+        ['Suhu air (global)', sensorText(sensorSeed.waterTemp, ' °C', 1)],
         ['Laju aliran', sensorText(sensor.flow, ' L/menit', 1)],
-        ['Nitrogen (N)', sensorText(sensor.n, ' mg/kg')],
-        ['Fosfor (P)', sensorText(sensor.p, ' mg/kg')],
-        ['Kalium (K)', sensorText(sensor.k, ' mg/kg')],
+        ['Nitrogen (N) global / register mentah', sensorText(globalNpk.n, ' raw')],
+        ['Fosfor (P) global / register mentah', sensorText(globalNpk.p, ' raw')],
+        ['Kalium (K) global / register mentah', sensorText(globalNpk.k, ' raw')],
         ['pH larutan', sensorText(sensorSeed.ph)],
         ['EC larutan', sensorText(sensorSeed.ec, ' mS/cm')]
     ];
@@ -800,6 +837,8 @@ function selectZone(label) {
     const pump = sensor.pump === true ? 'ON'
         : sensor.pump === false ? 'OFF' : '—';
     $('valve-state').textContent = valve;
+    if ($('global-npk-state')) $('global-npk-state').textContent =
+        ['n','p','k'].map(k => sensorText(globalNpk[k])).join(' / ') + ' (global)';
     if ($('pump-state')) $('pump-state').textContent = pump;
     if ($('mixer-state')) $('mixer-state').textContent =
         sensor.mixer === true ? 'ON' : sensor.mixer === false ? 'OFF' : '—';
@@ -848,10 +887,10 @@ function refreshForecast() {
         `${Math.max(0, plant.duration - age)} hari (estimasi)`;
     $('stage-label').textContent = stage[0];
 
-    $('phase-water').textContent = '—';$('phase-fert').textContent = '—';
-    $('phase-cost').textContent = '—';$('total-cost').textContent = '—';
-    $('n-index').textContent = '—';$('p-index').textContent = '—';
-    $('k-index').textContent = '—';$('stage-requirement').innerHTML = [
+    // Angka biaya akan diisi ulang oleh renderAutomaticCost() dari API.
+    $('n-index').textContent = sensorText(globalNpk.n);
+    $('p-index').textContent = sensorText(globalNpk.p);
+    $('k-index').textContent = sensorText(globalNpk.k);$('stage-requirement').innerHTML = [
         ['💧 Air', 'Menunggu', 'Total air dari flow meter'],
         ['🧪 Larutan pupuk', 'Menunggu', 'Total dosis dari aktuator'],
         ['🌱 NPK', 'Menunggu', 'Sensor RS485 N/P/K']
@@ -926,7 +965,7 @@ let liveSensorConnected = false;
 let sensorRecords = [];
 let lastSensorTimestamp = null;
 let lastValidTelemetryAt = 0;
-const SENSOR_STALE_AFTER_MS = 15000;
+const SENSOR_STALE_AFTER_MS = 20000;
 
 
 // Koneksi ESP32 murni berdasarkan heartbeat, tidak bergantung pada pembacaan sensor.
@@ -1009,6 +1048,10 @@ function applyRealSensorData(data) {
     }
 
     const keys = ['temp', 'humidity', 'waterTemp', 'ph', 'ec', 'tds'];
+    // Kontrak raw diagnostics dan NPK global tidak boleh dianggap data per zona.
+    const raw = data.diagnostic || {};
+    const soilRaw = Array.isArray(raw.soil_adc) ? raw.soil_adc : [];
+    const npkRaw = data.npk || {};
     for (const key of keys) {
         if (data[key] !== null && data[key] !== undefined &&
             !isValidNumber(data[key])) {
@@ -1038,7 +1081,8 @@ function applyRealSensorData(data) {
             ['soil', 'flow', 'n', 'p', 'k'].some(key =>
                 isValidNumber(item[key])
             )
-        );
+        ) || soilRaw.some(isValidNumber) ||
+        ['n', 'p', 'k'].some(k => isValidNumber(npkRaw[k]));
 
     if (!hasMeasurement) {
         throw new Error('Belum ada nilai sensor aktual dalam payload.');
@@ -1046,6 +1090,12 @@ function applyRealSensorData(data) {
 
     keys.forEach((key) => {
         sensorSeed[key] = isValidNumber(data[key]) ? data[key] : null;
+    });
+    ['A','B','C'].forEach((code, index) => {
+        soilAdcByZone[code] = isValidNumber(soilRaw[index]) ? soilRaw[index] : null;
+    });
+    ['n','p','k'].forEach(k => {
+        globalNpk[k] = isValidNumber(npkRaw[k]) ? npkRaw[k] : null;
     });
     getBlocks().forEach((block, i) => {
         const item = byCode.get(block.code);
@@ -1068,13 +1118,14 @@ function addSensorRecords(timestamp, receivedCodes) {
             source: sensorSourceLabel(),
             zone: getBlocks()[i].code,
             soil: item.soil,
+            soilAdc: soilAdcByZone[getBlocks()[i].code] ?? null,
             temp: sensorSeed.temp,
             humidity: sensorSeed.humidity,
             waterTemp: sensorSeed.waterTemp,
             ph: sensorSeed.ph,
             ec: sensorSeed.ec,
             tds: sensorSeed.tds,
-            n: item.n, p: item.p, k: item.k,
+            n: globalNpk.n, p: globalNpk.p, k: globalNpk.k,
             flow: item.flow,
             valve: item.valve === true ? 'ON' : item.valve === false ? 'OFF' : '—',
             pump: item.pump === true ? 'ON' : item.pump === false ? 'OFF' : '—',
@@ -1103,6 +1154,7 @@ function renderSensorRecords() {
             record.source,
             record.zone,
             record.soil,
+            record.soilAdc,
             record.temp,
             record.humidity,
             record.waterTemp,
@@ -1151,10 +1203,17 @@ function refreshLiveSensorDisplay() {
 
     zoneSensors.forEach((item, i) => {
         const small = $('zone-' + getBlocks()[i].code)?.querySelector('small');
-        if (small) small.textContent = sensorText(item.soil, '%');
+        if (small) small.textContent = isValidNumber(item.soil)
+            ? sensorText(item.soil, '%', 1)
+            : (isValidNumber(soilAdcByZone[getBlocks()[i].code])
+                ? soilAdcByZone[getBlocks()[i].code] + ' ADC (mentah)' : '—');
     });
 
     selectZone(zone);
+    ['n','p','k'].forEach((k) => {
+        const node = $(k + '-index');
+        if (node) node.textContent = sensorText(globalNpk[k]);
+    });
     renderDeviceConnection();
     renderSensorRecords();
     renderHistory();
@@ -1185,6 +1244,8 @@ async function updateSensorsAutomatically() {
         console.warn('ESP32-S3 offline / payload tidak valid:', error.message);
         liveSensorConnected = false;
         Object.keys(sensorSeed).forEach(key => { sensorSeed[key] = null; });
+        ['A','B','C'].forEach(code => { soilAdcByZone[code] = null; });
+        ['n','p','k'].forEach(k => { globalNpk[k] = null; });
         zoneSensors.forEach(item => {
             ['soil', 'flow', 'n', 'p', 'k', 'valve', 'pump', 'mixer']
                 .forEach(key => { item[key] = null; });
@@ -1290,51 +1351,89 @@ function daysBetweenLocalDates(startDate, endDate) {
     );
     return Math.floor((b - a) / 86400000);
 }
+// Ringkasan biaya diisi hanya dari data backend, bukan angka default/simulasi.
+let atanCostLatest = null;
+const costMoney = v => 'Rp ' + Number(v || 0).toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 6});
+const costNum = v => Number(v || 0);
+function calculateDailyCosts() { return atanCostLatest?.today || null; }
 function renderPeriodCosts() {
     const target = $('cost-period-grid');
     if (!target) return;
-    target.innerHTML = [
-        'Hari Ini', 'Bulan Ini', 'Bulan Depan'
-    ].map(label => `
-        <article class="rounded-2xl border border-emerald-100 bg-[#f8faf3] p-5">
-            <h4 class="font-bold text-emerald-900">${label}</h4>
-            <p class="mt-2 text-xs text-slate-500">Air · Pupuk · Listrik</p>
-            <strong class="mt-3 block text-xl text-emerald-950">—</strong>
-            <small class="text-slate-500">Menunggu data pemakaian aktual</small>
-        </article>
-    `).join('');
+    if (!atanCostLatest) {
+        target.innerHTML = '<p class="sub">Menunggu data biaya dari Laravel...</p>';
+        return;
+    }
+    const cards = [
+        ['Hari Ini', atanCostLatest.today],
+        ['Bulan Ini (tercatat)', atanCostLatest.month],
+        ['Bulan Depan', null]
+    ];
+    target.innerHTML = cards.map(([label, period]) => {
+        if (!period) return `<article class="rounded-2xl border border-emerald-100 bg-[#f8faf3] p-5"><h4>${label}</h4><strong>—</strong><small>Belum ada dasar proyeksi yang tervalidasi</small></article>`;
+        return `<article class="rounded-2xl border border-emerald-100 bg-[#f8faf3] p-5">
+          <h4 class="font-bold text-emerald-900">${label}</h4>
+          <small>Air ${costMoney(period.water)} · Pupuk ${costMoney(period.fertilizer)} · Listrik ${costMoney(period.electricity)}</small>
+          <strong class="mt-3 block text-xl text-emerald-950">${costMoney(period.total)}</strong>
+          <small>${period.batches} batch · ${period.events} aktivitas relay</small>
+        </article>`;
+    }).join('');
 }
-
-function calculateDailyCosts() {
-    return {
-        liters: null,
-        concentrateMl: null,
-        electricityKwh: null,
-        waterCost: null,
-        fertilizerCost: null,
-        electricityCost: null
-    };
-}
-
 function renderAutomaticCost() {
-    $('automatic-cost-breakdown').innerHTML = [
-        '💧 Air', '🧪 Pupuk · ' + fertilizerProfile.name, '⚡ Listrik'
-    ].map(label => `
-        <article>
-            <h4>${escapeHtml(label)}</h4>
-            <span>Biaya hari ini</span>
-            <strong>—</strong>
-            <small>Menunggu pemakaian terukur</small>
-            <hr class="my-3 border-t border-emerald-100">
-            <span>Perkiraan 30 hari ke depan</span>
-            <strong>—</strong>
-        </article>
-    `).join('');
-    $('phase-cost').textContent = '—';
-    $('total-cost').textContent = '—';
+    const target = $('automatic-cost-breakdown');
+    if (!target) return;
+    const today = atanCostLatest?.today;
+    if (!today) {
+        target.innerHTML = ['💧 Air','🧪 Pupuk A + B','⚡ Listrik'].map(label =>
+            `<article><h4>${label}</h4><strong>—</strong><small>Menunggu data Laravel</small></article>`).join('');
+        return;
+    }
+    const rows = [
+       ['💧 Air (batch)', today.water, 'Volume air resep dicatat saat batch dibuat'],
+       ['🧪 Pupuk A + B', today.fertilizer, 'Biaya bahan pada batch yang dicatat'],
+       ['⚡ Listrik (relay)', today.electricity, 'Estimasi daya nominal · Rp1.350/kWh']
+    ];
+    target.innerHTML = rows.map(([label,value,note]) => `<article><h4>${label}</h4><span>Biaya hari ini</span><strong>${costMoney(value)}</strong><small>${note}</small></article>`).join('');
+    if ($('phase-cost')) $('phase-cost').textContent = costMoney(today.total);
+    if ($('phase-water')) $('phase-water').textContent = atanCostLatest.today.batches ? today.waterLiters.toLocaleString('id-ID',{maximumFractionDigits:3}) + ' L (batch)' : '—';
+    if ($('phase-fert')) $('phase-fert').textContent = '—';
+    if ($('total-cost')) $('total-cost').textContent = '—';
     renderPeriodCosts();
 }
-
+// Biaya pupuk dan air dari event relay TIDAK ditambahkan lagi jika batch sudah
+// mencatat bahan-bahan yang sama; ini mencegah double-count.
+async function atanRefreshCosts() {
+    try {
+        const responses = await Promise.all([
+            fetch('/api/nutrient/summary', {cache:'no-store'}),
+            fetch('/api/cost/summary', {cache:'no-store'})
+        ]);
+        if (responses.some(r => !r.ok)) throw new Error('HTTP ' + responses.map(r=>r.status).join('/'));
+        const [nutrient, electrical] = await Promise.all(responses.map(r=>r.json()));
+        const period = key => {
+            const batch = nutrient[key] || {}, relay = electrical[key] || {};
+            const a=costNum(batch.fertilizer_a_rp), b=costNum(batch.fertilizer_b_rp);
+            const fertilizer=a+b, water=costNum(batch.water_rp), electricity=costNum(relay.electricity_rp);
+            return {a,b,fertilizer,water,electricity,total:fertilizer+water+electricity,
+                batches:costNum(batch.batches),events:costNum(relay.events),waterLiters:costNum(batch.water_l),
+                kwh:costNum(relay.energy_kwh)};
+        };
+        atanCostLatest={today:period('today'),month:period('month'),all:period('all')};
+        const t=atanCostLatest.today, r=nutrient.recipe_estimate_per_batch;
+        const set=(id,value)=>{const e=$(id);if(e)e.textContent=value};
+        set('nc-recipe',r?costMoney(r.total_rp):'Belum ada resep');
+        set('nc-batches',String(t.batches));
+        set('nc-fertilizer',costMoney(t.fertilizer));
+        set('nc-water',costMoney(t.water));
+        set('nc-electricity',costMoney(t.electricity)+' / '+t.kwh.toFixed(9)+' kWh');
+        set('nc-total',costMoney(t.total));
+        set('nc-info','Basis: batch dicatat secara manual dan listrik diestimasi dari relay. Debit/biaya cairan dari relay tidak dijumlah ulang.');
+        renderAutomaticCost();
+    } catch(e) {
+        atanCostLatest=null;
+        const info=$('nc-info');if(info)info.textContent='API biaya belum dapat dibaca: '+e.message;
+        renderAutomaticCost();
+    }
+}
 function escapeHtml(value) {
     return String(value).replace(/[&<>"']/g, (c) => ({
         '&': '&amp;', '<': '&lt;', '>': '&gt;',
@@ -1346,9 +1445,9 @@ function updateDecisionExplanation() {
     const sensor = zoneSensors[findZoneIndex(zone)];
     if (!sensor || !liveSensorConnected ||
         !isValidNumber(sensor.soil) || !isValidNumber(sensorSeed.temp)) {
-        $('decision-explanation').textContent =
-            'Menunggu suhu DHT22 dan kelembapan tanah aktual dari ESP32-S3. ' +
-            'Analisis keputusan belum dapat dilakukan.';
+        $('decision-heading').textContent = 'Menunggu kalibrasi Soil';
+        $('decision-reason').textContent =
+            'Suhu dan ADC Soil sudah bisa dipantau, tetapi aturan irigasi menunggu kelembapan tanah (%) terkalibrasi. Tidak ada perintah pompa otomatis.';
         return;
     }
     const dry = sensor.soil < 60;
@@ -1369,7 +1468,8 @@ function updateDecisionExplanation() {
         'Ini penjelasan aturan pemantauan, bukan hasil Decision Tree terlatih.',
         'Status relay aktual harus dibaca dari perangkat; tidak ada perintah otomatis.'
     ];
-    $('decision-explanation').textContent = message.join(' ');
+    $('decision-heading').textContent = 'Analisis Zona ' + zone;
+    $('decision-reason').textContent = message.join(' ');
 }
 
 const botanyKnowledge = {
@@ -1588,14 +1688,76 @@ function resetSimulation() {
     refreshForecast();
     $('dashboard').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
+// Mengunduh data yang tersimpan pada tabel Riwayat Pembacaan Sensor.
+// CSV memakai ; sebagai pemisah agar Excel regional Indonesia membaca kolom terpisah.
+function downloadSensorCSV() {
+    if (!sensorRecords.length) {
+        window.alert('Belum ada riwayat pembacaan sensor untuk diunduh.');
+        return;
+    }
+
+    const headings = [
+        'Waktu Pembacaan', 'Sumber Data', 'Zona', 'Soil Moisture (%)',
+        'Soil ADC (mentah)', 'Suhu Udara (°C)', 'Kelembapan Udara (%)',
+        'Suhu Air (°C)', 'pH', 'EC (mS/cm)', 'TDS (ppm)',
+        'Nitrogen Global (raw)', 'Fosfor Global (raw)', 'Kalium Global (raw)',
+        'Aliran (L/menit)', 'Valve', 'Pompa', 'Mixer'
+    ];
+
+    const formatDate = (timestamp) => {
+        const date = new Date(timestamp);
+        if (Number.isNaN(date.getTime())) return '';
+        const pad = x => String(x).padStart(2, '0');
+        return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()} ` +
+               `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+    };
+
+    const safeCell = (value) => {
+        if (value === null || value === undefined ||
+            (typeof value === 'number' && !Number.isFinite(value)) || value === '—') return '';
+        // Angka memakai koma desimal agar cocok dengan Excel regional Indonesia.
+        if (typeof value === 'number') return String(value).replace('.', ',');
+        let text = String(value).replace(/\r?\n/g, ' ').trim();
+        // Hindari interpretasi nilai teks dari sensor sebagai rumus spreadsheet.
+        if (/^[=+@\-\t\r]/.test(text)) text = "'" + text;
+        return text;
+    };
+    const csvEscape = value => '"' + safeCell(value).replace(/"/g, '""') + '"';
+    const records = [...sensorRecords].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+    const rows = records.map(item => [
+        formatDate(item.timestamp), item.source, item.zone,
+        item.soil, item.soilAdc, item.temp, item.humidity, item.waterTemp,
+        item.ph, item.ec, item.tds, item.n, item.p, item.k,
+        item.flow, item.valve, item.pump, item.mixer
+    ]);
+
+    // Baris sep=; membantu Excel mengenali delimiter tanpa wizard impor.
+    const csv = '\uFEFFsep=;\r\n' + [headings, ...rows]
+        .map(row => row.map(csvEscape).join(';'))
+        .join('\r\n') + '\r\n';
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    const now = new Date();
+    const datePart = [now.getFullYear(),
+        String(now.getMonth()+1).padStart(2, '0'),
+        String(now.getDate()).padStart(2, '0')].join('-');
+    link.href = url;
+    link.download = `ATAN_Riwayat_Sensor_${datePart}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
 function exportHistoryCSV() {
     const headings = [
-        'Waktu', 'Sumber', 'Blok', 'Soil (%)', 'Suhu (C)',
+        'Waktu', 'Sumber', 'Blok', 'Soil (%)', 'Soil ADC mentah', 'Suhu (C)',
         'RH (%)', 'pH', 'EC (mS/cm)', 'Flow (L/min)', 'Valve'
     ];
     const rows = sensorRecords.map(item => [
         new Date(item.timestamp).toISOString(), item.source, item.zone,
-        item.soil, item.temp, item.humidity, item.ph, item.ec,
+        item.soil, item.soilAdc, item.temp, item.humidity, item.ph, item.ec,
         item.flow, item.valve
     ]);
     const csv = [headings, ...rows].map(row =>
@@ -1688,5 +1850,35 @@ if ($('dashboard')) {
 </div>
 
 
+<script>
+// Monitor diagnostik langsung dari Laravel; status ESP32 tetap di-handle heartbeat.
+(async function atanRawDiagnostics() {
+  const el=document.getElementById('atan-raw-diagnostic');
+  if(!el) return;
+  const fmt=(n,unit='') => typeof n==='number' && Number.isFinite(n) ? String(n)+unit : '—';
+  const add=(name,value)=>{const div=document.createElement('div');div.className='mini';
+    const title=document.createElement('span');title.textContent=name;
+    const v=document.createElement('strong');v.textContent=value;
+    div.append(title,v);el.append(div);};
+  async function refresh(){try{
+    const r=await fetch('/api/telemetry/latest',{cache:'no-store'});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const data=await r.json();
+    const d=data.diagnostic||{}, n=data.npk||{};
+    el.replaceChildren();
+    const soils=Array.isArray(d.soil_adc)?d.soil_adc:[];
+    ['A','B','C'].forEach((z,i)=>add('Soil '+z+' (ADC mentah)',fmt(soils[i])));
+    add('pH (ADC mentah)',fmt(d.ph_adc));
+    add('pH GPIO (V)',fmt(d.ph_voltage,' V'));
+    add('TDS (ADC mentah)',fmt(d.tds_adc));
+    add('TDS GPIO (V)',fmt(d.tds_voltage,' V'));
+    add('N global (mg/kg raw)',fmt(n.n));
+    add('P global (mg/kg raw)',fmt(n.p));
+    add('K global (mg/kg raw)',fmt(n.k));
+  } catch(e){el.replaceChildren(); add('Status diagnostik','Gagal mengambil API: '+e.message);}}
+  await refresh();setInterval(refresh,5000);
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",()=>{atanRefreshCosts();setInterval(atanRefreshCosts,5000);});</script>
 </body>
 </html>

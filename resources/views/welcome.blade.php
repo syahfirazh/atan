@@ -1,126 +1,351 @@
 <!DOCTYPE html>
+
 <html lang="id">
+
 <head>
+
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+
   <meta name="theme-color" content="#143e35">
+
   <title>ATAN si TATANEN — The Art of Growing</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
+
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap" rel="stylesheet">
+
   <script src="https://cdn.tailwindcss.com"></script>
+
   <script>tailwind.config={theme:{extend:{colors:{forest:'#143e35',ink:'#17372e',cream:'#fbfaf4',sage:'#dfe8d7',lime:'#cbe897',clay:'#d78d68',moss:'#6f9277'},fontFamily:{sans:['Manrope','sans-serif'],serif:['Playfair Display','serif']},boxShadow:{soft:'0 22px 75px rgba(24,56,41,.10)',float:'0 30px 80px rgba(8,39,28,.18)'}}}};</script>
+
   <style>
+
     :root{color-scheme:light}html{scroll-behavior:smooth}body{font-family:Manrope,sans-serif;background:#fbfaf4;color:#17372e}*{box-sizing:border-box}
+
     .noise{background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.1'/%3E%3C/svg%3E")}
+
     @keyframes drift{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-15px) rotate(2deg)}}
+
     @keyframes sway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(5deg)}}
+
     @keyframes pour{0%,32%,100%{transform:rotate(-15deg)}44%,75%{transform:rotate(17deg)}}
+
     @keyframes fall{0%{transform:translate(-7px,-14px);opacity:0}22%{opacity:1}88%{opacity:.8}100%{transform:translate(28px,70px);opacity:0}}
+
     @keyframes emerge{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:translateY(0)}}
+
     @keyframes twinkle{0%,100%{opacity:.4;transform:scale(.8)}50%{opacity:1;transform:scale(1.15)}}
+
     .float-plant{animation:drift 7s ease-in-out infinite}.sway{transform-origin:bottom center;animation:sway 4.8s ease-in-out infinite}.water-can{transform-origin:70% 85%;animation:pour 4.1s ease-in-out infinite}.drop{animation:fall 1.5s linear infinite}.drop:nth-child(2){animation-delay:.4s}.drop:nth-child(3){animation-delay:.8s}.twinkle{animation:twinkle 3.4s ease-in-out infinite}.enter{animation:emerge .8s ease both}
+
     .reveal{opacity:0;transform:translateY(26px);transition:opacity .75s ease,transform .75s ease}.reveal.visible{opacity:1;transform:translateY(0)}
+
     .phase-button{transition:transform .3s,box-shadow .3s,border-color .3s,background .3s}.phase-button:hover{transform:translateY(-8px)}.phase-button.active{transform:translateY(-9px);box-shadow:0 18px 55px rgba(15,65,41,.14);border-color:#4e8060;background:#f0f7e9}
+
     .detail-swap{animation:emerge .43s ease both}.hero-glow{background:radial-gradient(ellipse at 70% 32%,#b3d3a9 0%,#7ea792 30%,#326654 63%,#183e34 100%)}
+
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}.reveal{opacity:1;transform:none}}
-  </style>
-</head>
-<body class="overflow-x-hidden">
-<div class="relative isolate overflow-hidden">
-  <div class="pointer-events-none absolute -left-28 top-96 h-[470px] w-[470px] rounded-full bg-[#e4ecd7] blur-[110px] opacity-70"></div>
-  <header class="relative z-20 mx-auto flex max-w-[1440px] items-center justify-between px-6 py-7 md:px-12 lg:px-20">
-    <a href="{{ route('welcome') }}" class="group flex items-center gap-3"><span class="grid h-11 w-11 place-items-center rounded-2xl bg-forest text-lime shadow-lg shadow-emerald-950/10 group-hover:-rotate-12 transition-transform">✳</span><span class="text-[15px] font-extrabold tracking-[-.04em]">ATAN <span class="font-medium text-moss">si TATANEN</span></span></a>
-    <span class="hidden items-center gap-2 rounded-full border border-[#d8e4d6] bg-white/70 px-4 py-2 text-[10px] font-extrabold uppercase tracking-[.2em] text-[#567763] sm:inline-flex"><span class="h-2 w-2 rounded-full bg-[#84ad79]"></span> Grow with intelligence</span>
-    <a href="#fertilizer-section" class="rounded-full bg-[#e6eedf] px-5 py-3 text-xs font-extrabold text-forest transition hover:bg-lime">Atur Nutrisi <span class="ml-1">↗</span></a>
-  </header>
-  <main>
-  <section class="relative mx-auto grid max-w-[1440px] items-center gap-12 px-6 pb-24 pt-8 md:px-12 lg:grid-cols-[.94fr_1.06fr] lg:px-20 lg:pb-32 lg:pt-16">
-    <div class="relative z-10 enter">
-      <span class="mb-7 inline-flex items-center gap-2 rounded-full border border-[#d9e5d2] bg-white px-4 py-2 text-[10px] font-black uppercase tracking-[.21em] text-moss"><span class="text-clay">✦</span> Botanical intelligence · 01</span>
-      <h1 class="max-w-[620px] font-serif text-[clamp(3.8rem,7vw,7.4rem)] leading-[.99] tracking-[-.072em] text-forest">Every seed<br>has a <span class="italic text-[#7d9d78]">story.</span></h1>
-      <p class="mt-9 max-w-[490px] text-[15px] leading-[2] text-[#688077]">Dari benih kecil sampai cabai pertama dipetik. Kenali perjalanan pertumbuhan, pahami kebutuhan nutrisi, dan kelola greenhouse dengan lebih cerdas.</p>
-      <div class="mt-10 flex flex-wrap items-center gap-4"><a href="#growth" class="group inline-flex items-center gap-3 rounded-full bg-forest px-7 py-4 text-[13px] font-bold text-white shadow-xl shadow-[#173e30]/15 transition hover:-translate-y-1 hover:bg-[#245746]">Jelajahi Pertumbuhan <span class="transition-transform group-hover:translate-x-1">↗</span></a><a href="#fertilizer-section" class="inline-flex items-center gap-2 px-2 py-3 text-[13px] font-bold text-[#55715f] hover:text-forest">Konfigurasi pupuk <span>→</span></a></div>
-      <div class="mt-16 flex items-center gap-6 border-t border-[#dce5d8] pt-7"><div><strong class="font-serif text-3xl text-forest">05</strong><p class="mt-1 text-[10px] uppercase tracking-[.18em] text-[#7d9185]">Fase tumbuh</p></div><span class="h-10 w-px bg-[#dce5d8]"></span><div><strong class="font-serif text-3xl text-forest">120<span class="text-xl">±</span></strong><p class="mt-1 text-[10px] uppercase tracking-[.18em] text-[#7d9185]">Hari referensi</p></div><span class="h-10 w-px bg-[#dce5d8]"></span><div><strong class="font-serif text-3xl text-forest">01</strong><p class="mt-1 text-[10px] uppercase tracking-[.18em] text-[#7d9185]">Fokus: cabai</p></div></div>
-    </div>
-    <div class="relative mx-auto w-full max-w-[720px] enter" style="animation-delay:.12s">
-      <div class="hero-glow relative aspect-[.92] overflow-hidden rounded-[42px] shadow-float sm:aspect-[1.1] lg:aspect-[.9]"><div class="noise absolute inset-0 opacity-[.19]"></div><div class="absolute -right-24 -top-28 h-[370px] w-[370px] rounded-full border border-white/15"></div><div class="absolute -right-8 -top-12 h-[270px] w-[270px] rounded-full border border-white/15"></div><span class="absolute left-8 top-8 text-[10px] font-black uppercase tracking-[.28em] text-[#e6f2df] sm:left-12 sm:top-12">Capsicum annuum / 001</span>
-       <div class="absolute inset-x-[6%] bottom-[4%] top-[12%] flex items-center justify-center"><div class="absolute bottom-[6%] h-[17%] w-[65%] rounded-[50%] bg-[#0b2c22]/25 blur-xl"></div><img src="/img/cabai.png" alt="Ilustrasi tanaman cabai dari aset proyek" class="float-plant relative z-10 h-[86%] w-[90%] object-contain drop-shadow-[0_28px_25px_rgba(12,36,25,.3)]"></div>
-       <div class="absolute right-[5%] top-[20%] rounded-2xl border border-white/35 bg-white/90 px-4 py-3 shadow-xl backdrop-blur-lg sm:right-[6%]"><div class="flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-wide text-forest"><span class="twinkle text-lg text-clay">✦</span> Naturally better</div><p class="mt-1 text-[10px] text-[#799187]">Precision cultivation</p></div>
-       <div class="absolute bottom-7 left-7 rounded-2xl border border-white/25 bg-[#153d34]/80 px-5 py-4 text-white backdrop-blur-md sm:bottom-11 sm:left-11"><p class="text-[10px] uppercase tracking-[.21em] text-[#b9d7c3]">A living journey</p><p class="mt-1 font-serif text-2xl italic">from soil to soul.</p></div>
-      </div>
-      <div class="absolute -bottom-6 -right-3 flex w-[177px] items-center gap-3 rounded-[22px] border border-[#e1e8d7] bg-[#fffef7] p-3 shadow-soft sm:-right-8"><div class="relative grid h-[59px] w-[62px] shrink-0 place-items-center rounded-2xl bg-[#eaf1dc]">
-        <!-- Animasi petani kecil menyiram, digambar sebagai SVG mandiri. Gambar tanaman asli tidak diubah. -->
-        <svg viewBox="0 0 96 96" width="61" height="61" aria-label="Animasi orang menyiram tanaman" role="img"><path d="M10 81H86" stroke="#9bb29b" stroke-width="3" stroke-linecap="round"/><path class="sway" d="M65 80V56M65 64Q50 61 47 51M65 69Q79 63 81 51" fill="none" stroke="#4c9872" stroke-width="4" stroke-linecap="round"/><path d="M47 52q-1-13 12-10q1 12-12 10M81 51q-12-5-10 9q13 2 10-9" fill="#7fba79"/><circle cx="32" cy="28" r="9" fill="#c98e67"/><path d="M20 24q5-18 20-4l-1 6-20 1" fill="#355b48"/><path d="M27 38l-5 21 19 2 4-21z" fill="#e9ae75"/><path d="M25 58l-8 21m21-19 7 19" fill="none" stroke="#36594f" stroke-width="7" stroke-linecap="round"/><path d="M42 45l12 4 9-8" fill="none" stroke="#c98e67" stroke-width="6" stroke-linecap="round"/><g class="water-can"><path d="M61 31h18l4 14-4 7H61l-3-15z" fill="#7a9eb1" stroke="#436e79" stroke-width="2"/><path d="M60 35q-13-4-11 9" fill="none" stroke="#436e79" stroke-width="3"/><path d="M80 38l9-5-1-5" fill="none" stroke="#436e79" stroke-width="3"/></g><g fill="#bfeafa"><circle class="drop" cx="86" cy="41" r="2.7"/><circle class="drop" cx="81" cy="43" r="2.3"/><circle class="drop" cx="89" cy="45" r="2"/></g></svg></div><div><p class="text-[11px] font-black text-forest">Growing care</p><p class="mt-1 text-[10px] leading-4 text-[#829384]">Setiap tetes<br>punya arti.</p></div></div>
-    </div>
-  </section>
-  <section id="growth" class="relative border-y border-[#e3e8da] bg-[#f1f4e9] py-24 md:py-32"><div class="mx-auto max-w-[1360px] px-6 md:px-12 lg:px-20">
-    <div class="reveal grid gap-7 lg:grid-cols-[1fr_.65fr] lg:items-end"><div><span class="text-[11px] font-black uppercase tracking-[.25em] text-[#6a987c]">02 / The growth chapters</span><h2 class="mt-5 max-w-[700px] font-serif text-[clamp(2.9rem,5vw,5.2rem)] leading-[1.07] tracking-[-.06em] text-forest">Lima babak,<br><span class="italic text-[#8da887]">satu perjalanan hidup.</span></h2></div><p class="max-w-[440px] text-[14px] leading-[2] text-[#778c7e]">Setiap fase membawa tantangan berbeda. Pilih salah satu babak untuk melihat perkembangan tanaman, kebutuhan lingkungan, serta risiko yang perlu diperhatikan.</p></div>
-    <div id="phase-list" class="mt-14 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5"></div>
-    <div id="phase-detail" class="reveal mt-9 overflow-hidden rounded-[34px] border border-[#d9e4d4] bg-[#fffefa] shadow-soft"><div class="grid lg:grid-cols-[.8fr_1.2fr]"><div class="relative flex min-h-[340px] flex-col items-center justify-center overflow-hidden bg-[#e4efde] p-10"><div class="absolute -right-28 -top-28 h-[390px] w-[390px] rounded-full border border-[#c7dcc5]"></div><span id="detail-chapter" class="absolute left-8 top-8 text-[11px] font-black uppercase tracking-[.2em] text-[#6a9476]"></span><img id="detail-image" src="/img/persemaian.png" alt="Ilustrasi fase pertumbuhan" class="sway relative z-10 max-h-[300px] w-full object-contain drop-shadow-xl"/><span id="detail-days" class="absolute bottom-7 rounded-full bg-white/80 px-4 py-2 text-[11px] font-bold text-[#3b6950] backdrop-blur"></span></div><div class="p-7 sm:p-10 lg:p-14"><span class="text-[10px] font-extrabold uppercase tracking-[.22em] text-clay">Inside the growing process</span><h3 id="detail-title" class="mt-4 font-serif text-4xl tracking-[-.045em] text-forest sm:text-5xl"></h3><p id="detail-description" class="mt-5 text-[14px] leading-[1.95] text-[#6e8374]"></p><div class="mt-8 flex flex-wrap gap-2" id="phase-tags"></div><div class="mt-9 flex items-center gap-3"><button id="prev-phase" type="button" class="grid h-11 w-11 place-items-center rounded-full border border-[#d8e5d5] text-forest transition hover:bg-lime" aria-label="Fase sebelumnya">←</button><button id="next-phase" type="button" class="flex items-center gap-2 rounded-full bg-forest px-6 py-3 text-xs font-extrabold text-white transition hover:-translate-y-1">Fase selanjutnya <span>→</span></button><span class="ml-auto text-[12px] font-bold text-[#8ca293]" id="phase-counter"></span></div></div></div></div>
-    <div class="reveal mt-14 flex items-center justify-between gap-4"><div><span class="text-[10px] font-black uppercase tracking-[.25em] text-[#739980]">Field notes</span><h3 class="mt-2 font-serif text-3xl text-forest md:text-4xl">Kenali lebih dalam.</h3></div><span class="hidden text-xs text-[#809586] md:block">Panduan cabai · ringkasan agronomi per fase</span></div><div id="learning-grid" class="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3"></div><p class="mt-5 text-[11px] leading-7 text-[#819487]">Rentang hari pada halaman ini merupakan referensi ilustratif. Umur dan kebutuhan aktual berubah menurut varietas, media tanam, cuaca, serta pengelolaan budidaya.</p>
-  </div></section>
-  <section id="fertilizer-section" class="relative overflow-hidden bg-[#143e35] py-24 text-white md:py-32"><div class="pointer-events-none absolute -right-52 -top-56 h-[680px] w-[680px] rounded-full border border-white/10"></div><div class="pointer-events-none absolute -right-20 -top-28 h-[500px] w-[500px] rounded-full border border-white/10"></div><div class="mx-auto grid max-w-[1360px] gap-12 px-6 md:px-12 lg:grid-cols-[.85fr_1.15fr] lg:items-center lg:gap-20 lg:px-20"><div class="reveal"><span class="text-[11px] font-extrabold uppercase tracking-[.25em] text-[#a9d6ac]">03 / Nutrient studio</span><h2 class="mt-5 font-serif text-[clamp(3rem,5.5vw,5.8rem)] leading-[1.08] tracking-[-.07em]">Good growth<br>starts <span class="italic text-[#c6e79b]">within.</span></h2><p class="mt-8 max-w-[440px] text-[14px] leading-[2] text-[#b5cdbf]">Kenalkan pupuk yang digunakan greenhouse-mu. Nama, harga, dan isi kemasan tersimpan di browser sebagai dasar konversi biaya konsentrat.</p><div class="mt-10 flex items-center gap-3 text-[12px] text-[#c7dccc]"><span class="grid h-10 w-10 place-items-center rounded-full border border-[#7cab88] text-xl">✳</span><span>Tanpa popup, tanpa pengisian berulang.</span></div></div>
-    <div class="reveal relative rounded-[34px] border border-white/20 bg-[#fffcf5] p-7 text-forest shadow-[0_35px_80px_rgba(0,0,0,.2)] sm:p-10"><div class="mb-8 flex items-center justify-between"><div><span class="text-[10px] font-black uppercase tracking-[.22em] text-[#8ca18b]">Your growing essentials</span><h3 class="mt-2 font-serif text-3xl">Nutrient settings.</h3></div><span class="grid h-14 w-14 place-items-center rounded-2xl bg-[#e6efd9] text-2xl">🧪</span></div><form id="fert-form" class="space-y-5"><div><label for="fert-name" class="mb-2 block text-[12px] font-bold">Nama pupuk</label><input id="fert-name" name="name" required maxlength="80" placeholder="Contoh: AB Mix" class="w-full rounded-2xl border border-[#dce5d6] bg-[#f7f9f2] px-5 py-4 text-sm text-forest outline-none transition focus:border-[#86ad8a] focus:ring-4 focus:ring-[#dcebd2]"/></div><div class="grid gap-4 sm:grid-cols-2"><div><label for="fert-package-price" class="mb-2 block text-[12px] font-bold">Harga kemasan (Rp)</label><input id="fert-package-price" type="number" min="0" step="1" required placeholder="45000" class="w-full rounded-2xl border border-[#dce5d6] bg-[#f7f9f2] px-5 py-4 text-sm outline-none transition focus:border-[#86ad8a] focus:ring-4 focus:ring-[#dcebd2]"/></div><div><label for="fert-package-volume" class="mb-2 block text-[12px] font-bold">Isi konsentrat (mL)</label><input id="fert-package-volume" type="number" min="1" step="1" required placeholder="1000" class="w-full rounded-2xl border border-[#dce5d6] bg-[#f7f9f2] px-5 py-4 text-sm outline-none transition focus:border-[#86ad8a] focus:ring-4 focus:ring-[#dcebd2]"/></div></div><p class="text-[11px] leading-[1.8] text-[#829487]">Harga dihitung berdasarkan konsentrat pupuk dalam kemasan, bukan larutan setelah pengenceran.</p><div id="fert-preview" class="hidden rounded-2xl bg-[#e9f0de] px-5 py-4 text-[12px] leading-relaxed text-forest"></div><button type="submit" class="group flex w-full items-center justify-center gap-3 rounded-2xl bg-forest px-6 py-4 text-[13px] font-extrabold text-white transition hover:-translate-y-1 hover:bg-[#255a45]">Simpan Pengaturan <span class="transition-transform group-hover:translate-x-1">↗</span></button><p id="fert-save-status" aria-live="polite" class="min-h-4 text-center text-[12px] font-bold text-[#548866]"></p></form></div>
-  </div></section>
-  <section class="relative mx-auto max-w-[1360px] px-6 py-24 text-center md:px-12 md:py-32 lg:px-20"><div class="reveal"><span class="text-[11px] font-black uppercase tracking-[.25em] text-moss">Next chapter / Live greenhouse</span><h2 class="mx-auto mt-5 max-w-[850px] font-serif text-[clamp(3.1rem,6vw,6rem)] leading-[1.09] tracking-[-.07em] text-forest">Now, let's make<br><span class="italic text-[#7fa483]">it grow.</span></h2><p class="mx-auto mt-6 max-w-[550px] text-[14px] leading-[2] text-[#74897a]">Buka dashboard untuk melihat Living Greenhouse, membaca data sensor ESP32-S3, dan memantau perjalanan budidaya cabai secara menyeluruh.</p><a href="{{ route('dashboard') }}" class="mt-10 inline-flex items-center gap-4 rounded-full bg-forest px-9 py-5 text-[13px] font-extrabold text-white shadow-xl shadow-forest/20 transition hover:-translate-y-1 hover:bg-[#245746]">Masuk ke Living Greenhouse <span>↗</span></a></div></section>
-  </main><footer class="border-t border-[#e0e8d9] bg-[#f4f5ed] px-6 py-9 text-center text-[11px] font-bold tracking-[.07em] text-[#718d79]">✳ ATAN si TATANEN <span class="mx-2 opacity-40">/</span> Teknologi Adaptif Nutrisi <span class="mx-2 opacity-40">/</span> Smart Greenhouse Cabai</footer>
-</div>
-<script>
-const stages=[
- {name:'Persemaian',start:0,end:18,img:'/img/persemaian.png',desc:'Benih menyerap air, berkecambah, dan membentuk akar primer serta daun awal. Lingkungan stabil dan kelembapan media yang terkontrol menjadi kunci pertumbuhan bibit.'},
- {name:'Vegetatif',start:19,end:45,img:'/img/vegetatif.png',desc:'Akar, batang, dan daun berkembang semakin aktif. Pembentukan percabangan dan luas daun membantu tanaman menyiapkan cadangan energi untuk tahap pembungaan.'},
- {name:'Pembungaan',start:46,end:65,img:'/img/pembungaan.png',desc:'Kuncup dan bunga bermunculan. Keseimbangan air, nutrisi, dan mikroklimat membantu proses reproduktif serta mengurangi stres yang memicu kerontokan bunga.'},
- {name:'Pembuahan',start:66,end:95,img:'/img/pembuahan.png',desc:'Bakal buah tumbuh menjadi cabai muda lalu membesar. Stabilitas air dan unsur hara mendukung pembesaran buah dan kesehatan jaringan tanaman.'},
- {name:'Panen',start:96,end:120,img:'/img/panen.png',desc:'Buah mencapai tingkat kematangan panen dan mulai dipetik. Tanaman cabai dapat tetap berproduksi dan dipanen berulang sesuai kondisi budidaya.'}
-];
-const detailedChiliStages = [
-    {
-        morphology: 'Benih menyerap air (imbibisi), embrio mengaktifkan proses metabolisme, radikula muncul, lalu hipokotil dan kotiledon berkembang. Daun sejati pertama menjadi tanda awal kapasitas fotosintesis yang lebih stabil.',
-        roots: 'Sistem perakaran masih pendek dan rentan terhadap kurang oksigen akibat genangan. Media semai perlu porous, lembap tetapi tidak jenuh air.',
-        nutrients: 'Cadangan makanan benih membantu fase awal. Pemupukan pekat terlalu dini dapat meningkatkan tekanan osmotik dan merusak akar muda. Mulai nutrisi bertahap sesuai kondisi bibit dan formulasi yang teruji.',
-        environment: 'Cahaya cukup, sirkulasi udara baik, suhu tidak ekstrem, dan penyiraman halus membantu bibit tumbuh seragam. pH/EC diperiksa bila memakai fertigasi.',
-        observation: 'Catat tanggal semai, persentase berkecambah, jumlah daun sejati, gejala rebah semai, warna kotiledon, serta pertumbuhan akar.',
-        risks: 'Risiko umum meliputi damping-off, media terlalu basah, bibit etiolasi karena cahaya rendah, dan stres setelah pindah tanam.'
-    },
-    {
-        morphology: 'Tanaman mengembangkan ruas batang, akar lateral, luas daun, dan percabangan. Tajuk yang sehat membentuk kapasitas fotosintesis untuk menopang fase generatif berikutnya.',
-        roots: 'Akar menyebar untuk mengambil air dan hara. Tanaman pada polybag perlu ruang akar, drainase, serta penghindaran genangan berkepanjangan.',
-        nutrients: 'Nitrogen mendukung pembentukan daun dan jaringan vegetatif; fosfor berperan dalam transfer energi dan pembentukan akar; kalium mendukung pengaturan air dan berbagai proses enzimatis. Proporsi harus seimbang.',
-        environment: 'Jaga kelembapan media stabil, cahaya cukup, dan aerasi greenhouse. Kelebihan nitrogen dapat mendorong daun lebat tanpa keseimbangan pertumbuhan generatif.',
-        observation: 'Ukur tinggi tanaman, jumlah daun dan cabang, diameter batang, intensitas hijau daun, serta perkembangan akar dan tanda hama.',
-        risks: 'Waspadai serangan kutu daun, trips, tungau, gejala kekurangan hara, dan pertumbuhan terlalu rimbun akibat pemupukan tidak seimbang.'
-    },
-    {
-        morphology: 'Titik tumbuh mulai membentuk organ reproduksi. Bakal bunga berkembang menjadi bunga; keberhasilan penyerbukan dan pembuahan menentukan jumlah calon buah.',
-        roots: 'Akar harus tetap aktif menyediakan air dan unsur hara. Kekeringan atau perubahan kelembapan mendadak meningkatkan stres dan dapat memicu kerontokan bunga.',
-        nutrients: 'Fosfor terkait metabolisme energi, sedangkan kalium mendukung keseimbangan air dan proses fisiologis. Unsur mikro seperti boron juga penting dalam perkembangan reproduktif, sesuai kebutuhan yang terukur.',
-        environment: 'Suhu terlalu tinggi, kelembapan udara ekstrem dan sirkulasi yang buruk bisa menurunkan keberhasilan pembentukan buah. Ventilasi dan kontinuitas irigasi perlu diperhatikan.',
-        observation: 'Catat tanggal bunga pertama, jumlah tandan bunga, bunga yang gugur, pembentukan bakal buah, serta kondisi mikroklimat ketika bunga muncul.',
-        risks: 'Stres panas, serangan trips, defisit air, dan ketidakseimbangan nutrisi dapat menyebabkan bunga rontok atau pembentukan buah rendah.'
-    },
-    {
-        morphology: 'Setelah pembuahan, sel-sel buah membelah lalu membesar. Buah bertambah panjang dan berat; biji serta jaringan perikarp berkembang hingga mencapai ukuran varietasnya.',
-        roots: 'Kebutuhan suplai air relatif konsisten karena buah yang berkembang memerlukan transportasi hara dan tekanan turgor. Hindari perubahan kadar air terlalu drastis.',
-        nutrients: 'Kalium penting bagi transportasi hasil fotosintesis dan keseimbangan osmotik. Kalsium mendukung integritas jaringan; pengaturan nutrisi harus mempertimbangkan keseluruhan larutan dan hasil pengukuran.',
-        environment: 'Jaga suhu, kelembapan dan pencahayaan yang mendukung pembentukan buah. Irigasi berlebih dapat mengurangi oksigen akar, sedangkan defisit ekstrem membatasi pembesaran.',
-        observation: 'Pantau panjang dan diameter buah, jumlah buah per tanaman, tanda busuk ujung buah, kondisi bunga baru, serta serangan hama pada buah.',
-        risks: 'Masalah yang perlu dipantau antara lain busuk ujung buah, antraknosa, kerusakan serangga, pecah buah, dan stres kelembapan media.'
-    },
-    {
-        morphology: 'Buah mencapai kematangan fisiologis dan warna kulit berubah sesuai varietas. Cabai dapat dipanen beberapa kali karena tanaman masih dapat menghasilkan bunga dan buah baru.',
-        roots: 'Perakaran tetap membutuhkan aerasi dan pasokan air walaupun buah dipetik berulang. Pemeliharaan tidak berhenti setelah panen pertama.',
-        nutrients: 'Kebutuhan unsur hara mengikuti ritme pembungaan, pembentukan buah, dan panen berikutnya. Penyesuaian pupuk dilakukan berdasarkan kondisi tanaman serta pengukuran pH, EC dan media.',
-        environment: 'Pilih waktu panen dengan suhu lapang tidak terlalu tinggi; hindari luka mekanis dan kelembapan berlebih selama penanganan hasil.',
-        observation: 'Catat tanggal petik, bobot panen per blok, jumlah buah layak jual, tingkat kematangan, interval panen, serta kerusakan pascapanen.',
-        risks: 'Waspadai penurunan kesehatan tanaman, pembusukan buah, keterlambatan panen, dan tekanan penyakit selama fase produksi berkepanjangan.'
+
+
+    /* Tata letak pasti: menjaga section tetap rapi walau CDN utility terlambat. */
+    .atan-hero-layout,.atan-nutrient-layout{display:grid;grid-template-columns:minmax(0,1fr);gap:3rem;align-items:center}
+    .atan-hero-layout>*,.atan-nutrient-layout>*{min-width:0;width:100%}
+    .atan-hero-layout{width:100%;margin-inline:auto}
+    .atan-nutrient-layout{width:100%;margin-inline:auto}
+    .atan-nutrient-card{width:100%;max-width:100%;justify-self:stretch}
+    .atan-nutrient-card input,.atan-nutrient-card select{max-width:100%;min-width:0}
+    @media(min-width:1024px){
+      .atan-hero-layout{grid-template-columns:minmax(0,.94fr) minmax(0,1.06fr);gap:3.5rem}
+      .atan-nutrient-layout{grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:4rem}
     }
+    @media(max-width:1023px){
+      .atan-hero-layout,.atan-nutrient-layout{grid-template-columns:minmax(0,1fr)!important}
+      .atan-nutrient-card{max-width:760px;margin-inline:auto}
+    }
+    @media(max-width:640px){
+      .atan-hero-layout,.atan-nutrient-layout{gap:2rem}
+      .atan-nutrient-card{border-radius:24px;padding:20px}
+    }
+  </style>
+
+</head>
+
+<body class="overflow-x-hidden">
+
+<div class="relative isolate overflow-hidden">
+
+  <div class="pointer-events-none absolute -left-28 top-96 h-[470px] w-[470px] rounded-full bg-[#e4ecd7] blur-[110px] opacity-70"></div>
+
+  <header class="relative z-20 mx-auto flex max-w-[1440px] items-center justify-between px-6 py-7 md:px-12 lg:px-20">
+
+    <a href="{{ route('welcome') }}" class="group flex items-center gap-3"><span class="grid h-11 w-11 place-items-center rounded-2xl bg-forest text-lime shadow-lg shadow-emerald-950/10 group-hover:-rotate-12 transition-transform">✳</span><span class="text-[15px] font-extrabold tracking-[-.04em]">ATAN <span class="font-medium text-moss">si TATANEN</span></span></a>
+
+    <span class="hidden items-center gap-2 rounded-full border border-[#d8e4d6] bg-white/70 px-4 py-2 text-[10px] font-extrabold uppercase tracking-[.2em] text-[#567763] sm:inline-flex"><span class="h-2 w-2 rounded-full bg-[#84ad79]"></span> Grow with intelligence</span>
+
+    <a href="#fertilizer-section" class="rounded-full bg-[#e6eedf] px-5 py-3 text-xs font-extrabold text-forest transition hover:bg-lime">Atur Nutrisi <span class="ml-1">↗</span></a>
+
+  </header>
+
+  <main>
+
+  <section class="atan-hero-layout relative mx-auto grid max-w-[1440px] items-center gap-12 px-6 pb-24 pt-8 md:px-12 lg:grid-cols-[.94fr_1.06fr] lg:px-20 lg:pb-32 lg:pt-16">
+
+    <div class="relative z-10 enter">
+
+      <span class="mb-7 inline-flex items-center gap-2 rounded-full border border-[#d9e5d2] bg-white px-4 py-2 text-[10px] font-black uppercase tracking-[.21em] text-moss"><span class="text-clay">✦</span> Botanical intelligence · 01</span>
+
+      <h1 class="max-w-[620px] font-serif text-[clamp(3.8rem,7vw,7.4rem)] leading-[.99] tracking-[-.072em] text-forest">Every seed<br>has a <span class="italic text-[#7d9d78]">story.</span></h1>
+
+      <p class="mt-9 max-w-[490px] text-[15px] leading-[2] text-[#688077]">Dari benih kecil sampai cabai pertama dipetik. Kenali perjalanan pertumbuhan, pahami kebutuhan nutrisi, dan kelola greenhouse dengan lebih cerdas.</p>
+
+      <div class="mt-10 flex flex-wrap items-center gap-4"><a href="#growth" class="group inline-flex items-center gap-3 rounded-full bg-forest px-7 py-4 text-[13px] font-bold text-white shadow-xl shadow-[#173e30]/15 transition hover:-translate-y-1 hover:bg-[#245746]">Jelajahi Pertumbuhan <span class="transition-transform group-hover:translate-x-1">↗</span></a><a href="#fertilizer-section" class="inline-flex items-center gap-2 px-2 py-3 text-[13px] font-bold text-[#55715f] hover:text-forest">Konfigurasi pupuk <span>→</span></a></div>
+
+      <div class="mt-16 flex items-center gap-6 border-t border-[#dce5d8] pt-7"><div><strong class="font-serif text-3xl text-forest">05</strong><p class="mt-1 text-[10px] uppercase tracking-[.18em] text-[#7d9185]">Fase tumbuh</p></div><span class="h-10 w-px bg-[#dce5d8]"></span><div><strong class="font-serif text-3xl text-forest">120<span class="text-xl">±</span></strong><p class="mt-1 text-[10px] uppercase tracking-[.18em] text-[#7d9185]">Hari referensi</p></div><span class="h-10 w-px bg-[#dce5d8]"></span><div><strong class="font-serif text-3xl text-forest">01</strong><p class="mt-1 text-[10px] uppercase tracking-[.18em] text-[#7d9185]">Fokus: cabai</p></div></div>
+
+    </div>
+
+    <div class="relative mx-auto w-full max-w-[720px] enter" style="animation-delay:.12s">
+
+      <div class="hero-glow relative aspect-[.92] overflow-hidden rounded-[42px] shadow-float sm:aspect-[1.1] lg:aspect-[.9]"><div class="noise absolute inset-0 opacity-[.19]"></div><div class="absolute -right-24 -top-28 h-[370px] w-[370px] rounded-full border border-white/15"></div><div class="absolute -right-8 -top-12 h-[270px] w-[270px] rounded-full border border-white/15"></div><span class="absolute left-8 top-8 text-[10px] font-black uppercase tracking-[.28em] text-[#e6f2df] sm:left-12 sm:top-12">Capsicum annuum / 001</span>
+
+       <div class="absolute inset-x-[6%] bottom-[4%] top-[12%] flex items-center justify-center"><div class="absolute bottom-[6%] h-[17%] w-[65%] rounded-[50%] bg-[#0b2c22]/25 blur-xl"></div><img src="/img/cabai.png" alt="Ilustrasi tanaman cabai dari aset proyek" class="float-plant relative z-10 h-[86%] w-[90%] object-contain drop-shadow-[0_28px_25px_rgba(12,36,25,.3)]"></div>
+
+       <div class="absolute right-[5%] top-[20%] rounded-2xl border border-white/35 bg-white/90 px-4 py-3 shadow-xl backdrop-blur-lg sm:right-[6%]"><div class="flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-wide text-forest"><span class="twinkle text-lg text-clay">✦</span> Naturally better</div><p class="mt-1 text-[10px] text-[#799187]">Precision cultivation</p></div>
+
+       <div class="absolute bottom-7 left-7 rounded-2xl border border-white/25 bg-[#153d34]/80 px-5 py-4 text-white backdrop-blur-md sm:bottom-11 sm:left-11"><p class="text-[10px] uppercase tracking-[.21em] text-[#b9d7c3]">A living journey</p><p class="mt-1 font-serif text-2xl italic">from soil to soul.</p></div>
+
+      </div>
+
+      <div class="absolute -bottom-6 -right-3 flex w-[177px] items-center gap-3 rounded-[22px] border border-[#e1e8d7] bg-[#fffef7] p-3 shadow-soft sm:-right-8"><div class="relative grid h-[59px] w-[62px] shrink-0 place-items-center rounded-2xl bg-[#eaf1dc]">
+
+        <!-- Animasi petani kecil menyiram, digambar sebagai SVG mandiri. Gambar tanaman asli tidak diubah. -->
+
+        <svg viewBox="0 0 96 96" width="61" height="61" aria-label="Animasi orang menyiram tanaman" role="img"><path d="M10 81H86" stroke="#9bb29b" stroke-width="3" stroke-linecap="round"/><path class="sway" d="M65 80V56M65 64Q50 61 47 51M65 69Q79 63 81 51" fill="none" stroke="#4c9872" stroke-width="4" stroke-linecap="round"/><path d="M47 52q-1-13 12-10q1 12-12 10M81 51q-12-5-10 9q13 2 10-9" fill="#7fba79"/><circle cx="32" cy="28" r="9" fill="#c98e67"/><path d="M20 24q5-18 20-4l-1 6-20 1" fill="#355b48"/><path d="M27 38l-5 21 19 2 4-21z" fill="#e9ae75"/><path d="M25 58l-8 21m21-19 7 19" fill="none" stroke="#36594f" stroke-width="7" stroke-linecap="round"/><path d="M42 45l12 4 9-8" fill="none" stroke="#c98e67" stroke-width="6" stroke-linecap="round"/><g class="water-can"><path d="M61 31h18l4 14-4 7H61l-3-15z" fill="#7a9eb1" stroke="#436e79" stroke-width="2"/><path d="M60 35q-13-4-11 9" fill="none" stroke="#436e79" stroke-width="3"/><path d="M80 38l9-5-1-5" fill="none" stroke="#436e79" stroke-width="3"/></g><g fill="#bfeafa"><circle class="drop" cx="86" cy="41" r="2.7"/><circle class="drop" cx="81" cy="43" r="2.3"/><circle class="drop" cx="89" cy="45" r="2"/></g></svg></div><div><p class="text-[11px] font-black text-forest">Growing care</p><p class="mt-1 text-[10px] leading-4 text-[#829384]">Setiap tetes<br>punya arti.</p></div></div>
+
+    </div>
+
+  </section>
+
+  <section id="growth" class="relative border-y border-[#e3e8da] bg-[#f1f4e9] py-24 md:py-32"><div class="mx-auto max-w-[1360px] px-6 md:px-12 lg:px-20">
+
+    <div class="reveal grid gap-7 lg:grid-cols-[1fr_.65fr] lg:items-end"><div><span class="text-[11px] font-black uppercase tracking-[.25em] text-[#6a987c]">02 / The growth chapters</span><h2 class="mt-5 max-w-[700px] font-serif text-[clamp(2.9rem,5vw,5.2rem)] leading-[1.07] tracking-[-.06em] text-forest">Lima babak,<br><span class="italic text-[#8da887]">satu perjalanan hidup.</span></h2></div><p class="max-w-[440px] text-[14px] leading-[2] text-[#778c7e]">Setiap fase membawa tantangan berbeda. Pilih salah satu babak untuk melihat perkembangan tanaman, kebutuhan lingkungan, serta risiko yang perlu diperhatikan.</p></div>
+
+    <div id="phase-list" class="mt-14 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5"></div>
+
+    <div id="phase-detail" class="reveal mt-9 overflow-hidden rounded-[34px] border border-[#d9e4d4] bg-[#fffefa] shadow-soft"><div class="grid lg:grid-cols-[.8fr_1.2fr]"><div class="relative flex min-h-[340px] flex-col items-center justify-center overflow-hidden bg-[#e4efde] p-10"><div class="absolute -right-28 -top-28 h-[390px] w-[390px] rounded-full border border-[#c7dcc5]"></div><span id="detail-chapter" class="absolute left-8 top-8 text-[11px] font-black uppercase tracking-[.2em] text-[#6a9476]"></span><img id="detail-image" src="/img/persemaian.png" alt="Ilustrasi fase pertumbuhan" class="sway relative z-10 max-h-[300px] w-full object-contain drop-shadow-xl"/><span id="detail-days" class="absolute bottom-7 rounded-full bg-white/80 px-4 py-2 text-[11px] font-bold text-[#3b6950] backdrop-blur"></span></div><div class="p-7 sm:p-10 lg:p-14"><span class="text-[10px] font-extrabold uppercase tracking-[.22em] text-clay">Inside the growing process</span><h3 id="detail-title" class="mt-4 font-serif text-4xl tracking-[-.045em] text-forest sm:text-5xl"></h3><p id="detail-description" class="mt-5 text-[14px] leading-[1.95] text-[#6e8374]"></p><div class="mt-8 flex flex-wrap gap-2" id="phase-tags"></div><div class="mt-9 flex items-center gap-3"><button id="prev-phase" type="button" class="grid h-11 w-11 place-items-center rounded-full border border-[#d8e5d5] text-forest transition hover:bg-lime" aria-label="Fase sebelumnya">←</button><button id="next-phase" type="button" class="flex items-center gap-2 rounded-full bg-forest px-6 py-3 text-xs font-extrabold text-white transition hover:-translate-y-1">Fase selanjutnya <span>→</span></button><span class="ml-auto text-[12px] font-bold text-[#8ca293]" id="phase-counter"></span></div></div></div></div>
+
+    <div class="reveal mt-14 flex items-center justify-between gap-4"><div><span class="text-[10px] font-black uppercase tracking-[.25em] text-[#739980]">Field notes</span><h3 class="mt-2 font-serif text-3xl text-forest md:text-4xl">Kenali lebih dalam.</h3></div><span class="hidden text-xs text-[#809586] md:block">Panduan cabai · ringkasan agronomi per fase</span></div><div id="learning-grid" class="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3"></div><p class="mt-5 text-[11px] leading-7 text-[#819487]">Rentang hari pada halaman ini merupakan referensi ilustratif. Umur dan kebutuhan aktual berubah menurut varietas, media tanam, cuaca, serta pengelolaan budidaya.</p>
+
+  </div></section>
+
+  <section id="fertilizer-section" class="relative overflow-hidden bg-[#143e35] py-24 text-white md:py-32"><div class="pointer-events-none absolute -right-52 -top-56 h-[680px] w-[680px] rounded-full border border-white/10"></div><div class="pointer-events-none absolute -right-20 -top-28 h-[500px] w-[500px] rounded-full border border-white/10"></div><div class="atan-nutrient-layout mx-auto grid max-w-[1360px] gap-12 px-6 md:px-12 lg:grid-cols-[.85fr_1.15fr] lg:items-center lg:gap-20 lg:px-20"><div class="reveal"><span class="text-[11px] font-extrabold uppercase tracking-[.25em] text-[#a9d6ac]">03 / Nutrient studio</span><h2 class="mt-5 font-serif text-[clamp(3rem,5.5vw,5.8rem)] leading-[1.08] tracking-[-.07em]">Good growth<br>starts <span class="italic text-[#c6e79b]">within.</span></h2><p class="mt-8 max-w-[440px] text-[14px] leading-[2] text-[#b5cdbf]">Kelola bahan Pupuk A dan B, biaya kemasan, kebutuhan setiap campuran, serta air dalam satu sistem.</p><div class="mt-10 flex items-center gap-3 text-[12px] text-[#c7dccc]"><span class="grid h-10 w-10 place-items-center rounded-full border border-[#7cab88] text-xl">✳</span><span>Kelola komposisi nutrisi dan catat biaya setiap pembuatan larutan.</span></div></div>
+
+    <div class="atan-nutrient-card reveal relative rounded-[34px] border border-white/20 bg-[#fffcf5] p-7 text-forest shadow-[0_35px_80px_rgba(0,0,0,.2)] sm:p-10">
+  <div class="mb-7 flex items-center justify-between"><div><span class="text-[10px] font-black uppercase tracking-[.22em] text-[#8ca18b]">Pengaturan nutrisi</span><h3 class="mt-2 font-serif text-3xl">Komposisi Pupuk A & B</h3></div><span class="grid h-14 w-14 place-items-center rounded-2xl bg-[#e6efd9] text-2xl">🧪</span></div>
+  <p class="mb-6 text-xs leading-6 text-[#718876]">Tambahkan bahan sebanyak yang diperlukan ke kelompok A atau B. Semua harga dan pemakaian dihitung per satu batch campuran. Satuan kemasan dan pemakaian harus sama.</p>
+  <form id="nutrient-form" class="space-y-6">
+    <div class="space-y-3"><div class="flex items-center justify-between"><h4 class="text-lg font-extrabold">Campuran A</h4><span id="subtotal-a" class="text-sm font-extrabold text-[#508566]">Rp 0</span></div><div id="nutrient-items-a" class="space-y-3"></div><button type="button" data-add-group="A" class="rounded-xl border border-[#bad0ba] bg-[#e7f0e0] px-4 py-3 text-xs font-extrabold">+ Tambah pupuk A</button></div>
+    <div class="border-t border-[#e1e9dc] pt-5 space-y-3"><div class="flex items-center justify-between"><h4 class="text-lg font-extrabold">Campuran B</h4><span id="subtotal-b" class="text-sm font-extrabold text-[#508566]">Rp 0</span></div><div id="nutrient-items-b" class="space-y-3"></div><button type="button" data-add-group="B" class="rounded-xl border border-[#bad0ba] bg-[#e7f0e0] px-4 py-3 text-xs font-extrabold">+ Tambah pupuk B</button></div>
+    <div class="border-t border-[#e1e9dc] pt-5"><h4 class="mb-3 text-lg font-extrabold">💧 Air campuran</h4><div class="grid gap-3 sm:grid-cols-2"><label class="block text-xs font-bold">Volume air (liter)<input id="nutrient-water-liters" type="number" min="0" step="any" class="mt-2 w-full rounded-xl border border-[#dce5d6] bg-[#f7f9f2] p-3"></label><label class="block text-xs font-bold">Harga air (Rp/liter)<input id="nutrient-water-price" type="number" min="0" step="any" class="mt-2 w-full rounded-xl border border-[#dce5d6] bg-[#f7f9f2] p-3"></label></div></div>
+    <div class="rounded-2xl bg-[#e9f0de] p-5 text-xs leading-7"><div class="flex justify-between"><span>Biaya A</span><b id="cost-a">Rp 0</b></div><div class="flex justify-between"><span>Biaya B</span><b id="cost-b">Rp 0</b></div><div class="flex justify-between"><span>Biaya air</span><b id="cost-water">Rp 0</b></div><div class="mt-2 flex justify-between border-t border-[#ccdcbf] pt-2 text-base"><b>Total biaya bahan / batch</b><b id="cost-total">Rp 0</b></div><p class="mt-2 text-[10px] text-[#6e856f]">Biaya bahan untuk satu kali pembuatan larutan, tidak termasuk energi listrik.</p></div>
+    <button id="nutrient-save" type="submit" class="w-full rounded-2xl bg-forest px-6 py-4 text-[13px] font-extrabold text-white hover:bg-[#255a45]">Simpan Komposisi</button>
+    <button id="nutrient-record" type="button" disabled class="w-full rounded-2xl border border-forest px-6 py-4 text-[13px] font-extrabold text-forest disabled:cursor-not-allowed disabled:opacity-40">Catat Pembuatan Larutan</button>
+    <p id="nutrient-status" aria-live="polite" class="text-center text-xs font-bold text-[#548866]"></p>
+  </form>
+</div>
+
+  </div></section>
+
+  <section class="relative mx-auto max-w-[1360px] px-6 py-24 text-center md:px-12 md:py-32 lg:px-20"><div class="reveal"><span class="text-[11px] font-black uppercase tracking-[.25em] text-moss">Next chapter / Live greenhouse</span><h2 class="mx-auto mt-5 max-w-[850px] font-serif text-[clamp(3.1rem,6vw,6rem)] leading-[1.09] tracking-[-.07em] text-forest">Now, let's make<br><span class="italic text-[#7fa483]">it grow.</span></h2><p class="mx-auto mt-6 max-w-[550px] text-[14px] leading-[2] text-[#74897a]">Buka dashboard untuk melihat Living Greenhouse, membaca data sensor ESP32-S3, dan memantau perjalanan budidaya cabai secara menyeluruh.</p><a href="{{ route('dashboard') }}" class="mt-10 inline-flex items-center gap-4 rounded-full bg-forest px-9 py-5 text-[13px] font-extrabold text-white shadow-xl shadow-forest/20 transition hover:-translate-y-1 hover:bg-[#245746]">Masuk ke Living Greenhouse <span>↗</span></a></div></section>
+
+  </main><footer class="border-t border-[#e0e8d9] bg-[#f4f5ed] px-6 py-9 text-center text-[11px] font-bold tracking-[.07em] text-[#718d79]">✳ ATAN si TATANEN <span class="mx-2 opacity-40">/</span> Teknologi Adaptif Nutrisi <span class="mx-2 opacity-40">/</span> Smart Greenhouse Cabai</footer>
+
+</div>
+
+<script>
+
+const stages=[
+
+ {name:'Persemaian',start:0,end:18,img:'/img/persemaian.png',desc:'Benih menyerap air, berkecambah, dan membentuk akar primer serta daun awal. Lingkungan stabil dan kelembapan media yang terkontrol menjadi kunci pertumbuhan bibit.'},
+
+ {name:'Vegetatif',start:19,end:45,img:'/img/vegetatif.png',desc:'Akar, batang, dan daun berkembang semakin aktif. Pembentukan percabangan dan luas daun membantu tanaman menyiapkan cadangan energi untuk tahap pembungaan.'},
+
+ {name:'Pembungaan',start:46,end:65,img:'/img/pembungaan.png',desc:'Kuncup dan bunga bermunculan. Keseimbangan air, nutrisi, dan mikroklimat membantu proses reproduktif serta mengurangi stres yang memicu kerontokan bunga.'},
+
+ {name:'Pembuahan',start:66,end:95,img:'/img/pembuahan.png',desc:'Bakal buah tumbuh menjadi cabai muda lalu membesar. Stabilitas air dan unsur hara mendukung pembesaran buah dan kesehatan jaringan tanaman.'},
+
+ {name:'Panen',start:96,end:120,img:'/img/panen.png',desc:'Buah mencapai tingkat kematangan panen dan mulai dipetik. Tanaman cabai dapat tetap berproduksi dan dipanen berulang sesuai kondisi budidaya.'}
+
 ];
+
+const detailedChiliStages = [
+
+    {
+
+        morphology: 'Benih menyerap air (imbibisi), embrio mengaktifkan proses metabolisme, radikula muncul, lalu hipokotil dan kotiledon berkembang. Daun sejati pertama menjadi tanda awal kapasitas fotosintesis yang lebih stabil.',
+
+        roots: 'Sistem perakaran masih pendek dan rentan terhadap kurang oksigen akibat genangan. Media semai perlu porous, lembap tetapi tidak jenuh air.',
+
+        nutrients: 'Cadangan makanan benih membantu fase awal. Pemupukan pekat terlalu dini dapat meningkatkan tekanan osmotik dan merusak akar muda. Mulai nutrisi bertahap sesuai kondisi bibit dan formulasi yang teruji.',
+
+        environment: 'Cahaya cukup, sirkulasi udara baik, suhu tidak ekstrem, dan penyiraman halus membantu bibit tumbuh seragam. pH/EC diperiksa bila memakai fertigasi.',
+
+        observation: 'Catat tanggal semai, persentase berkecambah, jumlah daun sejati, gejala rebah semai, warna kotiledon, serta pertumbuhan akar.',
+
+        risks: 'Risiko umum meliputi damping-off, media terlalu basah, bibit etiolasi karena cahaya rendah, dan stres setelah pindah tanam.'
+
+    },
+
+    {
+
+        morphology: 'Tanaman mengembangkan ruas batang, akar lateral, luas daun, dan percabangan. Tajuk yang sehat membentuk kapasitas fotosintesis untuk menopang fase generatif berikutnya.',
+
+        roots: 'Akar menyebar untuk mengambil air dan hara. Tanaman pada polybag perlu ruang akar, drainase, serta penghindaran genangan berkepanjangan.',
+
+        nutrients: 'Nitrogen mendukung pembentukan daun dan jaringan vegetatif; fosfor berperan dalam transfer energi dan pembentukan akar; kalium mendukung pengaturan air dan berbagai proses enzimatis. Proporsi harus seimbang.',
+
+        environment: 'Jaga kelembapan media stabil, cahaya cukup, dan aerasi greenhouse. Kelebihan nitrogen dapat mendorong daun lebat tanpa keseimbangan pertumbuhan generatif.',
+
+        observation: 'Ukur tinggi tanaman, jumlah daun dan cabang, diameter batang, intensitas hijau daun, serta perkembangan akar dan tanda hama.',
+
+        risks: 'Waspadai serangan kutu daun, trips, tungau, gejala kekurangan hara, dan pertumbuhan terlalu rimbun akibat pemupukan tidak seimbang.'
+
+    },
+
+    {
+
+        morphology: 'Titik tumbuh mulai membentuk organ reproduksi. Bakal bunga berkembang menjadi bunga; keberhasilan penyerbukan dan pembuahan menentukan jumlah calon buah.',
+
+        roots: 'Akar harus tetap aktif menyediakan air dan unsur hara. Kekeringan atau perubahan kelembapan mendadak meningkatkan stres dan dapat memicu kerontokan bunga.',
+
+        nutrients: 'Fosfor terkait metabolisme energi, sedangkan kalium mendukung keseimbangan air dan proses fisiologis. Unsur mikro seperti boron juga penting dalam perkembangan reproduktif, sesuai kebutuhan yang terukur.',
+
+        environment: 'Suhu terlalu tinggi, kelembapan udara ekstrem dan sirkulasi yang buruk bisa menurunkan keberhasilan pembentukan buah. Ventilasi dan kontinuitas irigasi perlu diperhatikan.',
+
+        observation: 'Catat tanggal bunga pertama, jumlah tandan bunga, bunga yang gugur, pembentukan bakal buah, serta kondisi mikroklimat ketika bunga muncul.',
+
+        risks: 'Stres panas, serangan trips, defisit air, dan ketidakseimbangan nutrisi dapat menyebabkan bunga rontok atau pembentukan buah rendah.'
+
+    },
+
+    {
+
+        morphology: 'Setelah pembuahan, sel-sel buah membelah lalu membesar. Buah bertambah panjang dan berat; biji serta jaringan perikarp berkembang hingga mencapai ukuran varietasnya.',
+
+        roots: 'Kebutuhan suplai air relatif konsisten karena buah yang berkembang memerlukan transportasi hara dan tekanan turgor. Hindari perubahan kadar air terlalu drastis.',
+
+        nutrients: 'Kalium penting bagi transportasi hasil fotosintesis dan keseimbangan osmotik. Kalsium mendukung integritas jaringan; pengaturan nutrisi harus mempertimbangkan keseluruhan larutan dan hasil pengukuran.',
+
+        environment: 'Jaga suhu, kelembapan dan pencahayaan yang mendukung pembentukan buah. Irigasi berlebih dapat mengurangi oksigen akar, sedangkan defisit ekstrem membatasi pembesaran.',
+
+        observation: 'Pantau panjang dan diameter buah, jumlah buah per tanaman, tanda busuk ujung buah, kondisi bunga baru, serta serangan hama pada buah.',
+
+        risks: 'Masalah yang perlu dipantau antara lain busuk ujung buah, antraknosa, kerusakan serangga, pecah buah, dan stres kelembapan media.'
+
+    },
+
+    {
+
+        morphology: 'Buah mencapai kematangan fisiologis dan warna kulit berubah sesuai varietas. Cabai dapat dipanen beberapa kali karena tanaman masih dapat menghasilkan bunga dan buah baru.',
+
+        roots: 'Perakaran tetap membutuhkan aerasi dan pasokan air walaupun buah dipetik berulang. Pemeliharaan tidak berhenti setelah panen pertama.',
+
+        nutrients: 'Kebutuhan unsur hara mengikuti ritme pembungaan, pembentukan buah, dan panen berikutnya. Penyesuaian pupuk dilakukan berdasarkan kondisi tanaman serta pengukuran pH, EC dan media.',
+
+        environment: 'Pilih waktu panen dengan suhu lapang tidak terlalu tinggi; hindari luka mekanis dan kelembapan berlebih selama penanganan hasil.',
+
+        observation: 'Catat tanggal petik, bobot panen per blok, jumlah buah layak jual, tingkat kematangan, interval panen, serta kerusakan pascapanen.',
+
+        risks: 'Waspadai penurunan kesehatan tanaman, pembusukan buah, keterlambatan panen, dan tekanan penyakit selama fase produksi berkepanjangan.'
+
+    }
+
+];
+
 let active=0;
+
 const $=id=>document.getElementById(id);
+
 const knowledgeHeaders=[['🌱','Proses pertumbuhan','morphology'],['🌿','Perkembangan akar','roots'],['🧪','Nutrisi & unsur hara','nutrients'],['💧','Lingkungan & irigasi','environment'],['🔬','Parameter pengamatan','observation'],['🛡️','Risiko & pencegahan','risks']];
+
 function showStage(n){active=(n+stages.length)%stages.length;const s=stages[active];$('phase-list').querySelectorAll('button').forEach((b,i)=>{b.classList.toggle('active',i===active);b.setAttribute('aria-pressed',String(i===active));});const panel=$('phase-detail');panel.classList.remove('detail-swap');void panel.offsetWidth;panel.classList.add('detail-swap');$('detail-chapter').textContent=`Chapter 0${active+1} / 05`;$('detail-image').src=s.img;$('detail-image').alt='Ilustrasi fase '+s.name;$('detail-days').textContent=`Hari ${s.start}–${s.end}`;$('detail-title').textContent=s.name;$('detail-description').textContent=s.desc;$('phase-counter').textContent=`0${active+1} / 05`;$('phase-tags').innerHTML=['Cabai','Pertumbuhan','Fase '+(active+1)].map(t=>`<span class="rounded-full bg-[#edf4e6] px-4 py-2 text-[10px] font-bold text-[#63826b]">${t}</span>`).join('');const d=detailedChiliStages[active];$('learning-grid').innerHTML=knowledgeHeaders.map(([emoji,title,key],i)=>`<article class="group rounded-[23px] border border-[#dce6d7] bg-white/90 p-6 shadow-sm transition duration-300 hover:-translate-y-2 hover:border-[#a9c7a7] hover:shadow-soft"><div class="mb-5 flex items-center justify-between"><span class="grid h-11 w-11 place-items-center rounded-2xl bg-[#e8f1e2] text-xl">${emoji}</span><span class="text-[11px] font-bold text-[#aabbaa]">0${i+1}</span></div><h4 class="text-[13px] font-black text-forest">${title}</h4><p class="mt-3 text-[12px] leading-[1.95] text-[#758778]">${d[key]}</p></article>`).join('');}
+
 $('phase-list').innerHTML=stages.map((s,i)=>`<button type="button" data-phase="${i}" aria-pressed="false" class="phase-button group relative flex min-h-[211px] flex-col items-center overflow-hidden rounded-[25px] border border-[#dce5d5] bg-[#fffefa] px-3 pb-6 pt-5 text-center"><span class="absolute left-4 top-4 text-[10px] font-extrabold tracking-widest text-[#abc0ae]">0${i+1}</span><img src="${s.img}" alt="${s.name}" class="mb-4 mt-3 h-24 w-full object-contain transition duration-500 group-hover:scale-110"/><strong class="text-[13px] font-black text-forest">${s.name}</strong><small class="mt-1 text-[10px] text-[#92a296]">Hari ${s.start}–${s.end}</small></button>`).join('');$('phase-list').addEventListener('click',e=>{const b=e.target.closest('[data-phase]');if(b)showStage(Number(b.dataset.phase));});$('prev-phase').onclick=()=>showStage(active-1);$('next-phase').onclick=()=>showStage(active+1);showStage(0);
-const storageKey='atan_fertilizer';const initial=(()=>{try{return JSON.parse(localStorage.getItem(storageKey)||'null')}catch{return null}})();$('fert-name').value=initial?.name||'AB Mix';$('fert-package-price').value=initial?.packagePrice??45000;$('fert-package-volume').value=initial?.packageVolume??1000;
-function updatePreview(){const p=Number($('fert-package-price').value),v=Number($('fert-package-volume').value);if(Number.isFinite(p)&&p>=0&&Number.isFinite(v)&&v>0){$('fert-preview').classList.remove('hidden');$('fert-preview').textContent=`Konversi biaya konsentrat: Rp ${(p/v).toLocaleString('id-ID',{maximumFractionDigits:2})} / mL (belum termasuk pengenceran dan biaya operasional).`;}else $('fert-preview').classList.add('hidden')};$('fert-form').addEventListener('input',()=>{$('fert-save-status').textContent='';updatePreview()});updatePreview();$('fert-form').addEventListener('submit',e=>{e.preventDefault();const obj={name:$('fert-name').value.trim(),packagePrice:Number($('fert-package-price').value),packageVolume:Number($('fert-package-volume').value)};if(!obj.name||obj.packagePrice<0||!Number.isFinite(obj.packagePrice)||obj.packageVolume<=0||!Number.isFinite(obj.packageVolume))return;try{localStorage.setItem(storageKey,JSON.stringify(obj));$('fert-save-status').textContent='✓ Pengaturan pupuk berhasil disimpan.'}catch{$('fert-save-status').textContent='Penyimpanan browser tidak tersedia.'}});
+
+// Pupuk A/B tersimpan di Laravel, bukan hanya localStorage.
+const nutrientApi='/api/nutrient';
+const moneyN=n=>'Rp '+Number(n).toLocaleString('id-ID',{maximumFractionDigits:4});
+const finiteN=v=>{const n=Number(v);return Number.isFinite(n)&&n>=0?n:0};
+const nutrientTemplate={items:[{group:'A',name:'',package_price_rp:0,package_qty:1,unit:'ml',used_qty:0},{group:'B',name:'',package_price_rp:0,package_qty:1,unit:'ml',used_qty:0}],water_l:0,water_price_rp_l:0};
+let nutrientState=JSON.parse(JSON.stringify(nutrientTemplate));
+let savedNutrient=false;
+const inputStyle='w-full rounded-xl border border-[#dce5d6] bg-[#f7f9f2] p-3 text-xs';
+function escN(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function itemCostN(x){return finiteN(x.package_qty)>0?finiteN(x.package_price_rp)/finiteN(x.package_qty)*finiteN(x.used_qty):0}
+function renderNutrientItems(){
+  for(const g of ['A','B']){
+    const el=$('nutrient-items-'+g.toLowerCase());
+    el.innerHTML='';
+    nutrientState.items.forEach((x,i)=>{
+      if(x.group!==g)return;
+      const card=document.createElement('div');card.className='rounded-2xl border border-[#e0e8dc] bg-white p-3';
+      card.innerHTML=`<div class="flex justify-between gap-3"><label class="block flex-1 text-[11px] font-bold">Nama bahan<input data-index="${i}" data-field="name" maxlength="80" class="mt-1 ${inputStyle}" value="${escN(x.name)}" placeholder="Nama pupuk"></label><button type="button" data-remove="${i}" class="self-end rounded-lg bg-[#f7e7e2] px-3 py-3 text-xs">Hapus</button></div>
+      <div class="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4"><label class="text-[10px] font-bold">Harga kemasan (Rp)<input type="number" min="0" step="any" data-index="${i}" data-field="package_price_rp" class="mt-1 ${inputStyle}" value="${x.package_price_rp}"></label><label class="text-[10px] font-bold">Isi kemasan<input type="number" min="0.000001" step="any" data-index="${i}" data-field="package_qty" class="mt-1 ${inputStyle}" value="${x.package_qty}"></label><label class="text-[10px] font-bold">Satuan<select data-index="${i}" data-field="unit" class="mt-1 ${inputStyle}"><option value="ml" ${x.unit==='ml'?'selected':''}>mL</option><option value="g" ${x.unit==='g'?'selected':''}>gram</option></select></label><label class="text-[10px] font-bold">Dipakai / batch<input type="number" min="0" step="any" data-index="${i}" data-field="used_qty" class="mt-1 ${inputStyle}" value="${x.used_qty}"></label></div><p class="mt-2 text-right text-[11px] font-extrabold text-[#508566]" data-subtotal="${i}"></p>`;
+      el.appendChild(card);
+    });
+  }
+  refreshNutrientCosts();
+}
+function refreshNutrientCosts(){
+  const a=nutrientState.items.filter(x=>x.group==='A').reduce((t,x)=>t+itemCostN(x),0);
+  const b=nutrientState.items.filter(x=>x.group==='B').reduce((t,x)=>t+itemCostN(x),0);
+  const w=finiteN(nutrientState.water_l)*finiteN(nutrientState.water_price_rp_l);
+  $('subtotal-a').textContent=moneyN(a);$('subtotal-b').textContent=moneyN(b);
+  $('cost-a').textContent=moneyN(a);$('cost-b').textContent=moneyN(b);
+  $('cost-water').textContent=moneyN(w);$('cost-total').textContent=moneyN(a+b+w);
+  document.querySelectorAll('[data-subtotal]').forEach(el=>el.textContent='Subtotal: '+moneyN(itemCostN(nutrientState.items[Number(el.dataset.subtotal)])));
+}
+function dirtyNutrient(){savedNutrient=false;$('nutrient-record').disabled=true;$('nutrient-status').textContent='Ada perubahan yang belum disimpan';refreshNutrientCosts()}
+$('nutrient-form').addEventListener('input',e=>{
+  const t=e.target;
+  if(t.dataset.index!==undefined){const x=nutrientState.items[Number(t.dataset.index)];if(x)x[t.dataset.field]=['name','unit'].includes(t.dataset.field)?t.value:finiteN(t.value)}
+  else if(t.id==='nutrient-water-liters')nutrientState.water_l=finiteN(t.value);
+  else if(t.id==='nutrient-water-price')nutrientState.water_price_rp_l=finiteN(t.value);
+  dirtyNutrient();
+});
+$('nutrient-form').addEventListener('change',e=>{const t=e.target;if(t.dataset.field==='unit'){nutrientState.items[Number(t.dataset.index)].unit=t.value;dirtyNutrient()}});
+$('nutrient-form').addEventListener('click',e=>{
+  const add=e.target.closest('[data-add-group]');
+  if(add){nutrientState.items.push({group:add.dataset.addGroup,name:'',package_price_rp:0,package_qty:1,unit:'ml',used_qty:0});renderNutrientItems();dirtyNutrient()}
+  const remove=e.target.closest('[data-remove]');
+  if(remove){nutrientState.items.splice(Number(remove.dataset.remove),1);renderNutrientItems();dirtyNutrient()}
+});
+function statusN(message){$('nutrient-status').textContent=message}
+async function requestN(path,method='GET',body){
+  const resp=await fetch(nutrientApi+path,{method,headers:{'Accept':'application/json','Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
+  const json=await resp.json();if(!resp.ok)throw Error(json.message||'HTTP '+resp.status);
+  return json;
+}
+async function loadNutrient(){try{const j=await requestN('/recipe');if(j.recipe){nutrientState={items:j.recipe.items||[],water_l:j.recipe.water_l,water_price_rp_l:j.recipe.water_price_rp_l};savedNutrient=true;$('nutrient-record').disabled=false;}$('nutrient-water-liters').value=nutrientState.water_l;$('nutrient-water-price').value=nutrientState.water_price_rp_l;renderNutrientItems();}catch(e){renderNutrientItems();statusN('Gagal memuat pengaturan nutrisi: '+e.message)}}
+$('nutrient-form').addEventListener('submit',async e=>{
+  e.preventDefault();
+  if(!nutrientState.items.length||nutrientState.items.some(x=>!x.name.trim()||finiteN(x.package_qty)<=0)){statusN('Isi nama dan ukuran kemasan semua bahan.');return}
+  const btn=$('nutrient-save');btn.disabled=true;
+  try{await requestN('/recipe','POST',nutrientState);savedNutrient=true;$('nutrient-record').disabled=false;statusN('Komposisi nutrisi berhasil disimpan.');}
+  catch(err){statusN('Gagal menyimpan: '+err.message)}finally{btn.disabled=false}
+});
+$('nutrient-record').addEventListener('click',async()=>{
+  if(!savedNutrient)return;
+  if(!confirm('Simpan biaya pembuatan larutan ini ke catatan pengeluaran?'))return;
+  const btn=$('nutrient-record');btn.disabled=true;
+  const id='BATCH-'+Date.now()+'-'+Math.random().toString(36).slice(2,10);
+  try{const j=await requestN('/batches','POST',{batch_id:id});statusN('Pembuatan larutan berhasil dicatat: '+moneyN(j.batch.total_rp)+' (lihat dashboard).');}
+  catch(err){statusN('Gagal mencatat batch: '+err.message)}finally{btn.disabled=!savedNutrient}
+});
+loadNutrient();
+
 if('IntersectionObserver'in window){const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}}),{threshold:.07});document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));}else document.querySelectorAll('.reveal').forEach(el=>el.classList.add('visible'));
+
 </script></body></html>
