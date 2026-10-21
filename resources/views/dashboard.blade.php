@@ -51,6 +51,7 @@ h1,h2,h3,h4{font-family:Outfit,sans-serif}button,input{font:inherit}button{curso
 <section class="screen active" id="dashboard">
     <div class="wrap">
      <div class="dashboard-top">
+<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><button id="atan-monitor-toggle" type="button" class="btn dark" aria-pressed="true">Monitoring: ON</button><span id="atan-monitor-note" style="font-size:11px;color:#63826b">Mengatur refresh dashboard, bukan daya ESP32</span></div>
       <div>
        <span class="eyebrow">
         03 / Smart growing intelligence
@@ -469,8 +470,8 @@ h1,h2,h3,h4{font-family:Outfit,sans-serif}button,input{font:inherit}button{curso
         <th>Soil ADC A/B/C</th><th>Suhu Udara °C</th><th>RH %</th><th>Suhu Air °C</th>
         <th>pH</th><th>EC mS/cm</th><th>TDS ppm</th><th>N / P / K global</th>
         <th>Air batch kumulatif L</th><th>Biaya air batch Rp</th><th>Pupuk A Rp</th><th>Pupuk B Rp</th>
-        <th>Listrik relay kWh</th><th>Biaya listrik relay Rp</th><th>Pompa air belum terukur (kejadian)</th>
-      </tr></thead>
+        <th>Listrik relay kWh</th><th>Biaya listrik relay Rp</th><th>Pompa air belum terukur (kejadian)</th><th>PZEM V</th><th>PZEM A</th><th>PZEM W</th><th>PZEM meter kWh</th><th>PZEM kumulatif kWh</th><th>Biaya listrik PZEM Rp</th>
+</tr></thead>
       <tbody id="sensor-log-body"><tr><td colspan="19">Memuat riwayat...</td></tr></tbody>
     </table>
   </div>
@@ -556,11 +557,10 @@ const plants = {
         "description": "Cabai adalah tanaman penghasil buah pedas...",
         "duration": 120,
         "stages": [
-            ["Persemaian", 0, 18, "/img/persemaian.png", "Benih berkembang menjadi bibit dan daun awal.", 2, 1, 1],
-            ["Vegetatif", 19, 45, "/img/vegetatif.png", "Tanaman membangun akar, batang, dan percabangan.", 5, 3, 3],
-            ["Pembungaan", 46, 65, "/img/pembungaan.png", "Muncul bunga sebagai awal perkembangan buah.", 6, 5, 5],
-            ["Pembuahan", 66, 95, "/img/pembuahan.png", "Buah mulai terbentuk dan berkembang.", 8, 6, 8],
-            ["Panen", 96, 120, "/img/panen.png", "Buah mencapai kematangan, panen dapat berlanjut setelah fase awal.", 7, 5, 7]
+            ["Vegetatif Awal", 0, 30, "/img/vegetatif.png", "Pembentukan daun, batang, akar awal; status divalidasi lewat pengamatan tanaman.", 0, 0, 0],
+            ["Vegetatif Akhir", 31, 60, "/img/vegetatif.png", "Pertumbuhan vegetatif lanjut serta persiapan generatif.", 0, 0, 0],
+            ["Pembungaan", 61, 90, "/img/pembungaan.png", "Pemunculan bunga; observasi lapangan diperlukan untuk memastikan fase.", 0, 0, 0],
+            ["Pembuahan / Panen", 91, 99999, "/img/panen.png", "Perkembangan buah dan panen berulang; umur hanya panduan.", 0, 0, 0]
         ]
     }
 };
@@ -748,7 +748,7 @@ function renderDashboard() {
         [`<img src="/img/suhu_air.png" alt="Suhu Air" class="w-6 h-6 object-contain">`, 'Suhu air', sensorText(sensorSeed.waterTemp, '°C', 1)],
         [`<img src="/img/sensor_ph.png" alt="pH Larutan" class="w-6 h-6 object-contain">`, 'pH larutan', sensorText(sensorSeed.ph)],
         ['⚡', 'EC', sensorText(sensorSeed.ec, ' mS/cm')],
-        [`🌱`, 'Soil Moisture (Blok ' + zone + ')', sensorText(zoneSensors[findZoneIndex(zone)]?.soil, ' %', 1)]
+        [`🌱`, 'Soil Moisture (belum aktif)', '—']
     ];
 
     $('metrics').innerHTML = metrics.map(([icon, label, value]) => `
@@ -801,7 +801,7 @@ function selectZone(label) {
     if (soilMetric) {
         const soilLabel = soilMetric.querySelector('label');
         const soilValue = soilMetric.querySelector('strong');
-        if (soilLabel) soilLabel.textContent = 'Soil Moisture (Blok ' + zone + ')';
+        if (soilLabel) soilLabel.textContent = 'Soil Moisture (belum aktif)';
         if (soilValue) soilValue.textContent = sensorText(zoneSensors[index]?.soil, ' %', 1);
     }
     const sensor = zoneSensors[index];
@@ -817,7 +817,7 @@ function selectZone(label) {
     });
 
     const readings = [
-        ['Kelembapan media tanam (terkalibrasi)', sensorText(sensor.soil, ' %')],
+        ['Kelembapan media tanam (terkalibrasi)', '—'],
         ['Soil (ADC mentah)', sensorText(soilAdcByZone[label], ' ADC')],
         ['Suhu udara (global)', sensorText(sensorSeed.temp, ' °C', 1)],
         ['Kelembapan udara (global)', sensorText(sensorSeed.humidity, ' %', 1)],
@@ -875,11 +875,11 @@ function refreshForecast() {
     const stage = plant.stages[stageForAge(age)];
     
     $('automatic-age-label').textContent = plantStartDate
-        ? `Hari ke-${age} · ${age > plant.duration ? 'Panen berlanjut' : stage[0]}`
+        ? `Hari ke-${age} · ${stage[0]}`
         : 'Tanggal tanam belum diatur';
     $('current-period').textContent =
         `Hari ${age} · rentang fase ${stage[1]}–${stage[2]}`;
-    $('current-stage').textContent = !plantStartDate ? 'Tanggal tanam belum diatur' : (age > plant.duration ? 'Panen berlanjut' : stage[0]);$('current-explanation').textContent = !plantStartDate ? 'Simpan tanggal tanam agar fase dihitung berdasarkan umur kalender.' : (age > plant.duration ? 'Masa panen dapat berlanjut sesuai kondisi tanaman; verifikasi melalui pengamatan lapang.' : stage[4]);
+    $('current-stage').textContent = !plantStartDate ? 'Tanggal tanam belum diatur' : (stage[0]);$('current-explanation').textContent = !plantStartDate ? 'Simpan tanggal tanam agar fase dihitung berdasarkan umur kalender.' : stage[4];
     
     // Perbaikan rendering gambar dengan penanganan error gambar
     const imagePath = stage[3];
@@ -891,7 +891,7 @@ function refreshForecast() {
     `;
     
     $('days-left').textContent =
-        `${Math.max(0, plant.duration - age)} hari (estimasi)`;
+        `Fase kalender; pengamatan lapang wajib`;
     $('stage-label').textContent = stage[0];
 
     // Angka biaya akan diisi ulang oleh renderAutomaticCost() dari API.
@@ -972,7 +972,7 @@ let liveSensorConnected = false;
 let sensorRecords = [];
 let lastSensorTimestamp = null;
 let lastValidTelemetryAt = 0;
-const SENSOR_STALE_AFTER_MS = 12000;
+const SENSOR_STALE_AFTER_MS = 20000; // toleransi HTTP/laju sensor; status offline tetap via heartbeat
 
 
 // Koneksi ESP32 murni berdasarkan heartbeat, tidak bergantung pada pembacaan sensor.
@@ -1000,6 +1000,7 @@ function renderDeviceConnection() {
 }
 
 async function updateDeviceConnection() {
+    if (window.atanMonitoringPaused) return;
     try {
         const response = await fetch(API_DEVICE_STATUS_URL, {
             cache: 'no-store',
@@ -1019,7 +1020,7 @@ async function updateDeviceConnection() {
 }
 
 function sensorSourceLabel() {
-    return liveSensorConnected ? 'Data Aktual ESP32-S3' : (deviceOnline ? 'Sensor Belum Tersedia' : 'Perangkat Offline');
+    return liveSensorConnected ? 'Data Aktual ESP32-S3' : (lastSensorTimestamp ? 'Data terakhir / tidak live' : (deviceOnline ? 'Sensor Belum Tersedia' : 'Perangkat Offline'));
 }
 
 function isValidNumber(value) {
@@ -1153,6 +1154,7 @@ function refreshLiveSensorDisplay() {
         return;
     }
 
+    liveSensorConnected = !!lastSensorTimestamp && deviceOnline && (Date.now()-lastSensorTimestamp < SENSOR_STALE_AFTER_MS);
     // Re-render hanya nilai sensor dan zona, bukan keseluruhan dashboard.
     const metricValues = [
         sensorText(sensorSeed.temp, '°C', 1),
@@ -1160,11 +1162,11 @@ function refreshLiveSensorDisplay() {
         sensorText(sensorSeed.waterTemp, '°C', 1),
         sensorText(sensorSeed.ph),
         sensorText(sensorSeed.ec, ' mS/cm'),
-        sensorText(zoneSensors[findZoneIndex(zone)]?.soil, ' %', 1)
+        '—'
     ];
 
     const soilLabel = $('metrics')?.querySelectorAll('.metric')[5]?.querySelector('label');
-    if (soilLabel) soilLabel.textContent = 'Soil Moisture (Blok ' + zone + ')';
+    if (soilLabel) soilLabel.textContent = 'Soil Moisture (belum aktif)';
 
     $('metrics').querySelectorAll('.metric').forEach((card, index) => {
         const value = card.querySelector('strong');
@@ -1195,7 +1197,7 @@ function refreshLiveSensorDisplay() {
 // Tidak ada input manual; polling berjalan setiap 5 detik.
 // Polling tidak pernah menghasilkan nilai palsu ketika perangkat offline.
 async function updateSensorsAutomatically() {
-    liveSensorConnected = false;
+    if (window.atanMonitoringPaused) return;
     if (!API_SENSOR_URL) {
         liveSensorConnected = false;
         refreshLiveSensorDisplay();
@@ -1215,13 +1217,7 @@ async function updateSensorsAutomatically() {
     } catch (error) {
         console.warn('ESP32-S3 offline / payload tidak valid:', error.message);
         liveSensorConnected = false;
-        Object.keys(sensorSeed).forEach(key => { sensorSeed[key] = null; });
-        ['A','B','C'].forEach(code => { soilAdcByZone[code] = null; });
-        ['n','p','k'].forEach(k => { globalNpk[k] = null; });
-        zoneSensors.forEach(item => {
-            ['soil', 'flow', 'n', 'p', 'k', 'valve', 'pump', 'mixer']
-                .forEach(key => { item[key] = null; });
-        });
+        // Pertahankan snapshot terakhir; status sumber menandai data tidak lagi live.
     }
     refreshLiveSensorDisplay();
 }
@@ -1326,6 +1322,7 @@ function daysBetweenLocalDates(startDate, endDate) {
 }
 // Ringkasan biaya diisi hanya dari data backend, bukan angka default/simulasi.
 let atanCostLatest = null;
+let atanForecast30 = null;
 const costMoney = v => 'Rp ' + Number(v || 0).toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 6});
 const costNum = v => Number(v || 0);
 function calculateDailyCosts() { return atanCostLatest?.today || null; }
@@ -1339,7 +1336,7 @@ function renderPeriodCosts() {
     const cards = [
         ['Hari Ini', atanCostLatest.today],
         ['Bulan Ini (tercatat)', atanCostLatest.month],
-        ['Bulan Depan', null]
+        ['Proyeksi 30 Hari', atanForecast30 || null]
     ];
     target.innerHTML = cards.map(([label, period]) => {
         if (!period) return `<article class="rounded-2xl border border-emerald-100 bg-[#f8faf3] p-5"><h4>${label}</h4><strong>—</strong><small>Belum ada dasar proyeksi yang tervalidasi</small></article>`;
@@ -1363,7 +1360,7 @@ function renderAutomaticCost() {
     const rows = [
        ['💧 Air (batch)', today.water, 'Volume air resep dicatat saat batch dibuat'],
        ['🧪 Pupuk A + B', today.fertilizer, 'Biaya bahan pada batch yang dicatat'],
-       ['⚡ Listrik (relay)', today.electricity, 'Estimasi daya nominal · Rp1.350/kWh']
+       ['⚡ Listrik (PZEM)', today.electricity, 'Energi dari PZEM; tarif Rp1.444,70/kWh; tidak dijumlah dengan estimasi relay']
     ];
     target.innerHTML = rows.map(([label,value,note]) => `<article><h4>${label}</h4><span>Biaya hari ini</span><strong>${costMoney(value)}</strong><small>${note}</small></article>`).join('');
     if ($('phase-cost')) $('phase-cost').textContent = costMoney(today.total);
@@ -1375,20 +1372,25 @@ function renderAutomaticCost() {
 // Biaya pupuk dan air dari event relay TIDAK ditambahkan lagi jika batch sudah
 // mencatat bahan-bahan yang sama; ini mencegah double-count.
 async function atanRefreshCosts() {
+    if (window.atanMonitoringPaused) return;
     try {
         const responses = await Promise.all([
             fetch('/api/nutrient/summary', {cache:'no-store'}),
-            fetch('/api/cost/summary', {cache:'no-store'})
+            fetch('/api/cost/summary', {cache:'no-store'}),
+            fetch('/api/energy/summary', {cache:'no-store'}),
+            fetch('/api/finance/forecast', {cache:'no-store'})
         ]);
         if (responses.some(r => !r.ok)) throw new Error('HTTP ' + responses.map(r=>r.status).join('/'));
-        const [nutrient, electrical] = await Promise.all(responses.map(r=>r.json()));
+        const [nutrient, electrical, energy, forecast] = await Promise.all(responses.map(r=>r.json()));
+        atanForecast30 = forecast.ready ? { ...forecast.forecast, batches: forecast.observed_batches || 0, events: 0 } : null;
         const period = key => {
             const batch = nutrient[key] || {}, relay = electrical[key] || {};
+            const pzem = energy[key] || {};
             const a=costNum(batch.fertilizer_a_rp), b=costNum(batch.fertilizer_b_rp);
-            const fertilizer=a+b, water=costNum(batch.water_rp), electricity=costNum(relay.electricity_rp);
+            const fertilizer=a+b, water=costNum(batch.water_rp), electricity=costNum(pzem.rp);
             return {a,b,fertilizer,water,electricity,total:fertilizer+water+electricity,
                 batches:costNum(batch.batches),events:costNum(relay.events),waterLiters:costNum(batch.water_l),
-                kwh:costNum(relay.energy_kwh)};
+                kwh:costNum(pzem.kwh),meterReadings:costNum(pzem.readings)};
         };
         atanCostLatest={today:period('today'),month:period('month'),all:period('all')};
         const t=atanCostLatest.today, r=nutrient.recipe_estimate_per_batch;
@@ -1397,12 +1399,12 @@ async function atanRefreshCosts() {
         set('nc-batches',String(t.batches));
         set('nc-fertilizer',costMoney(t.fertilizer));
         set('nc-water',costMoney(t.water));
-        set('nc-electricity',costMoney(t.electricity)+' / '+t.kwh.toFixed(9)+' kWh');
+        set('nc-electricity',t.meterReadings ? costMoney(t.electricity)+' / '+t.kwh.toFixed(6)+' kWh' : 'Menunggu PZEM');
         set('nc-total',costMoney(t.total));
-        set('nc-info','Basis: batch dicatat secara manual dan listrik diestimasi dari relay. Debit/biaya cairan dari relay tidak dijumlah ulang.');
+        set('nc-info',t.meterReadings ? 'Air dan pupuk = batch tercatat; listrik = PZEM (hanya beban yang melewati meter). Estimasi relay tidak dijumlah ulang.' : 'Belum ada bacaan PZEM. Total biaya saat ini hanya mencakup bahan yang tercatat; listrik belum terukur.');
         renderAutomaticCost();
     } catch(e) {
-        atanCostLatest=null;
+        atanCostLatest=null;atanForecast30=null;
         const info=$('nc-info');if(info)info.textContent='API biaya belum dapat dibaca: '+e.message;
         renderAutomaticCost();
     }
@@ -1909,6 +1911,7 @@ atanLoadGrowth();
  const dec=(v,n=2)=>v===null||v===undefined||v===''?'—':Number(v).toLocaleString('id-ID',{maximumFractionDigits:n});
  const td=(tr,v)=>{const e=document.createElement('td');e.textContent=v;tr.appendChild(e);};
  async function load(){
+   if(window.atanMonitoringPaused)return;
    if(busy)return;busy=true;
    try{
     const response=await fetch('/api/telemetry/history',{cache:'no-store',headers:{Accept:'application/json'}});
@@ -1928,14 +1931,16 @@ atanLoadGrowth();
         [r.npk_n,r.npk_p,r.npk_k].map(show).join(' / '),
         dec(r.water_batch_l,4),dec(r.water_batch_rp,4),
         dec(r.fertilizer_a_rp,4),dec(r.fertilizer_b_rp,4),
-        dec(r.energy_kwh,8),dec(r.electricity_rp,6),show(r.unmetered_pump_events)
+        dec(r.energy_kwh,8),dec(r.electricity_rp,6),show(r.unmetered_pump_events),
+        dec(r.pzem_voltage_v,2),dec(r.pzem_current_a,3),dec(r.pzem_power_w,2),
+        dec(r.pzem_meter_total_kwh,6),dec(r.pzem_consumption_kwh,6),dec(r.pzem_electricity_rp,4)
       ];
       values.forEach(v=>td(tr,v));frag.appendChild(tr);
     }
-    if(!rows.length){const tr=document.createElement('tr');const c=document.createElement('td');c.colSpan=19;c.textContent='Belum ada data telemetry yang tersimpan di MySQL.';tr.appendChild(c);frag.appendChild(tr)}
+    if(!rows.length){const tr=document.createElement('tr');const c=document.createElement('td');c.colSpan=25;c.textContent='Belum ada data telemetry yang tersimpan di MySQL.';tr.appendChild(c);frag.appendChild(tr)}
     table.replaceChildren(frag);
     count.textContent=rows.length+' terbaru / '+data.total_saved+' tersimpan';
-    info.textContent='Arsip MySQL • data tetap tersimpan ketika ESP32 offline • nilai biaya adalah kumulatif hingga waktu telemetry diterima';
+    info.textContent='Arsip MySQL • 100 terbaru • biaya pupuk dan air = batch; listrik PZEM dan relay terpisah • riwayat tidak terhapus saat offline';
    }catch(e){
     // Saat Laravel terganggu, jangan hapus riwayat yang masih terlihat.
     info.textContent='Gagal menyegarkan arsip ('+e.message+'). Riwayat terakhir di layar tetap ditampilkan.';
@@ -1951,5 +1956,14 @@ atanLoadGrowth();
  load();setInterval(load,15000);
 })();
 </script>
-</body>
+<script>
+window.atanMonitoringPaused=false;
+(function(){ const b=document.getElementById('atan-monitor-toggle'); if(!b)return;
+ b.addEventListener('click',()=>{window.atanMonitoringPaused=!window.atanMonitoringPaused;
+ b.textContent=window.atanMonitoringPaused?'Monitoring: OFF':'Monitoring: ON';
+ b.setAttribute('aria-pressed',String(!window.atanMonitoringPaused));
+ const n=document.getElementById('atan-monitor-note');if(n)n.textContent=window.atanMonitoringPaused?'Refresh halaman dijeda; ESP32 dan blower tetap bekerja':'Monitoring browser aktif';
+ if(!window.atanMonitoringPaused){updateDeviceConnection();updateSensorsAutomatically();atanRefreshCosts();}
+ });})();
+</script></body>
 </html>

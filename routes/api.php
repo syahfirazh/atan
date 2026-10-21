@@ -38,3 +38,10 @@ Route::post('/growth/planting-date', [AtanGrowthController::class, 'save']);
 use App\Http\Controllers\Api\AtanHistoryController;
 Route::get('/telemetry/history', [AtanHistoryController::class, 'latest']);
 Route::get('/telemetry/export', [AtanHistoryController::class, 'export']);
+
+use App\Http\Controllers\Api\AtanEnergyController;
+Route::get('/energy/summary', [AtanEnergyController::class, 'summary']);
+use App\Http\Controllers\Api\AtanFinanceController;
+Route::get('/finance/forecast', [AtanFinanceController::class, 'forecast']);
+
+

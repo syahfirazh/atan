@@ -24,8 +24,12 @@ class AtanHistoryController extends Controller
             's.ph','s.ec','s.tds','s.ph_adc','s.ph_voltage',
             's.tds_adc','s.tds_voltage','s.npk_n','s.npk_p','s.npk_k',
         ]);
+        $q->leftJoin('atan_pzem_readings as pz', 'pz.sensor_log_id', '=', 's.id');
+        $q->addSelect('pz.voltage_v as pzem_voltage_v','pz.current_a as pzem_current_a','pz.power_w as pzem_power_w','pz.total_kwh as pzem_meter_total_kwh');
         $costs = [
             'energy_kwh' => ['atan_cost_events', 'energy_kwh'],
+            'pzem_consumption_kwh' => ['atan_pzem_readings', 'delta_kwh'],
+            'pzem_electricity_rp' => ['atan_pzem_readings', 'electricity_rp'],
             'electricity_rp' => ['atan_cost_events', 'electricity_rp'],
             'water_batch_l' => ['atan_nutrient_batches', 'water_l'],
             'water_batch_rp' => ['atan_nutrient_batches', 'water_rp'],
@@ -54,7 +58,7 @@ class AtanHistoryController extends Controller
             'source' => 'mysql',
             'count' => $rows->count(),
             'total_saved' => DB::table('sensor_logs')->count(),
-            'cost_basis' => 'Kumulatif hingga waktu penerimaan telemetry. Air/pupuk = batch disiapkan; listrik = estimasi relay dengan watt diketahui, tidak termasuk daya pompa air yang belum diukur.',
+            'cost_basis' => 'Air/pupuk = batch disiapkan. Listrik PZEM = meter untuk beban yang melewati PZEM. Estimasi relay ditampilkan terpisah dan TIDAK dijumlahkan dengan PZEM.',
             'rows' => $rows,
         ])->header('Cache-Control', 'no-store');
     }
@@ -115,6 +119,8 @@ class AtanHistoryController extends Controller
                 'Listrik relay - kumulatif (kWh)',
                 'Biaya listrik relay - kumulatif (Rp)',
                 'Kejadian pompa air tanpa daya terukur (jumlah)',
+                'PZEM tegangan (V)', 'PZEM arus (A)', 'PZEM daya (W)',
+                'PZEM total meter (kWh)', 'PZEM pemakaian tercatat kumulatif (kWh)', 'PZEM biaya tercatat kumulatif (Rp)',
             ]);
             foreach ($query->cursor() as $r) {
                 $row = [
@@ -128,6 +134,8 @@ class AtanHistoryController extends Controller
                     $r->water_batch_l,$r->water_batch_rp,
                     $r->fertilizer_a_rp,$r->fertilizer_b_rp,
                     $r->energy_kwh,$r->electricity_rp,$r->unmetered_pump_events,
+                    $r->pzem_voltage_v,$r->pzem_current_a,$r->pzem_power_w,
+                    $r->pzem_meter_total_kwh,$r->pzem_consumption_kwh,$r->pzem_electricity_rp,
                 ];
                 $this->outputRow($h, $row, array_keys($row));
             }

@@ -28,6 +28,10 @@ class IotController extends Controller
             'water_temp' => 'nullable|numeric|between:-10,100',
             'ph' => 'nullable|numeric|between:0,14',
             'ec' => 'nullable|numeric|min:0',
+            'pzem_voltage_v' => 'nullable|numeric|between:0,300',
+            'pzem_current_a' => 'nullable|numeric|between:0,150',
+            'pzem_power_w' => 'nullable|numeric|between:0,30000',
+            'pzem_energy_kwh' => 'nullable|numeric|min:0',
             'tds' => 'nullable|numeric|min:0',
             'npk_n' => 'nullable|numeric|min:0',
             'npk_p' => 'nullable|numeric|min:0',
@@ -92,6 +96,7 @@ class IotController extends Controller
                 $row, ['created_at' => now(), 'updated_at' => now()]
             ));
             $log = SensorLog::where('sample_id', $sampleId)->firstOrFail();
+            $this->storePzemReading($validated, $log->id, $sampleId);
             return response()->json([
                 'status' => 'success',
                 'message' => $inserted ? 'Telemetry tersimpan.' : 'Telemetry sudah pernah diterima.',
@@ -102,6 +107,7 @@ class IotController extends Controller
         }
 
         $log = SensorLog::create($row);
+        $this->storePzemReading($validated, $log->id, 'legacy-' . $log->id);
 
         return response()->json([
             'status' => 'success',
@@ -109,6 +115,34 @@ class IotController extends Controller
             'id' => $log->id,
             'timestamp' => $log->created_at,
         ], 201);
+    }
+
+    /** Catatan PZEM berasal dari meter kumulatif; delta diambil dari bacaan terakhir. */
+    private function storePzemReading(array $v, int $sensorLogId, string $sampleId): void
+    {
+        if (!isset($v['pzem_energy_kwh'], $v['pzem_voltage_v'],
+                   $v['pzem_current_a'], $v['pzem_power_w'])) return;
+        \Illuminate\Support\Facades\DB::transaction(function () use ($v, $sensorLogId, $sampleId) {
+            // Lock satu baris state agar permintaan paralel tidak menggandakan delta.
+            $state = \Illuminate\Support\Facades\DB::table('atan_pzem_state')
+                ->where('id', 1)->lockForUpdate()->first();
+            if (\Illuminate\Support\Facades\DB::table('atan_pzem_readings')->where('sample_id', $sampleId)->exists()) return;
+            $current = (float) $v['pzem_energy_kwh'];
+            $last = $state ? (float) $state->last_total_kwh : null;
+            // Counter yang turun = meter reset/penggantian; jangan mengurangi akumulasi.
+            $delta = $last !== null && $current >= $last ? $current - $last : 0.0;
+            $tariff = 1444.70; // Tarif proyek, dapat dipindahkan ke konfigurasi kemudian.
+            \Illuminate\Support\Facades\DB::table('atan_pzem_readings')->insert([
+                'sample_id' => $sampleId, 'sensor_log_id' => $sensorLogId,
+                'voltage_v' => $v['pzem_voltage_v'], 'current_a' => $v['pzem_current_a'],
+                'power_w' => $v['pzem_power_w'], 'total_kwh' => $current,
+                'delta_kwh' => $delta, 'electricity_rp' => $delta * $tariff,
+                'created_at' => now(), 'updated_at' => now(),
+            ]);
+            \Illuminate\Support\Facades\DB::table('atan_pzem_state')->updateOrInsert(
+                ['id'=>1], ['last_total_kwh'=>$current, 'updated_at'=>now()]
+            );
+        });
     }
 
     /**
