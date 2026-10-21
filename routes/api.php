@@ -29,3 +29,12 @@ Route::get('/nutrient/recipe', [AtanNutrientController::class, 'showRecipe']);
 Route::post('/nutrient/recipe', [AtanNutrientController::class, 'saveRecipe']);
 Route::post('/nutrient/batches', [AtanNutrientController::class, 'recordBatch']);
 Route::get('/nutrient/summary', [AtanNutrientController::class, 'summary']);
+// Fase pertumbuhan: hanya pencatatan, tidak mengendalikan aktuator.
+use App\Http\Controllers\Api\AtanGrowthController;
+Route::get('/growth/current', [AtanGrowthController::class, 'show']);
+Route::post('/growth/planting-date', [AtanGrowthController::class, 'save']);
+
+// Riwayat permanen dari MySQL: tidak bergantung pada browser dan status ESP32.
+use App\Http\Controllers\Api\AtanHistoryController;
+Route::get('/telemetry/history', [AtanHistoryController::class, 'latest']);
+Route::get('/telemetry/export', [AtanHistoryController::class, 'export']);

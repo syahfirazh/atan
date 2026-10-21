@@ -110,7 +110,7 @@
 
       <div class="hero-glow relative aspect-[.92] overflow-hidden rounded-[42px] shadow-float sm:aspect-[1.1] lg:aspect-[.9]"><div class="noise absolute inset-0 opacity-[.19]"></div><div class="absolute -right-24 -top-28 h-[370px] w-[370px] rounded-full border border-white/15"></div><div class="absolute -right-8 -top-12 h-[270px] w-[270px] rounded-full border border-white/15"></div><span class="absolute left-8 top-8 text-[10px] font-black uppercase tracking-[.28em] text-[#e6f2df] sm:left-12 sm:top-12">Capsicum annuum / 001</span>
 
-       <div class="absolute inset-x-[6%] bottom-[4%] top-[12%] flex items-center justify-center"><div class="absolute bottom-[6%] h-[17%] w-[65%] rounded-[50%] bg-[#0b2c22]/25 blur-xl"></div><img src="/img/cabai.png" alt="Ilustrasi tanaman cabai dari aset proyek" class="float-plant relative z-10 h-[86%] w-[90%] object-contain drop-shadow-[0_28px_25px_rgba(12,36,25,.3)]"></div>
+       <div class="absolute inset-x-[6%] bottom-[4%] top-[12%] flex items-center justify-center"><div class="absolute bottom-[6%] h-[17%] w-[65%] rounded-[50%] bg-[#0b2c22]/25 blur-xl"></div><img src="img/cabai.png" alt="Ilustrasi tanaman cabai dari aset proyek" class="float-plant relative z-10 h-[86%] w-[90%] object-contain drop-shadow-[0_28px_25px_rgba(12,36,25,.3)]"></div>
 
        <div class="absolute right-[5%] top-[20%] rounded-2xl border border-white/35 bg-white/90 px-4 py-3 shadow-xl backdrop-blur-lg sm:right-[6%]"><div class="flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-wide text-forest"><span class="twinkle text-lg text-clay">✦</span> Naturally better</div><p class="mt-1 text-[10px] text-[#799187]">Precision cultivation</p></div>
 

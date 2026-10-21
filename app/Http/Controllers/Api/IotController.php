@@ -22,6 +22,7 @@ class IotController extends Controller
     public function storeData(Request $request)
     {
         $rules = [
+            'sample_id' => 'sometimes|nullable|string|max:100|regex:/^[A-Za-z0-9_.:-]+$/',
             'air_temp' => 'nullable|numeric|between:-40,80',
             'air_humidity' => 'nullable|numeric|between:0,100',
             'water_temp' => 'nullable|numeric|between:-10,100',
@@ -45,7 +46,7 @@ class IotController extends Controller
         }
 
         $validated = $request->validate($rules);
-        $hasMeasurement = collect($validated)->contains(fn ($value) => $value !== null);
+        $hasMeasurement = collect($validated)->except(['sample_id'])->contains(fn ($value) => $value !== null);
         if (!$hasMeasurement) {
             return response()->json([
                 'status' => 'error',
@@ -82,6 +83,24 @@ class IotController extends Controller
             $row[$field] = $validated[$field] ?? null;
         }
 
+        // ID unik perangkat: pengiriman ulang tidak membuat pembacaan ganda.
+        // Dibuat opsional untuk kompatibilitas dengan firmware lama.
+        $sampleId = $validated['sample_id'] ?? null;
+        if ($sampleId !== null) {
+            $row['sample_id'] = $sampleId;
+            $inserted = \Illuminate\Support\Facades\DB::table('sensor_logs')->insertOrIgnore(array_merge(
+                $row, ['created_at' => now(), 'updated_at' => now()]
+            ));
+            $log = SensorLog::where('sample_id', $sampleId)->firstOrFail();
+            return response()->json([
+                'status' => 'success',
+                'message' => $inserted ? 'Telemetry tersimpan.' : 'Telemetry sudah pernah diterima.',
+                'id' => $log->id,
+                'duplicate' => !$inserted,
+                'timestamp' => $log->created_at,
+            ], $inserted ? 201 : 200);
+        }
+
         $log = SensorLog::create($row);
 
         return response()->json([
@@ -100,7 +119,7 @@ class IotController extends Controller
     {
         $sensor = SensorLog::latest('id')->first();
         $fresh = (bool) ($sensor && $sensor->created_at &&
-            $sensor->created_at->gte(now()->subSeconds(20)));
+            $sensor->created_at->gte(now()->subSeconds(12)));
 
         $number = static function ($value) {
             return $value === null ? null : (float) $value;
@@ -203,7 +222,7 @@ class IotController extends Controller
         $deviceId = 'ESP32-S3-ATAN';
         $device = DeviceStatus::where('device_id', $deviceId)->first();
         $online = (bool) ($device?->last_seen_at &&
-            $device->last_seen_at->gte(now()->subSeconds(30)));
+            $device->last_seen_at->gte(now()->subSeconds(12)));
 
         return response()->json([
             'device_id' => $deviceId,

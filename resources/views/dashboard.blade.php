@@ -253,6 +253,11 @@ h1,h2,h3,h4{font-family:Outfit,sans-serif}button,input{font:inherit}button{curso
         </div>
         <input id="age" type="hidden" value="0">
         <input id="quantity" type="hidden" value="30">
+<div class="atan-growth-settings" style="display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin:16px 0;padding:16px;border-radius:16px;background:#f0f6eb">
+  <label style="font-size:12px;font-weight:700">Tanggal tanam cabai<br><input type="date" id="atan-planting-date" style="margin-top:7px;border:1px solid #bdd2be;border-radius:10px;padding:10px;background:white;max-width:100%"></label>
+  <button type="button" class="btn dark" id="atan-save-planting-date">Simpan tanggal tanam</button>
+  <span id="atan-growth-status" style="font-size:12px;color:#4a6956" aria-live="polite">Memuat fase pertumbuhan...</span>
+</div>
 <div class="day-actions">
         <button class="btn dark" onclick="advanceDay()">
          ＋ Lanjut Hari Berikutnya
@@ -442,34 +447,35 @@ h1,h2,h3,h4{font-family:Outfit,sans-serif}button,input{font:inherit}button{curso
      </div>
       <!-- TIME SERIES: maksimal 200 pembacaan paling baru -->
       <section class="panel sensor-log-section" id="sensor-log-section">
-       <div class="sectionhead">
-        <div>
-         <span class="eyebrow">TIME SERIES / SENSOR LOG</span>
-         <h3>Riwayat Pembacaan Sensor</h3>
-         <p class="sub">Hasil aktual ESP32-S3; Soil ADC merupakan nilai mentah, sedangkan N/P/K berasal dari satu sensor global dan bukan hasil pengukuran tiap blok. Pembacaan ke-201 menggantikan data paling lama.</p>
-        </div>
-        <div class="atan-sensor-actions">
-          <span class="pill" id="sensor-log-count">0 / 200</span>
-          <button id="download-sensor-csv" type="button" class="btn dark" onclick="downloadSensorCSV()" aria-label="Unduh riwayat pembacaan sensor dalam format CSV">
-            ↓ Download CSV
-          </button>
-        </div>
-       </div>
-       <div class="sensor-table-wrap">
-        <table class="sensor-table">
-         <thead>
-          <tr>
-           <th>Waktu</th><th>Sumber</th><th>Zona</th>
-           <th>Soil %</th><th>Soil ADC mentah</th><th>Suhu Udara °C</th><th>RH %</th>
-           <th>Suhu Air °C</th><th>pH</th><th>EC</th><th>TDS ppm</th>
-           <th>N global*</th><th>P global*</th><th>K global*</th>
-           <th>Flow L/min</th><th>Valve</th><th>Pompa</th><th>Mixer</th>
-          </tr>
-         </thead>
-         <tbody id="sensor-log-body"></tbody>
-        </table>
-       </div>
-      </section>
+  <div class="sectionhead" style="flex-wrap:wrap;gap:12px">
+    <div>
+      <span class="eyebrow">TIME SERIES / SENSOR LOG</span>
+      <h3>Riwayat Pembacaan Sensor &amp; Biaya</h3>
+      <p class="sub">100 telemetry terbaru dari MySQL. Arsip tidak dihapus saat perangkat offline. Biaya merupakan akumulasi hingga waktu pembacaan, bukan biaya per sampel.</p>
+    </div>
+    <span class="pill" id="sensor-log-count">Memuat arsip...</span>
+  </div>
+  <div class="atan-history-tools">
+    <label>Dari tanggal <input id="atan-csv-from" type="date"></label>
+    <label>Sampai tanggal <input id="atan-csv-to" type="date"></label>
+    <button type="button" class="btn dark" id="atan-download-db-csv">↓ Download CSV</button>
+    <button type="button" class="btn light" id="atan-reload-db-history">↻ Perbarui</button>
+  </div>
+  <p class="footnote" id="atan-history-info" aria-live="polite">Memuat riwayat database...</p>
+  <div class="sensor-table-wrap">
+    <table class="sensor-table" style="min-width:1900px">
+      <thead><tr>
+        <th>Waktu (Laravel)</th><th>Soil A %</th><th>Soil B %</th><th>Soil C %</th>
+        <th>Soil ADC A/B/C</th><th>Suhu Udara °C</th><th>RH %</th><th>Suhu Air °C</th>
+        <th>pH</th><th>EC mS/cm</th><th>TDS ppm</th><th>N / P / K global</th>
+        <th>Air batch kumulatif L</th><th>Biaya air batch Rp</th><th>Pupuk A Rp</th><th>Pupuk B Rp</th>
+        <th>Listrik relay kWh</th><th>Biaya listrik relay Rp</th><th>Pompa air belum terukur (kejadian)</th>
+      </tr></thead>
+      <tbody id="sensor-log-body"><tr><td colspan="19">Memuat riwayat...</td></tr></tbody>
+    </table>
+  </div>
+  <p class="footnote">Nilai Soil % dan EC kosong sampai kalibrasi/perangkat EC tersedia. Air dan pupuk menunjukkan batch yang dicatat, bukan konsumsi terukur. Listrik adalah estimasi dari relay dengan daya diketahui; pompa air utama belum memiliki angka watt.</p>
+</section>
            <!-- Penjelasan keputusan analitik, tanpa mengganti Living Greenhouse -->
       <section class="panel" id="decision-explanation">
         <span class="eyebrow">Decision Intelligence / Explainable Rules</span>
@@ -868,11 +874,12 @@ function refreshForecast() {
     $('age').value = age;
     const stage = plant.stages[stageForAge(age)];
     
-    $('automatic-age-label').textContent =
-        `Hari ke-${age} · ${stage[0]}`;
+    $('automatic-age-label').textContent = plantStartDate
+        ? `Hari ke-${age} · ${age > plant.duration ? 'Panen berlanjut' : stage[0]}`
+        : 'Tanggal tanam belum diatur';
     $('current-period').textContent =
         `Hari ${age} · rentang fase ${stage[1]}–${stage[2]}`;
-    $('current-stage').textContent = stage[0];$('current-explanation').textContent = stage[4];
+    $('current-stage').textContent = !plantStartDate ? 'Tanggal tanam belum diatur' : (age > plant.duration ? 'Panen berlanjut' : stage[0]);$('current-explanation').textContent = !plantStartDate ? 'Simpan tanggal tanam agar fase dihitung berdasarkan umur kalender.' : (age > plant.duration ? 'Masa panen dapat berlanjut sesuai kondisi tanaman; verifikasi melalui pengamatan lapang.' : stage[4]);
     
     // Perbaikan rendering gambar dengan penanganan error gambar
     const imagePath = stage[3];
@@ -956,16 +963,16 @@ function renderCharts(plant) {
 // API disarankan melalui backend agar CORS dan autentikasi aman.
 const API_SENSOR_URL = '/api/telemetry/latest';
 const API_DEVICE_STATUS_URL = '/api/device/status';
-const DEVICE_STATUS_INTERVAL_MS = 5000;
+const DEVICE_STATUS_INTERVAL_MS = 2000;
 let deviceOnline = false;
 let lastHeartbeatAt = null;
 const SENSOR_INTERVAL_MS = 5000;
-const SENSOR_HISTORY_LIMIT = 200;
+const SENSOR_HISTORY_LIMIT = 100; // hanya jendela browser, arsip resmi ada di MySQL
 let liveSensorConnected = false;
 let sensorRecords = [];
 let lastSensorTimestamp = null;
 let lastValidTelemetryAt = 0;
-const SENSOR_STALE_AFTER_MS = 20000;
+const SENSOR_STALE_AFTER_MS = 12000;
 
 
 // Koneksi ESP32 murni berdasarkan heartbeat, tidak bergantung pada pembacaan sensor.
@@ -1137,43 +1144,8 @@ function addSensorRecords(timestamp, receivedCodes) {
     sensorRecords = sensorRecords.slice(-SENSOR_HISTORY_LIMIT);
 }
 
-function renderSensorRecords() {
-    const table = $('sensor-log-body');
-    if (!table) return;
-
-    $('sensor-log-count').textContent =
-        sensorRecords.length + ' / ' + SENSOR_HISTORY_LIMIT;
-
-    table.replaceChildren();
-    const fragment = document.createDocumentFragment();
-
-    for (const record of [...sensorRecords].reverse()) {
-        const tr = document.createElement('tr');
-        const values = [
-            new Date(record.timestamp).toLocaleTimeString('id-ID'),
-            record.source,
-            record.zone,
-            record.soil,
-            record.soilAdc,
-            record.temp,
-            record.humidity,
-            record.waterTemp,
-            record.ph,
-            record.ec,
-            record.tds,
-            record.n, record.p, record.k,
-            record.flow,
-            record.valve, record.pump, record.mixer
-        ];
-        for (const value of values) {
-            const td = document.createElement('td');
-            td.textContent = value === null || value === undefined || Number.isNaN(value) ? '—' : String(value);
-            tr.appendChild(td);
-        }
-        fragment.appendChild(tr);
-    }
-    table.appendChild(fragment);
-}
+// Riwayat resmi dirender dari database, bukan dari cache sensorRecords browser.
+function renderSensorRecords() { /* Tampilan dikelola atanLoadDatabaseHistory(). */ }
 
 function refreshLiveSensorDisplay() {
     if (!$('metrics') || !$('dashboard').classList.contains('active')) {
@@ -1265,7 +1237,7 @@ function localDateString() {
         .slice(0, 10);
 }
 
-let plantStartDate = localStorage.getItem('atan_start_date') || localDateString();
+let plantStartDate = null; // sumber tanggal tanam: MySQL melalui /api/growth/current
 let fertilizerProfile = JSON.parse(
     localStorage.getItem('atan_fertilizer') || 'null'
 ) || {
@@ -1284,10 +1256,11 @@ const RESOURCE_CONFIG = {
 };
 
 function getPlantAge() {
+    if (!plantStartDate) return 0;
     const start = new Date(plantStartDate + 'T00:00:00');
     const today = new Date(localDateString() + 'T00:00:00');
     const elapsed = Math.floor((today - start) / 86400000);
-    return Math.min(plants[crop].duration, Math.max(0, elapsed));
+    return Math.max(0, elapsed);
 }
 
 function openFertStep() {
@@ -1673,8 +1646,7 @@ function advanceDay() {
 }
 function resetSimulation() {
     // Semua state proyeksi frontend kembali ke awal.
-    plantStartDate = localDateString();
-    localStorage.setItem('atan_start_date', plantStartDate);
+    // Tombol reset tampilan tidak mengubah tanggal tanam tersimpan di MySQL.
     $('age').value = 0;
     $('quantity').value = 30;
     $('water-price').value = 15;
@@ -1690,7 +1662,7 @@ function resetSimulation() {
 }
 // Mengunduh data yang tersimpan pada tabel Riwayat Pembacaan Sensor.
 // CSV memakai ; sebagai pemisah agar Excel regional Indonesia membaca kolom terpisah.
-function downloadSensorCSV() {
+function downloadLegacyMemoryCSV_UNUSED() {
     if (!sensorRecords.length) {
         window.alert('Belum ada riwayat pembacaan sensor untuk diunduh.');
         return;
@@ -1879,6 +1851,105 @@ if ($('dashboard')) {
   await refresh();setInterval(refresh,5000);
 })();
 </script>
-<script>document.addEventListener("DOMContentLoaded",()=>{atanRefreshCosts();setInterval(atanRefreshCosts,5000);});</script>
+<script>document.addEventListener("DOMContentLoaded",()=>{atanRefreshCosts();setInterval(atanRefreshCosts,5000);});
+// Fase pertumbuhan resmi disimpan di Laravel/MySQL, bukan localStorage.
+async function atanLoadGrowth() {
+    const status = document.getElementById('atan-growth-status');
+    try {
+        const response = await fetch('/api/growth/current', {cache:'no-store'});
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const data = await response.json();
+        plantStartDate = data.planting_date || null;
+        document.getElementById('atan-planting-date').value = plantStartDate || '';
+        status.textContent = plantStartDate ? 'Fase: ' + data.phase.name + ' · hari ke-' + data.age_days : 'Masukkan tanggal tanam';
+        refreshForecast();
+    } catch(e) {
+        status.textContent = 'Data fase tidak dapat dimuat: ' + e.message;
+    }
+}
+document.getElementById('atan-save-planting-date').addEventListener('click', async () => {
+    const input = document.getElementById('atan-planting-date');
+    const status = document.getElementById('atan-growth-status');
+    if (!input.value) {status.textContent='Pilih tanggal tanam terlebih dahulu.';return;}
+    try {
+        const response = await fetch('/api/growth/planting-date', {
+            method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'},
+            body:JSON.stringify({planting_date:input.value})
+        });
+        const data = await response.json();
+        if (!response.ok) throw Error(data.message || 'HTTP ' + response.status);
+        plantStartDate = data.planting_date;
+        status.textContent = 'Tersimpan · ' + data.phase.name + ' · hari ke-' + data.age_days;
+        refreshForecast();
+    } catch(e) { status.textContent='Gagal menyimpan: ' + e.message; }
+});
+atanLoadGrowth();
+</script>
+<style>
+.atan-history-tools{display:flex;flex-wrap:wrap;align-items:end;gap:12px;margin:12px 0}
+.atan-history-tools label{display:flex;flex-direction:column;gap:5px;font-size:11px;font-weight:800;color:#42694d}
+.atan-history-tools input{border:1px solid #d8e7d6;border-radius:10px;padding:10px;background:#fffefa;color:#245743;min-width:148px}
+#sensor-log-body tr:nth-child(even){background:#f7faf5}
+#sensor-log-body td{font-variant-numeric:tabular-nums}
+</style>
+<script>
+(function () {
+ const table=document.getElementById('sensor-log-body');
+ if(!table)return;
+ const from=document.getElementById('atan-csv-from');
+ const to=document.getElementById('atan-csv-to');
+ const info=document.getElementById('atan-history-info');
+ const count=document.getElementById('sensor-log-count');
+ const pad=x=>String(x).padStart(2,'0');
+ const localDay=d=>[d.getFullYear(),pad(d.getMonth()+1),pad(d.getDate())].join('-');
+ const today=new Date(); to.value=localDay(today);
+ from.value=localDay(new Date(today.getFullYear(),today.getMonth(),1));
+ let busy=false;
+ const show=v=>(v===null||v===undefined||v==='')?'—':String(v);
+ const dec=(v,n=2)=>v===null||v===undefined||v===''?'—':Number(v).toLocaleString('id-ID',{maximumFractionDigits:n});
+ const td=(tr,v)=>{const e=document.createElement('td');e.textContent=v;tr.appendChild(e);};
+ async function load(){
+   if(busy)return;busy=true;
+   try{
+    const response=await fetch('/api/telemetry/history',{cache:'no-store',headers:{Accept:'application/json'}});
+    if(!response.ok)throw new Error('HTTP '+response.status);
+    const data=await response.json();
+    const rows=Array.isArray(data.rows)?data.rows:[];
+    const frag=document.createDocumentFragment();
+    for(const r of rows){
+      const tr=document.createElement('tr');
+      const localDate=r.created_at?new Date(r.created_at):null;
+      const values=[
+        localDate&&!isNaN(localDate)?localDate.toLocaleString('id-ID'):show(r.created_at),
+        dec(r.soil_a,1),dec(r.soil_b,1),dec(r.soil_c,1),
+        [r.soil_adc_a,r.soil_adc_b,r.soil_adc_c].map(show).join(' / '),
+        dec(r.air_temp,1),dec(r.air_humidity,1),dec(r.water_temp,1),
+        dec(r.ph),dec(r.ec),dec(r.tds),
+        [r.npk_n,r.npk_p,r.npk_k].map(show).join(' / '),
+        dec(r.water_batch_l,4),dec(r.water_batch_rp,4),
+        dec(r.fertilizer_a_rp,4),dec(r.fertilizer_b_rp,4),
+        dec(r.energy_kwh,8),dec(r.electricity_rp,6),show(r.unmetered_pump_events)
+      ];
+      values.forEach(v=>td(tr,v));frag.appendChild(tr);
+    }
+    if(!rows.length){const tr=document.createElement('tr');const c=document.createElement('td');c.colSpan=19;c.textContent='Belum ada data telemetry yang tersimpan di MySQL.';tr.appendChild(c);frag.appendChild(tr)}
+    table.replaceChildren(frag);
+    count.textContent=rows.length+' terbaru / '+data.total_saved+' tersimpan';
+    info.textContent='Arsip MySQL • data tetap tersimpan ketika ESP32 offline • nilai biaya adalah kumulatif hingga waktu telemetry diterima';
+   }catch(e){
+    // Saat Laravel terganggu, jangan hapus riwayat yang masih terlihat.
+    info.textContent='Gagal menyegarkan arsip ('+e.message+'). Riwayat terakhir di layar tetap ditampilkan.';
+   }finally{busy=false}
+ }
+ document.getElementById('atan-reload-db-history').addEventListener('click',load);
+ document.getElementById('atan-download-db-csv').addEventListener('click',()=>{
+    if(!from.value||!to.value||from.value>to.value){info.textContent='Isi rentang tanggal dengan benar.';return;}
+    const diff=(new Date(to.value+'T00:00:00')-new Date(from.value+'T00:00:00'))/86400000;
+    if(diff>366){info.textContent='Maksimal 366 hari dalam satu CSV. Pilih rentang lebih pendek.';return;}
+    window.location.href='/api/telemetry/export?from='+encodeURIComponent(from.value)+'&to='+encodeURIComponent(to.value);
+ });
+ load();setInterval(load,15000);
+})();
+</script>
 </body>
 </html>
