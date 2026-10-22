@@ -68,7 +68,18 @@
   <div class="pointer-events-none absolute -left-28 top-96 h-[470px] w-[470px] rounded-full bg-[#e4ecd7] blur-[110px] opacity-70"></div>
 
   <header id="welcome-navbar" class="welcome-navbar">
-    <a href="{{ route('welcome') }}" class="welcome-brand group flex shrink-0 items-center gap-3"><span class="welcome-brand-mark grid h-11 w-11 place-items-center rounded-2xl bg-forest text-lime shadow-lg shadow-emerald-950/10 transition-transform group-hover:-rotate-12">✳</span><span class="text-[15px] font-extrabold tracking-[-.04em]">ATAN <span class="font-medium text-moss">si TATANEN</span></span></a>
+    
+<a href="{{ route('welcome') }}" class="welcome-brand group flex shrink-0 items-center gap-3">
+    <img
+        src="{{ asset('img/logo.png') }}"
+        alt="Logo ATAN si TATANEN"
+        class="welcome-brand-mark h-11 w-11 rounded-2xl object-contain transition-transform group-hover:scale-105"
+    >
+    <span class="text-[15px] font-extrabold tracking-[-.04em]">
+        ATAN <span class="font-medium text-moss">si TATANEN</span>
+    </span>
+</a>
+
     <nav class="welcome-nav" aria-label="Navigasi section welcome">
       <a href="#welcome-home" data-welcome-slide="0" class="active" aria-current="page">Beranda</a>
       <a href="#growth" data-welcome-slide="1">Pertumbuhan</a>
