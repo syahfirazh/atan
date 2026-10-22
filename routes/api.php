@@ -33,6 +33,7 @@ Route::get('/nutrient/summary', [AtanNutrientController::class, 'summary']);
 use App\Http\Controllers\Api\AtanGrowthController;
 Route::get('/growth/current', [AtanGrowthController::class, 'show']);
 Route::post('/growth/planting-date', [AtanGrowthController::class, 'save']);
+Route::post('/growth/target-ppm', [AtanGrowthController::class, 'saveTarget']);
 
 // Riwayat permanen dari MySQL: tidak bergantung pada browser dan status ESP32.
 use App\Http\Controllers\Api\AtanHistoryController;
@@ -45,3 +46,7 @@ use App\Http\Controllers\Api\AtanFinanceController;
 Route::get('/finance/forecast', [AtanFinanceController::class, 'forecast']);
 
 
+
+// Log kejadian irigasi dari ESP32, data estimasi (bukan flow meter).
+// Route::post('/log_siram', [\App\Http\Controllers\Api\AtanIrrigationController::class, 'store']);
+// Route::get('/log_siram', [\App\Http\Controllers\Api\AtanIrrigationController::class, 'latest']);

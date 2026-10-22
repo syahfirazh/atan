@@ -21,11 +21,27 @@
 </script>
 <style>
 :root{--ink:#163d34;--muted:#73877c;--line:#e3eae0;--paper:#fffefa;--mist:#f0f6eb}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#f8f7f0;color:var(--ink);font-family:'DM Sans',sans-serif;overflow-x:hidden}
+*{box-sizing:border-box}html{scroll-behavior:auto;height:100%;overflow:hidden}body{margin:0;background:#f8f7f0;color:var(--ink);font-family:'DM Sans',sans-serif;overflow:hidden;height:100%}
 h1,h2,h3,h4{font-family:Outfit,sans-serif}button,input{font:inherit}button{cursor:pointer}a{text-decoration:none;color:inherit}.wrap{max-width:1440px;padding:0 clamp(16px,4vw,70px);margin:auto}.screen{display:none}.screen.active{display:block}
+main{width:100vw;height:100dvh;overflow:hidden}
+#dashboard.screen.active{width:100vw;height:100dvh;overflow:hidden}
+.wrap.dashboard-track{display:flex;align-items:stretch;width:600vw;max-width:none;padding:0;margin:0;height:100dvh;transition:transform .68s cubic-bezier(.22,.78,.24,1);will-change:transform}
+.dashboard-slide{flex:0 0 100vw;width:100vw;height:100dvh;min-height:100dvh;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;background:#f8f7f0;scrollbar-width:thin;scrollbar-color:#b9cdb5 transparent}
+.dashboard-slide-inner{width:100%;max-width:1440px;min-height:100%;margin:0 auto;padding:92px clamp(16px,4vw,70px) 36px}
+.dashboard-slide-nav{position:fixed;z-index:100;inset:0 0 auto;min-height:72px;display:flex;align-items:center;gap:16px;padding:10px clamp(14px,3vw,42px);background:rgba(248,247,240,.92);backdrop-filter:blur(18px);border-bottom:1px solid #e0e9dd;box-shadow:0 8px 28px rgba(25,62,42,.05)}
+.dashboard-nav-brand{display:flex;align-items:center;gap:9px;flex-shrink:0;font-size:13px;font-weight:900;letter-spacing:-.04em;white-space:nowrap}
+.dashboard-nav-mark{width:36px;height:36px;border-radius:13px;display:grid;place-items:center;background:#174b3b;color:#d5ebab;font-size:20px}
+.dashboard-nav-links{display:flex;align-items:center;gap:4px;flex:1;min-width:0;overflow-x:auto;scrollbar-width:none}
+.dashboard-nav-links::-webkit-scrollbar{display:none}
+.dashboard-nav-links button{white-space:nowrap;border:0;background:transparent;color:#6d8274;border-radius:999px;padding:10px 12px;font-size:11px;font-weight:800;transition:background .2s,color .2s}
+.dashboard-nav-links button:hover{background:#e8f1e4;color:#214b37}
+.dashboard-nav-links button.active{background:#174b3b;color:#fff;box-shadow:0 7px 18px #174b3b20}
+.dashboard-nav-home{flex-shrink:0;border-radius:999px;background:#e7f0e2;color:#214b37;padding:11px 14px;font-size:11px;font-weight:900;white-space:nowrap}
+@media(max-width:900px){.dashboard-slide-nav{flex-wrap:wrap;gap:5px;padding:8px 12px}.dashboard-nav-brand{font-size:12px}.dashboard-nav-mark{width:30px;height:30px}.dashboard-nav-links{order:3;flex-basis:100%;justify-content:flex-start}.dashboard-nav-links button{font-size:10px;padding:8px 10px}.dashboard-nav-home{margin-left:auto;padding:9px 11px}.dashboard-slide-inner{padding-top:112px}}
+@media(prefers-reduced-motion:reduce){.wrap.dashboard-track{transition:none!important}}
 .eyebrow{font:800 10px 'DM Sans';letter-spacing:2.6px;text-transform:uppercase;color:#699878}.dashboard-top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:34px 0 20px}.dashboard-top h1{font-size:clamp(36px,4.8vw,65px);line-height:1.05;letter-spacing:-2px;margin:10px 0}.dashboard-top p{font-size:13px;color:#708578}.dashboard-top>div:last-child{display:flex;gap:10px;flex-wrap:wrap}
 .panel{background:var(--paper);border:1px solid var(--line);border-radius:25px;padding:clamp(18px,2.2vw,28px);box-shadow:0 14px 45px #244d3210;min-width:0;transition:box-shadow .3s,transform .3s}.panel:hover{box-shadow:0 18px 48px #244d3219}.panel h3{font-family:Outfit;font-size:22px;letter-spacing:-.6px;margin:5px 0}.sub{font-size:12px;color:#7b8c80;line-height:1.8;margin:8px 0 16px}.sectionhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:14px 0}.sectionhead h3{margin:0}
-.metrics{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:13px;margin:10px 0 20px}.metric{min-width:0;background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:19px 16px;box-shadow:0 8px 30px #244d320a;transition:transform .25s,border-color .25s}.metric:hover{transform:translateY(-5px);border-color:#9ebca4}.metric .symbol{height:36px;display:flex;align-items:center;font-size:22px}.metric label{display:block;font-size:11px;color:#738878;margin:13px 0 7px}.metric strong{font:800 clamp(17px,2vw,26px) Outfit;word-break:break-word}.metric small{font-size:10px;color:#719681;display:block;margin-top:9px;font-weight:700}
+.metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:13px;margin:10px 0 20px}.metric{min-width:0;background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:19px 16px;box-shadow:0 8px 30px #244d320a;transition:transform .25s,border-color .25s}.metric:hover{transform:translateY(-5px);border-color:#9ebca4}.metric .symbol{height:36px;display:flex;align-items:center;font-size:22px}.metric label{display:block;font-size:11px;color:#738878;margin:13px 0 7px}.metric strong{font:800 clamp(17px,2vw,26px) Outfit;word-break:break-word}.metric small{font-size:10px;color:#719681;display:block;margin-top:9px;font-weight:700}
 .sensor-status-panel{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 18px;background:linear-gradient(115deg,#edf4e7,#fffdf7)}.sensor-status-panel strong{display:block;margin:9px 0;font:700 18px Outfit}.sensor-status-panel .sub{margin:0}.pill{display:inline-flex;align-items:center;border-radius:50px;background:#e9f2e6;color:#416e52;padding:7px 13px;font-size:10px;font-weight:800}.tag{border-radius:50px;background:#fff1e7;color:#9e705a;padding:10px 14px;font-size:11px;font-weight:800}
 .two-col{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,.86fr);gap:18px;margin:18px 0}.reading{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 0;border-bottom:1px solid #ebf0e8;font-size:12px}.reading strong{font-weight:800;color:#244e39;text-align:right}.forecast{background:linear-gradient(130deg,#183f35,#315c43);padding:24px;border-radius:20px;color:white;margin-top:16px}.forecast h3{color:#fff}.forecast p{color:#d4e5d6;line-height:1.8;font-size:12px}
 .diagram{position:relative;isolation:isolate;background:radial-gradient(ellipse at 50% 0%,#fcfff7,#eaf3e5 85%);border:1px solid #dae7d6;border-radius:22px;min-height:315px;padding:27px 20px;overflow:hidden}.diagram:before{content:'';position:absolute;inset:0;z-index:-1;background-image:linear-gradient(#aac9a31e 1px,transparent 1px),linear-gradient(90deg,#aac9a31e 1px,transparent 1px);background-size:29px 29px}.diagram-row{display:flex;justify-content:center;align-items:center;gap:7px;flex-wrap:wrap}.tank{width:95px;height:122px;border:3px solid #6199a0;border-top-width:8px;border-radius:16px 16px 25px 25px;background:linear-gradient(to top,#90d4e0 60%,#edf8f6 60%);display:grid;place-items:center;text-align:center;font-size:11px;font-weight:800;color:#396a75;box-shadow:0 12px 20px #34718b14;transition:transform .4s}.tank:hover{transform:translateY(-5px)}.tank.orange{border-color:#c5a46f;background:linear-gradient(to top,#f0d39f 50%,#fffaf0 50%);color:#856127}.tank.green{border-color:#8aa574;background:linear-gradient(to top,#aed49e 61%,#f3f9ed 61%);color:#466a38}.pipe{height:7px;min-width:15px;max-width:65px;flex:1;border-radius:30px;background:repeating-linear-gradient(90deg,#2699b4 0 14px,#a0dcf0 14px 27px);background-size:54px 100%;animation:waterflow 1.1s linear infinite}.pipe.off{background:#c7d7d1;animation:none}.mixer{width:106px;height:105px;border:3px solid #8db2a5;border-radius:22px;background:linear-gradient(to top,#b5e4d7 60%,#fafffc 60%);display:grid;place-items:center;position:relative;font-size:11px;font-weight:800}.mixer:after{content:'↻';font-size:36px;position:absolute;bottom:14px;color:#468d7e;animation:rotate 5s linear infinite}.water{text-align:center;margin:18px 0;color:#5797ae;font-size:11px;font-weight:700}.diagram-bottom,.zones{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.plant-node,.zone{border:1px solid #d2e4cd;background:#fffefaeb;border-radius:17px;padding:14px 7px;text-align:center;min-width:0;color:#2a533c;font-weight:800;transition:transform .3s,border-color .3s,box-shadow .3s}.plant-node:hover,.plant-node.chosen,.zone:hover,.zone.active{transform:translateY(-3px);border-color:#74a784;box-shadow:0 10px 25px #3e7c3d1c}.zone.active{background:#1c5140;color:white}.plant-node .sprout{display:block;min-height:45px;animation:sway 4s ease-in-out infinite}.plant-node b,.plant-node small{display:block;font-size:11px}.plant-node small{color:#829688;font-size:10px;margin-top:5px}.zone span{display:block;margin:7px 0}.zone small{font-weight:700}
@@ -51,7 +67,7 @@ h1,h2,h3,h4{font-family:Outfit,sans-serif}button,input{font:inherit}button{curso
 <section class="screen active" id="dashboard">
     <div class="wrap">
      <div class="dashboard-top">
-<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><button id="atan-monitor-toggle" type="button" class="btn dark" aria-pressed="true">Monitoring: ON</button><span id="atan-monitor-note" style="font-size:11px;color:#63826b">Mengatur refresh dashboard, bukan daya ESP32</span></div>
+<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><button id="atan-monitor-toggle" type="button" class="btn dark" aria-pressed="true">Monitoring: ON</button><span id="atan-monitor-note" style="font-size:11px;color:#63826b"></span></div>
       <div>
        <span class="eyebrow">
         03 / Smart growing intelligence
@@ -90,7 +106,7 @@ h1,h2,h3,h4{font-family:Outfit,sans-serif}button,input{font:inherit}button{curso
            <section class="panel" style="margin:12px 0 18px" aria-label="Diagnostik sensor mentah">
         <span class="eyebrow">DIAGNOSTIK / PEMBACAAN MENTAH</span>
         <h3>ADC Sensor &amp; NPK Global</h3>
-        <p class="sub">Pembacaan mentah ESP32, bukan persentase Soil atau nilai pH/TDS terkalibrasi. NPK ditampilkan global, bukan diasumsikan per zona.</p>
+        <p class="sub"></p>
         <div class="grid3" id="atan-raw-diagnostic"><div class="mini">Menunggu telemetry diagnostik...</div></div>
       </section>
 <div class="two-col reveal">
@@ -223,7 +239,7 @@ h1,h2,h3,h4{font-family:Outfit,sans-serif}button,input{font:inherit}button{curso
         </strong>
        </div>
        <p class="footnote">
-        Status irigasi mengikuti pembacaan terbaru. Antarmuka ini tidak mengirim perintah aktuator ke ESP32.
+        
        </p>
        <div class="forecast">
         <span class="eyebrow" style="color:#b3dea3">
@@ -538,6 +554,102 @@ h1,h2,h3,h4{font-family:Outfit,sans-serif}button,input{font:inherit}button{curso
    </section>
   
 </main>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+(function initDashboardSlides(){
+  const dashboard = document.getElementById('dashboard');
+  const track = dashboard && dashboard.querySelector(':scope > .wrap');
+  if (!track || track.dataset.slidesReady === '1') return;
+  const original = Array.from(track.children);
+  const twoCols = original.filter(node => node.classList && node.classList.contains('two-col'));
+  const overviewNodes = original.slice(0, 5);
+  const logs = original.find(node => node.id === 'sensor-log-section');
+  const decision = original.find(node => node.id === 'decision-explanation');
+  const history = original.find(node => node.id === 'growth-history');
+  const footer = document.querySelector('body > .footer');
+  const groups = [
+    {id:'overview', label:'Overview', nodes:overviewNodes},
+    {id:'greenhouse', label:'Greenhouse', nodes:[twoCols[0]]},
+    {id:'growth', label:'Pertumbuhan', nodes:[twoCols[1]]},
+    {id:'costs', label:'Biaya & Nutrisi', nodes:[twoCols[2]]},
+    {id:'sensor-history', label:'Riwayat Sensor', nodes:[logs]},
+    {id:'insights', label:'Insight & Jurnal', nodes:[decision, history]}
+  ];
+  if (groups.some(group => group.nodes.some(node => !node))) return;
+
+  const nav = document.createElement('header');
+  nav.className = 'dashboard-slide-nav';
+  nav.innerHTML = '<a class="dashboard-nav-brand" href="/" aria-label="Kembali ke halaman welcome"><span class="dashboard-nav-mark">✳</span><span>ATAN <span style="color:#73927b;font-weight:600">si TATANEN</span></span></a><nav class="dashboard-nav-links" aria-label="Navigasi section dashboard"></nav><a class="dashboard-nav-home" href="/">Welcome ↗</a>';
+  const links = nav.querySelector('.dashboard-nav-links');
+  groups.forEach((group, index) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = group.label;
+    button.dataset.dashboardSlide = String(index);
+    if (index === 0) { button.classList.add('active'); button.setAttribute('aria-current','page'); }
+    links.appendChild(button);
+  });
+  document.body.insertBefore(nav, document.body.firstChild);
+
+  track.classList.add('dashboard-track');
+  track.dataset.slidesReady = '1';
+  const slides = [];
+  groups.forEach((group, index) => {
+    const slide = document.createElement('section');
+    slide.className = 'dashboard-slide';
+    slide.id = 'dashboard-slide-' + group.id;
+    slide.setAttribute('aria-label', group.label);
+    const inner = document.createElement('div');
+    inner.className = 'dashboard-slide-inner';
+    group.nodes.forEach(node => inner.appendChild(node));
+    slide.appendChild(inner);
+    track.appendChild(slide);
+    slides.push(slide);
+  });
+  if (footer) slides[slides.length - 1].querySelector('.dashboard-slide-inner').appendChild(footer);
+
+  let active = 0;
+  const navButtons = Array.from(links.querySelectorAll('button'));
+  const setSlide = (index, updateHash = false) => {
+    active = Math.max(0, Math.min(slides.length - 1, index));
+    track.style.transform = `translate3d(-${active * 100}vw,0,0)`;
+    navButtons.forEach((button, i) => {
+      const selected = i === active;
+      button.classList.toggle('active', selected);
+      if (selected) button.setAttribute('aria-current','page');
+      else button.removeAttribute('aria-current');
+    });
+    slides.forEach((slide, i) => { if (i !== active) slide.scrollTop = 0; });
+    if (updateHash) history.replaceState(null, '', '#dashboard-' + groups[active].id);
+    if (typeof growthChart !== 'undefined' && growthChart && typeof growthChart.resize === 'function') growthChart.resize();
+    if (typeof costChart !== 'undefined' && costChart && typeof costChart.resize === 'function') costChart.resize();
+  };
+  window.atanDashboardSlide = setSlide;
+  navButtons.forEach(button => button.addEventListener('click', () => setSlide(Number(button.dataset.dashboardSlide), true)));
+  let startX = 0, startY = 0;
+  slides.forEach(slide => {
+    slide.addEventListener('touchstart', event => {
+      if (event.touches.length !== 1) return;
+      startX = event.touches[0].clientX; startY = event.touches[0].clientY;
+    }, {passive:true});
+    slide.addEventListener('touchend', event => {
+      if (!event.changedTouches.length || event.target.closest('.sensor-table-wrap, input, textarea, select, button, a')) return;
+      const dx = event.changedTouches[0].clientX - startX;
+      const dy = event.changedTouches[0].clientY - startY;
+      if (Math.abs(dx) > 75 && Math.abs(dx) > Math.abs(dy) * 1.25) setSlide(active + (dx < 0 ? 1 : -1), true);
+    }, {passive:true});
+  });
+  document.addEventListener('keydown', event => {
+    if (event.altKey || event.ctrlKey || event.metaKey || /INPUT|TEXTAREA|SELECT/.test(event.target.tagName)) return;
+    if (event.key === 'ArrowRight') { event.preventDefault(); setSlide(active + 1, true); }
+    if (event.key === 'ArrowLeft') { event.preventDefault(); setSlide(active - 1, true); }
+  });
+  const hashId = location.hash.replace(/^#dashboard-/, '');
+  const initial = groups.findIndex(group => group.id === hashId);
+  setSlide(initial >= 0 ? initial : 0, false);
+})();
+});
+</script>
 <footer class="footer">
    ✳ ATAN si TATANEN &mdash; Teknologi Adaptif Nutrisi &middot; Smart Greenhouse Cabai &middot; ESP32-S3
   </footer>
@@ -747,8 +859,7 @@ function renderDashboard() {
         ['💦', 'Kelembapan udara', sensorText(sensorSeed.humidity, '%')],
         [`<img src="/img/suhu_air.png" alt="Suhu Air" class="w-6 h-6 object-contain">`, 'Suhu air', sensorText(sensorSeed.waterTemp, '°C', 1)],
         [`<img src="/img/sensor_ph.png" alt="pH Larutan" class="w-6 h-6 object-contain">`, 'pH larutan', sensorText(sensorSeed.ph)],
-        ['⚡', 'EC', sensorText(sensorSeed.ec, ' mS/cm')],
-        [`🌱`, 'Soil Moisture (belum aktif)', '—']
+        ['⚡', 'EC', sensorText(sensorSeed.ec, ' mS/cm')]
     ];
 
     $('metrics').innerHTML = metrics.map(([icon, label, value]) => `
@@ -783,7 +894,7 @@ function renderDashboard() {
                 <span>
                     <img src="/img/cabai2.png" alt="Cabai" class="w-6 h-6 object-contain mx-auto my-1 block">
                 </span>
-                <small>${isValidNumber(sensor.soil) ? sensorText(sensor.soil, '%', 1) : (isValidNumber(soilAdcByZone[label]) ? soilAdcByZone[label] + ' ADC (mentah)' : '—')}</small>
+                <small>${isValidNumber(sensor.soil) ? sensorText(sensor.soil, '%', 1) : '—'}</small>
             </button>
         `;
     }).join('');
@@ -797,13 +908,6 @@ function selectZone(label) {
     if (index < 0) return;
 
     zone = label;
-    const soilMetric = $('metrics')?.querySelectorAll('.metric')[5];
-    if (soilMetric) {
-        const soilLabel = soilMetric.querySelector('label');
-        const soilValue = soilMetric.querySelector('strong');
-        if (soilLabel) soilLabel.textContent = 'Soil Moisture (belum aktif)';
-        if (soilValue) soilValue.textContent = sensorText(zoneSensors[index]?.soil, ' %', 1);
-    }
     const sensor = zoneSensors[index];
     $('zone-label').textContent = zone;
     $('zone-status').textContent = `Zona ${zone} dipilih`;
@@ -817,7 +921,7 @@ function selectZone(label) {
     });
 
     const readings = [
-        ['Kelembapan media tanam (terkalibrasi)', '—'],
+        ['Kelembapan media tanam', sensorText(sensor.soil, ' %', 1)],
         ['Soil (ADC mentah)', sensorText(soilAdcByZone[label], ' ADC')],
         ['Suhu udara (global)', sensorText(sensorSeed.temp, ' °C', 1)],
         ['Kelembapan udara (global)', sensorText(sensorSeed.humidity, ' %', 1)],
@@ -1161,12 +1265,9 @@ function refreshLiveSensorDisplay() {
         sensorText(sensorSeed.humidity, '%'),
         sensorText(sensorSeed.waterTemp, '°C', 1),
         sensorText(sensorSeed.ph),
-        sensorText(sensorSeed.ec, ' mS/cm'),
-        '—'
+        sensorText(sensorSeed.ec, ' mS/cm')
     ];
 
-    const soilLabel = $('metrics')?.querySelectorAll('.metric')[5]?.querySelector('label');
-    if (soilLabel) soilLabel.textContent = 'Soil Moisture (belum aktif)';
 
     $('metrics').querySelectorAll('.metric').forEach((card, index) => {
         const value = card.querySelector('strong');
@@ -1179,8 +1280,7 @@ function refreshLiveSensorDisplay() {
         const small = $('zone-' + getBlocks()[i].code)?.querySelector('small');
         if (small) small.textContent = isValidNumber(item.soil)
             ? sensorText(item.soil, '%', 1)
-            : (isValidNumber(soilAdcByZone[getBlocks()[i].code])
-                ? soilAdcByZone[getBlocks()[i].code] + ' ADC (mentah)' : '—');
+            : '—';
     });
 
     selectZone(zone);
@@ -1644,7 +1744,8 @@ function advanceDay() {
     const max = plants[crop].duration;
     input.value = getPlantAge(); // otomatis dari tanggal tanam
     refreshForecast();
-    $('growth-history').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (window.atanDashboardSlide) window.atanDashboardSlide(5);
+    setTimeout(() => $('growth-history').scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
 }
 function resetSimulation() {
     // Semua state proyeksi frontend kembali ke awal.
@@ -1841,7 +1942,10 @@ if ($('dashboard')) {
     const d=data.diagnostic||{}, n=data.npk||{};
     el.replaceChildren();
     const soils=Array.isArray(d.soil_adc)?d.soil_adc:[];
-    ['A','B','C'].forEach((z,i)=>add('Soil '+z+' (ADC mentah)',fmt(soils[i])));
+    ['A','B','C'].forEach((z,i)=>{
+      const zone=(data.zones||[]).find(x=>x.code===z);
+      add('Soil '+z+' (kelembapan)', typeof zone?.soil==='number' ? zone.soil.toFixed(1)+' %' : '—');
+    });
     add('pH (ADC mentah)',fmt(d.ph_adc));
     add('pH GPIO (V)',fmt(d.ph_voltage,' V'));
     add('TDS (ADC mentah)',fmt(d.tds_adc));
