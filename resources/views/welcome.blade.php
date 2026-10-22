@@ -267,9 +267,9 @@ function renderNutrientItems(){
       card.innerHTML=`<div class="flex justify-between gap-3"><label class="block flex-1 text-[11px] font-bold">Nama Bahan<input data-index="${i}" data-field="name" maxlength="80" class="mt-1 ${inputStyle}" value="${escN(x.name)}" placeholder="Cth: AB Mix Premium"></label><button type="button" data-remove="${i}" class="self-end rounded-lg bg-[#f7e7e2] px-3 py-3 text-xs text-red-700 font-bold hover:bg-red-100 transition">Hapus</button></div>
       <div class="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
         <label class="text-[10px] font-bold">Harga per Kemasan (Rp)<input type="number" min="0" step="any" data-index="${i}" data-field="package_price_rp" class="mt-1 ${inputStyle}" value="${x.package_price_rp}" placeholder="Cth: 150000"></label>
-        <label class="text-[10px] font-bold">Isi Bersih Kemasan<input type="number" min="0.000001" step="any" data-index="${i}" data-field="package_qty" class="mt-1 ${inputStyle}" value="${x.package_qty}" placeholder="Cth: 1000"></label>
+        <label class="text-[10px] font-bold">Isi Total Kemasan<input type="number" min="0.000001" step="any" data-index="${i}" data-field="package_qty" class="mt-1 ${inputStyle}" value="${x.package_qty}" placeholder="Cth: 1000"></label>
         <label class="text-[10px] font-bold">Satuan (mL/g)<select data-index="${i}" data-field="unit" class="mt-1 ${inputStyle}"><option value="ml" ${x.unit==='ml'?'selected':''}>Mililiter (mL)</option><option value="g" ${x.unit==='g'?'selected':''}>Gram (g)</option></select></label>
-        <label class="text-[10px] font-bold"> Qty<input type="number" min="0" step="any" data-index="${i}" data-field="used_qty" class="mt-1 ${inputStyle}" value="${x.used_qty}" placeholder="Cth: 50"></label>
+        <label class="text-[10px] font-bold">Dosis 1x Campuran<input type="number" min="0" step="any" data-index="${i}" data-field="used_qty" class="mt-1 ${inputStyle}" value="${x.used_qty}" placeholder="Cth: 50"></label>
       </div>
       <p class="mt-2 text-right text-[11px] font-extrabold text-[#508566]" data-subtotal="${i}"></p>`;
       el.appendChild(card);
@@ -294,7 +294,6 @@ $('nutrient-form').addEventListener('input',e=>{
   const t=e.target;
   if(t.dataset.index!==undefined){
     const x=nutrientState.items[Number(t.dataset.index)];
-    // Tambahan logika agar saat input dikosongkan, nilainya kembali menjadi string kosong agar placeholder muncul
     if(x) x[t.dataset.field]=['name','unit'].includes(t.dataset.field)?t.value:(t.value===''? '': finiteN(t.value));
   }
   else if(t.id==='nutrient-water-liters') nutrientState.water_l=t.value===''? '': finiteN(t.value);
@@ -318,13 +317,21 @@ async function requestN(path,method='GET',body){
   return json;
 }
 async function loadNutrient(){try{const j=await requestN('/recipe');if(j.recipe){nutrientState={items:j.recipe.items||[],water_l:j.recipe.water_l,water_price_rp_l:j.recipe.water_price_rp_l};savedNutrient=true;$('nutrient-record').disabled=false;}$('nutrient-water-liters').value=nutrientState.water_l;$('nutrient-water-price').value=nutrientState.water_price_rp_l;renderNutrientItems();}catch(e){renderNutrientItems();statusN('Gagal memuat pengaturan nutrisi: '+e.message)}}
+
 $('nutrient-form').addEventListener('submit',async e=>{
   e.preventDefault();
-  if(!nutrientState.items.length||nutrientState.items.some(x=>!x.name.trim()||finiteN(x.package_qty)<=0)){statusN('Isi nama dan ukuran kemasan semua bahan.');return}
+  
+  // Perbaikan validasi: Pastikan nama diisi dan package_qty > 0 jika form terisi.
+  if(!nutrientState.items.length || nutrientState.items.some(x=>!x.name.trim() || (finiteN(x.package_qty)<=0 && x.package_qty !== ''))){
+      statusN('Isi nama dan pastikan ukuran kemasan lebih dari 0.');
+      return;
+  }
+  
   const btn=$('nutrient-save');btn.disabled=true;
   try{await requestN('/recipe','POST',nutrientState);savedNutrient=true;$('nutrient-record').disabled=false;statusN('Komposisi nutrisi berhasil disimpan.');}
   catch(err){statusN('Gagal menyimpan: '+err.message)}finally{btn.disabled=false}
 });
+
 $('nutrient-record').addEventListener('click',async()=>{
   if(!savedNutrient)return;
   if(!confirm('Simpan biaya pembuatan larutan ini ke catatan pengeluaran?'))return;
