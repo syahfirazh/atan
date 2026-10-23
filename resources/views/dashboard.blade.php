@@ -2658,7 +2658,7 @@
         if (target) {
           target.innerHTML = `
                 <article>
-                    <h4>📊 Prediksi Edge Impulse (30 Hari)</h4>
+                    <h4>📊 Prediksi (30 Hari)</h4>
                     <strong>${projection_30d_ml > 0 ? num(projection_30d_ml) + " mL" : "—"}</strong>
                     <small>Estimasi total pemakaian pupuk bulan depan</small>
                 </article>
@@ -2729,7 +2729,7 @@
         ) {
           $("decision-heading").textContent = "Menunggu data sensor";
           $("decision-reason").textContent =
-            "Model Edge Impulse ML belum dapat memprediksi nutrisi karena data sensor NPK belum divalidasi.";
+            "Model ML belum dapat memprediksi nutrisi karena data sensor NPK belum divalidasi.";
           return;
         }
         const nutrientReadings = [sensor.n, sensor.p, sensor.k];

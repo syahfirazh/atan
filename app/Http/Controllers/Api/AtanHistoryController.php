@@ -53,14 +53,35 @@ class AtanHistoryController extends Controller
 
     public function latest()
     {
-        $rows = $this->readingsQuery()->orderByDesc('s.id')->limit(100)->get();
+        // 1. Ambil 100 data riwayat sensor terakhir dari database
+        $sensors = \Illuminate\Support\Facades\DB::table('sensor_logs')
+            ->orderBy('id', 'desc')
+            ->limit(100)
+            ->get();
+
+        // 2. Ambil data dosis dan proyeksi ML TERAKHIR dari tabel irrigation
+        $lastIrrigation = \Illuminate\Support\Facades\DB::table('atan_irrigation_events')
+            ->orderBy('id', 'desc')
+            ->first();
+
+        // Jika tidak ada data, jadikan 0
+        $dosisAktual = $lastIrrigation ? $lastIrrigation->pupuk_keluar_ml : 0;
+        $proyeksiML = $lastIrrigation ? $lastIrrigation->proyeksi_pupuk_30_hari_ml : 0;
+
+        // 3. Sisipkan data ML tersebut ke dalam setiap baris riwayat sensor
+        foreach ($sensors as $sensor) {
+            $sensor->pupuk_keluar_ml = $dosisAktual;
+            $sensor->proyeksi_pupuk_30_hari_ml = $proyeksiML;
+        }
+
+        // 4. Hitung total data yang tersimpan
+        $totalSaved = \Illuminate\Support\Facades\DB::table('sensor_logs')->count();
+
         return response()->json([
-            'source' => 'mysql',
-            'count' => $rows->count(),
-            'total_saved' => DB::table('sensor_logs')->count(),
-            'cost_basis' => 'Air/pupuk = batch disiapkan. Listrik PZEM = meter untuk beban yang melewati PZEM. Estimasi relay ditampilkan terpisah dan TIDAK dijumlahkan dengan PZEM.',
-            'rows' => $rows,
-        ])->header('Cache-Control', 'no-store');
+            'status' => 'success',
+            'rows' => $sensors,
+            'total_saved' => $totalSaved
+        ]);
     }
 
     private function dates(Request $request): array
