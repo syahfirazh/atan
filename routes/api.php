@@ -48,5 +48,5 @@ Route::get('/finance/forecast', [AtanFinanceController::class, 'forecast']);
 
 
 // Log kejadian irigasi dari ESP32, data estimasi (bukan flow meter).
-// Route::post('/log_siram', [\App\Http\Controllers\Api\AtanIrrigationController::class, 'store']);
-// Route::get('/log_siram', [\App\Http\Controllers\Api\AtanIrrigationController::class, 'latest']);
+Route::post('/log_siram', [\App\Http\Controllers\Api\AtanIrrigationController::class, 'store']);
+Route::get('/log_siram/summary', [\App\Http\Controllers\Api\AtanIrrigationController::class, 'latest']);

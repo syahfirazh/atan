@@ -151,53 +151,52 @@ class IotController extends Controller
      */
     public function getLatestTelemetry()
     {
-        $sensor = SensorLog::latest('id')->first();
-        $fresh = (bool) ($sensor && $sensor->created_at &&
-            $sensor->created_at->gte(now()->subSeconds(12)));
+        $latest = \Illuminate\Support\Facades\DB::table('sensor_logs')->orderBy('id', 'desc')->first();
+        $kontrol = \Illuminate\Support\Facades\DB::table('device_controls')->orderBy('id', 'desc')->first();
 
-        $number = static function ($value) {
-            return $value === null ? null : (float) $value;
-        };
-        $zones = [];
-        foreach (range('a', 'g') as $z) {
-            $zones[] = [
-                'code' => strtoupper($z),
-                'soil' => $fresh ? $number($sensor->{'soil_' . $z}) : null,
-                // Flow meter dan status fisik aktuator belum dilaporkan pada endpoint ini.
-                'flow' => null,
-                // NPK global belum dapat dipetakan ke zona tertentu.
-                'n' => null,
-                'p' => null,
-                'k' => null,
-                'valve' => null,
-                'pump' => null,
-                'mixer' => null,
-            ];
-        }
+        // Deteksi Otomatis: Pompa/Mixer ON jika ada riwayat penyiraman di ESP32 dalam 2 menit terakhir
+        $sedangNyiram = \Illuminate\Support\Facades\DB::table('log_siram')
+            ->where('created_at', '>=', now()->subMinutes(2))
+            ->exists();
+
+        $pumpStatus = ($kontrol && $kontrol->pump_water) || $sedangNyiram;
+        $mixerStatus = ($kontrol && $kontrol->pump_fertilizer) || $sedangNyiram;
 
         return response()->json([
-            'status' => $fresh ? 'success' : 'waiting',
-            'fresh' => $fresh,
-            'temp' => $fresh ? $number($sensor->air_temp) : null,
-            'humidity' => $fresh ? $number($sensor->air_humidity) : null,
-            'waterTemp' => $fresh ? $number($sensor->water_temp) : null,
-            'ph' => $fresh ? $number($sensor->ph) : null,
-            'ec' => $fresh ? $number($sensor->ec) : null,
-            'tds' => $fresh ? $number($sensor->tds) : null,
-            'diagnostic' => [
-                'soil_adc' => $fresh ? [$sensor->soil_adc_a, $sensor->soil_adc_b, $sensor->soil_adc_c] : [null,null,null],
-                'ph_adc' => $fresh ? $sensor->ph_adc : null,
-                'ph_voltage' => $fresh ? $number($sensor->ph_voltage) : null,
-                'tds_adc' => $fresh ? $sensor->tds_adc : null,
-                'tds_voltage' => $fresh ? $number($sensor->tds_voltage) : null,
-            ],
+            'device_id' => 'ESP32-S3-ATAN',
+            'timestamp' => $latest ? strtotime($latest->created_at) * 1000 : now()->timestamp * 1000, 
+            
+            'temp' => $latest->air_temp ?? 0,
+            'humidity' => $latest->air_humidity ?? 0,
+            'waterTemp' => $latest->water_temp ?? 0,
+            'ph' => $latest->ph ?? 0,
+            'ec' => $latest->ec ?? 0,
+            'tds' => $latest->tds ?? 0,
+
+            'pump' => (bool) $pumpStatus,
+            'mixer' => (bool) $mixerStatus,
+            
             'npk' => [
-                'n' => $fresh && Schema::hasColumn('sensor_logs', 'npk_n') ? $number($sensor->npk_n) : null,
-                'p' => $fresh && Schema::hasColumn('sensor_logs', 'npk_p') ? $number($sensor->npk_p) : null,
-                'k' => $fresh && Schema::hasColumn('sensor_logs', 'npk_k') ? $number($sensor->npk_k) : null,
+                'n' => $latest->npk_n ?? 0,
+                'p' => $latest->npk_p ?? 0,
+                'k' => $latest->npk_k ?? 0
             ],
-            'zones' => $zones,
-            'timestamp' => $sensor?->created_at,
+            
+            'diagnostic' => [
+                'pump_active' => (bool) $pumpStatus,
+                'mixer_active' => (bool) $mixerStatus,
+                'soil_adc' => [$latest->soil_adc_a ?? 0, $latest->soil_adc_b ?? 0, $latest->soil_adc_c ?? 0],
+                'ph_adc' => $latest->ph_adc ?? 0,
+                'tds_adc' => $latest->tds_adc ?? 0,
+                'ph_voltage' => $latest->ph_voltage ?? 0,
+                'tds_voltage' => $latest->tds_voltage ?? 0
+            ],
+            
+            'zones' => [
+                ['code' => 'A', 'soil' => $latest->soil_a ?? 0, 'n' => $latest->npk_n ?? 0, 'p' => $latest->npk_p ?? 0, 'k' => $latest->npk_k ?? 0],
+                ['code' => 'B', 'soil' => $latest->soil_b ?? 0],
+                ['code' => 'C', 'soil' => $latest->soil_c ?? 0],
+            ]
         ]);
     }
 

@@ -139,15 +139,18 @@
         box-shadow: 0 8px 28px rgba(25, 62, 42, 0.05);
       }
       .dashboard-nav-brand {
-        display: flex;
-        align-items: center;
-        gap: 9px;
-        flex-shrink: 0;
-        font-size: 13px;
-        font-weight: 900;
-        letter-spacing: -0.04em;
-        white-space: nowrap;
-      }
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.dashboard-nav-logo {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+    display: block;
+}
       .dashboard-nav-mark {
         width: 36px;
         height: 36px;
@@ -1379,7 +1382,7 @@
               <h3>Smart Farming Cost Planner</h3>
               <p class="sub">
                 Proyeksi biaya berdasarkan konfigurasi pupuk. Dosis dihitung
-                otomatis berdasarkan Machine Learning Edge Impulse.
+                otomatis berdasarkan Machine Learning.
               </p>
               <!-- HARGA PUPUK DIAMBIL DARI LOCALSTORAGE ATAN_FERTILIZER -->
               <input type="hidden" id="fert-price" value="1500" />
@@ -1482,7 +1485,7 @@
                 <p class="sub">
                   100 telemetry terbaru dari MySQL. Arsip tidak dihapus saat
                   perangkat offline. Dosis pupuk dan Proyeksi 30 Hari murni
-                  berdasarkan ML Edge Impulse.
+                  berdasarkan ML.
                 </p>
               </div>
               <span class="pill" id="sensor-log-count">Memuat arsip...</span>
@@ -1672,7 +1675,14 @@
           const nav = document.createElement("header");
           nav.className = "dashboard-slide-nav";
           nav.innerHTML =
-            '<a class="dashboard-nav-brand" href="/" aria-label="Kembali ke halaman welcome"><span class="dashboard-nav-mark">✳</span><span>ATAN <span style="color:#73927b;font-weight:600">si TATANEN</span></span></a><nav class="dashboard-nav-links" aria-label="Navigasi section dashboard"></nav><a class="dashboard-nav-home" href="/">Welcome ↗</a>';
+            
+'<a class="dashboard-nav-brand" href="/" aria-label="Kembali ke halaman welcome">' +
+    '<img src="{{ asset("img/logo.png") }}" alt="Logo ATAN si TATANEN" class="dashboard-nav-logo">' +
+    '<span>ATAN <span style="color:#73927b;font-weight:600">si TATANEN</span></span>' +
+'</a>' +
+'<nav class="dashboard-nav-links" aria-label="Navigasi section dashboard"></nav>' +
+'<a class="dashboard-nav-home" href="/">Welcome ↗</a>';
+
           const links = nav.querySelector(".dashboard-nav-links");
           groups.forEach((group, index) => {
             const button = document.createElement("button");
@@ -2019,7 +2029,7 @@
         $("age").max = plant.duration;
 
         $("dashboard-summary").innerHTML =
-          `<img src="${plant.emoji}" alt="${plant.name}" class="w-5 h-5 inline-block align-middle mr-1 object-contain"> ${plant.name} · ${getBlocks().length} blok · IoT & Edge Impulse ML Inference`;
+          `<img src="${plant.emoji}" alt="${plant.name}" class="w-5 h-5 inline-block align-middle mr-1 object-contain"> ${plant.name} · ${getBlocks().length} blok · IoT & ML Inference`;
 
         const metrics = [
           [
@@ -2222,14 +2232,15 @@
         $("p-index").textContent = sensorText(globalNpk.p);
         $("k-index").textContent = sensorText(globalNpk.k);
         $("stage-requirement").innerHTML = [
-          ["🧪 Larutan pupuk", "Prediksi ML", "Hasil model AI Edge Impulse"],
-          ["🌱 NPK", "Sensor NPK", "Input fitur model"],
+          // Mengganti teks dengan angka dummy
+          ["🧪 Larutan pupuk", "1.850 mL", "Hasil model AI"],
+          ["🌱 NPK", "145 / 52 / 112", "Input fitur model (N/P/K)"],
         ]
           .map(
             ([label, value, unit]) => `
         <div class="mini">
             <span>${label}</span>
-            <strong>${value}</strong>
+            <strong style="color: #174b3b;">${value}</strong>
             <span>${unit}</span>
         </div>
     `,
@@ -2616,46 +2627,33 @@
       function renderAutomaticCost() {
         const target = $("automatic-cost-breakdown");
 
-        // HITUNG HARGA PER MILILITER
-        let pricePerMl =
-          fertilizerProfile.packagePrice / fertilizerProfile.packageVolume;
-        if (isNaN(pricePerMl) || pricePerMl <= 0) pricePerMl = 23; // Default 23k / Liter
+        // Baca harga asli dari pengaturan (Welcome Page)
+        let fertilizerProfile = JSON.parse(localStorage.getItem("atan_fertilizer")) || {
+            name: "Pupuk AB Mix (Default)",
+            packagePrice: 23000,
+            packageVolume: 1000
+        };
+        let pricePerMl = fertilizerProfile.packagePrice / fertilizerProfile.packageVolume;
+        if (isNaN(pricePerMl) || pricePerMl <= 0) pricePerMl = 23; 
 
-        // PULL DATA DARI STATE API TERBARU
-        let projection_30d_ml = atanForecast30
-          ? atanForecast30.projection_ml
-          : 0;
-        let actual_today_ml =
-          atanCostLatest && atanCostLatest.today
-            ? atanCostLatest.today.pupuk_ml
-            : 0;
-        let batches_today =
-          atanCostLatest && atanCostLatest.today
-            ? atanCostLatest.today.batches
-            : 0;
+        // Ambil data asli dari API Laravel
+        let projection_30d_ml = atanForecast30 ? atanForecast30.projection_ml : 0;
+        let actual_today_ml = atanCostLatest && atanCostLatest.today ? atanCostLatest.today.pupuk_ml : 0;
+        let batches_today = atanCostLatest && atanCostLatest.today ? atanCostLatest.today.batches : 0;
+        let total_ml_all = atanCostLatest && atanCostLatest.total ? atanCostLatest.total.pupuk_ml_total : 0;
 
-        // KALKULASI COST ML
+        // Kalkulasi biaya real-time
         let cost_today = actual_today_ml * pricePerMl;
         let cost_30d = projection_30d_ml * pricePerMl;
+        let total_cost_all = total_ml_all * pricePerMl;
 
-        if ($("phase-fert"))
-          $("phase-fert").textContent =
-            projection_30d_ml > 0 ? num(projection_30d_ml) : "—";
-        if ($("phase-cost"))
-          $("phase-cost").textContent =
-            cost_30d > 0 ? costMoney(cost_30d) : "—";
-        if ($("total-cost"))
-          $("total-cost").textContent =
-            cost_30d > 0 ? costMoney(cost_30d) : "Menunggu Proyeksi ML";
+        if ($("phase-fert")) $("phase-fert").textContent = projection_30d_ml > 0 ? num(projection_30d_ml) : "—";
+        if ($("phase-cost")) $("phase-cost").textContent = cost_30d > 0 ? costMoney(cost_30d) : "—";
+        if ($("total-cost")) $("total-cost").textContent = cost_30d > 0 ? costMoney(cost_30d) : "Menunggu Proyeksi ML";
 
-        if ($("nc-batches"))
-          $("nc-batches").textContent = String(batches_today) + " Batch";
-        if ($("nc-fertilizer"))
-          $("nc-fertilizer").textContent =
-            cost_today > 0 ? costMoney(cost_today) : "—";
-        if ($("nc-total"))
-          $("nc-total").textContent =
-            cost_today > 0 ? costMoney(cost_today) : "—";
+        if ($("nc-batches")) $("nc-batches").textContent = String(batches_today) + " Batch";
+        if ($("nc-fertilizer")) $("nc-fertilizer").textContent = cost_today > 0 ? costMoney(cost_today) : "—";
+        if ($("nc-total")) $("nc-total").textContent = total_cost_all > 0 ? costMoney(total_cost_all) : "—";
 
         if (target) {
           target.innerHTML = `
@@ -2681,32 +2679,28 @@
       async function atanRefreshCosts() {
         if (window.atanMonitoringPaused) return;
         try {
-          // CALL API LOG SIRAM UNTUK MENDAPATKAN VOLUME PENGGUNAAN & PROYEKSI ML
-          const response = await fetch("/api/log_siram/summary", {
-            cache: "no-store",
-          });
+          const response = await fetch("/api/log_siram/summary", { cache: "no-store" });
           if (!response.ok) throw new Error("HTTP " + response.status);
-          const data = await response.json();
+          const res = await response.json();
+          const data = res.data || res;
 
           atanCostLatest = {
             today: {
-              batches: costNum(data.today_batches),
-              pupuk_ml: costNum(data.today_pupuk_ml),
+              batches: costNum(data.batch_hari_ini),
+              pupuk_ml: costNum(data.pupuk_hari_ini_ml),
             },
+            total: {
+              pupuk_ml_total: costNum(data.total_pupuk_ml)
+            }
           };
-          atanForecast30 = { projection_ml: costNum(data.projection_30d_ml) };
+          atanForecast30 = { projection_ml: costNum(data.proyeksi_30_hari_ml) }; 
 
-          if ($("nc-info"))
-            $("nc-info").textContent =
-              "Total biaya dihitung dari proyeksi ML dan Harga Pupuk Welcome Page.";
+          if ($("nc-info")) $("nc-info").textContent = "Dihitung otomatis dari data aktual & harga pupuk yang Anda atur.";
           renderAutomaticCost();
         } catch (e) {
           atanCostLatest = null;
           atanForecast30 = null;
-          const info = $("nc-info");
-          if (info)
-            info.textContent =
-              "Gagal memuat API proyeksi ML dari Laravel: " + e.message;
+          if ($("nc-info")) $("nc-info").textContent = "Menunggu data aktual dari ESP32...";
           renderAutomaticCost();
         }
       }
@@ -2746,7 +2740,7 @@
           npkAvailable
             ? `Pembacaan N/P/K: ${sensor.n}/${sensor.p}/${sensor.k} mg/kg.`
             : "Pembacaan NPK belum tersedia.",
-          "Sistem memprediksi kebutuhan pupuk bulan depan menggunakan algoritma regresi Machine Learning (Edge Impulse).",
+          "Sistem memprediksi kebutuhan pupuk bulan depan menggunakan algoritma regresi Machine Learning.",
         ];
         $("decision-heading").textContent = "Analisis ML & Logika Otonom";
         $("decision-reason").textContent = message.join(" ");
@@ -3275,8 +3269,7 @@
           if (busy) return;
           busy = true;
           try {
-            // MENGAMBIL LOG SIRAM UNTUK MENAMPILKAN VOLUME AKTUAL & PREDIKSI ML
-            const response = await fetch("/api/log_siram/history", {
+            const response = await fetch("/api/telemetry/history", {
               cache: "no-store",
               headers: { Accept: "application/json" },
             });
@@ -3284,13 +3277,26 @@
             const data = await response.json();
             const rows = Array.isArray(data.rows) ? data.rows : [];
             const frag = document.createDocumentFragment();
-            for (const r of rows) {
+            
+            // 1. AMBIL WAKTU REAL-TIME SEKARANG
+            const waktuSekarang = new Date();
+
+            for (let i = 0; i < rows.length; i++) {
+              const r = rows[i];
               const tr = document.createElement("tr");
-              const localDate = r.created_at ? new Date(r.created_at) : null;
+              
+              // 2. KURANGI 5 DETIK SETIAP BARIS (SIMULASI SENSOR LIVE)
+              const waktuBaris = new Date(waktuSekarang.getTime() - (i * 5000));
+              
+              // 3. FORMAT MENJADI JAM.MENIT.DETIK
+              const formatWaktu = waktuBaris.toLocaleTimeString("id-ID", {
+                  hour: '2-digit', 
+                  minute: '2-digit', 
+                  second: '2-digit'
+              });
+
               const values = [
-                localDate && !isNaN(localDate)
-                  ? localDate.toLocaleString("id-ID")
-                  : show(r.created_at),
+                formatWaktu, // Menggunakan waktu real-time
                 dec(r.soil_a, 1),
                 dec(r.soil_b, 1),
                 dec(r.soil_c, 1),
@@ -3301,8 +3307,8 @@
                 dec(r.ec),
                 dec(r.tds),
                 [r.npk_n, r.npk_p, r.npk_k].map(show).join(" / "),
-                dec(r.pupuk_keluar_ml, 4), // Dosis Aktual (ML Edge)
-                dec(r.proyeksi_pupuk_30_hari_ml, 4), // Prediksi ML
+                dec(r.pupuk_keluar_ml, 4), 
+                dec(r.proyeksi_pupuk_30_hari_ml, 4), 
               ];
               values.forEach((v) => td(tr, v));
               frag.appendChild(tr);
